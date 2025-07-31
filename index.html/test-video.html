@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>試験公開_動画公開ページ</title>
+<meta name="viewport" content="width=700">
+<style>
+
+        body {
+
+            background: #f3f3f3;
+
+            font-family: "Helvetica Neue", Arial, sans-serif;
+
+            margin: 0;
+
+            padding: 0;
+
+        }
+
+        .container {
+
+            width: 700px;
+
+            margin: 40px auto;
+
+            padding: 24px 28px;
+
+            background: #fff;
+
+            border-radius: 14px;
+
+            box-shadow: 0 3px 16px rgba(0,0,0,0.09);
+
+        }
+
+        h1 {
+
+            text-align: center;
+
+            margin-bottom: 28px;
+
+            color: #444;
+
+        }
+
+        .video-wrapper {
+
+            position: relative;
+
+            width: 100%;
+
+            max-width: 640px;
+
+            margin: 0 auto;
+
+        }
+
+        video {
+
+            width: 100%;
+
+            height: auto;
+
+            border-radius: 8px;
+
+            background: #000;
+
+            display: block;
+
+        }
+
+        /* サムネイル用ポスターを動画上に表示 */
+
+        video::-webkit-media-controls-panel {
+
+            background: rgba(0,0,0,0.7);
+
+        }
+
+        .info {
+
+            margin-top: 18px;
+
+            color: #444;
+
+        }
+
+        @media (max-width: 800px) {
+
+            .container {
+
+                width: 98%;
+
+                padding: 10px;
+
+            }
+
+        }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>動画公開ページ</h1>
+<div class="video-wrapper">
+<video controls poster="test-video-yozora.jpg">
+<source src="test-yozora.mp4" type="video/mp4">
+
+                お使いのブラウザは動画タグに対応していません。
+</video>
+</div>
+<div class="info">
+<h2 style="margin-top:18px;">試験公開_アスノヨゾラ哨戒班</h2>
+<p>
+
+                これは試験公開動画です。<br>
+
+                はじめにサムネイル画像が表示され、再生ボタンを押すと動画がスタートします。
+</p>
+<p style="font-size: 13px; color: #888;">
+
+                © 2025 example.com
+</p>
+</div>
+</div>
+</body>
+</html>
+Example Domain
+ 
