@@ -5,23 +5,27 @@
 <title>試験公開_動画公開ページ</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
+    /* フォントのインポート */
     @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Noto+Sans+JP:wght@300;400&display=swap');
 
+    /* 色や基本的な変数の定義 */
     :root {
         --background-color: #0a0a0a;
         --text-color: #e0e0e0;
         --accent-gold: #d4af37;
         --card-background: #181818;
         --border-color: rgba(212, 175, 55, 0.3);
+        --curtain-color: #4a0e0e; /* 緞帳の色 */
     }
 
+    /* 基本的なページ設定 */
     body {
         margin: 0;
-        padding: 40px 20px;
+        /* ページの上下左右の余白を縮小 */
+        padding: 20px; 
         font-family: 'Noto Sans JP', sans-serif;
         background-color: var(--background-color);
-        /* 舞台の幕のようなテクスチャをうっすらと追加 */
-        background-image: 
+        background-image:
             radial-gradient(ellipse at center, rgba(255, 255, 255, 0.05) 0%, transparent 70%),
             url('https://www.transparenttextures.com/patterns/dark-denim-3.png');
         color: var(--text-color);
@@ -30,48 +34,51 @@
         align-items: center;
         min-height: 100vh;
         box-sizing: border-box;
+        overflow: hidden; /* 緞帳アニメーションのため */
     }
 
+    /* メインコンテンツのコンテナ */
     .container {
-        max-width: 800px;
+        /* 最大幅を縮小 */
+        max-width: 720px; 
         width: 100%;
-        padding: 40px;
+        /* 内側の余白を縮小 */
+        padding: 30px; 
         background: var(--card-background);
         border: 1px solid var(--border-color);
         border-radius: 8px;
-        /* スポットライトのような柔らかな光 */
         box-shadow: 0 0 30px rgba(0, 0, 0, 0.5), 0 0 15px var(--border-color);
-        /* 幕が上がるようなアニメーション */
         animation: curtain-up 1.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         opacity: 0;
         transform: translateY(30px);
+        position: relative;
+        z-index: 1;
     }
 
     @keyframes curtain-up {
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        to { opacity: 1; transform: translateY(0); }
     }
 
+    /* メインタイトル */
     h1 {
         text-align: center;
         font-family: 'Noto Serif JP', serif;
         font-weight: 700;
-        font-size: 32px;
-        margin-bottom: 30px;
+        /* フォントサイズを縮小 */
+        font-size: 28px; 
+        /* 下の余白を縮小 */
+        margin-bottom: 25px; 
         color: #fff;
-        /* ゴールドのテキストシャドウで上品な輝き */
         text-shadow: 0 0 10px var(--accent-gold), 0 0 2px #fff;
     }
 
+    /* 動画プレイヤーのラッパー */
     .video-wrapper {
         position: relative;
         width: 100%;
         border-radius: 8px;
         overflow: hidden;
         margin-bottom: 30px;
-        /* 動画プレイヤーに少し立体感を */
         box-shadow: 0 5px 20px rgba(0, 0, 0, 0.7);
     }
 
@@ -83,8 +90,9 @@
         border-radius: 8px;
     }
 
+    /* 動画情報セクション */
     .info {
-        text-align: left; /* 左揃えで読みやすく */
+        text-align: left;
         border-top: 1px solid var(--border-color);
         padding-top: 25px;
     }
@@ -92,15 +100,17 @@
     .info h2 {
         font-family: 'Noto Serif JP', serif;
         font-weight: 400;
-        font-size: 24px;
+        /* フォントサイズを縮小 */
+        font-size: 22px; 
         margin-top: 0;
         margin-bottom: 12px;
         color: var(--accent-gold);
     }
 
     .info p {
-        font-size: 15px;
-        line-height: 1.8;
+        /* フォントサイズを縮小 */
+        font-size: 14px; 
+        line-height: 1.7;
         color: #ccc;
     }
 
@@ -109,27 +119,152 @@
         color: #777;
         margin-top: 25px;
         text-align: center;
+        user-select: none;
     }
 
+    /* ギミックのトリガー */
+    #secret-trigger {
+        font-weight: bold;
+        color: #888;
+        cursor: pointer;
+        display: inline-block;
+        transition: color 0.3s, transform 0.2s;
+    }
+    #secret-trigger:hover {
+        color: var(--accent-gold);
+    }
+    #secret-trigger:active {
+        transform: scale(0.9);
+    }
+
+    /* === 豪華な演出のためのスタイル === */
+
+    /* 緞帳 */
+    .curtain {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        z-index: 99;
+        pointer-events: none;
+    }
+    .curtain-panel {
+        width: 50%;
+        height: 100%;
+        background-color: var(--curtain-color);
+        background-image: linear-gradient(to right, rgba(0,0,0,0.4), transparent 20%),
+                          linear-gradient(90deg, var(--curtain-color) 0%, #3a0c0c 100%);
+        box-shadow: inset -5px 0 20px rgba(0,0,0,0.5);
+        transform: translateX(-100%);
+        transition: transform 1.5s cubic-bezier(0.86, 0, 0.07, 1);
+    }
+    .curtain-panel.right {
+        transform: translateX(100%);
+        box-shadow: inset 5px 0 20px rgba(0,0,0,0.5);
+    }
+    .curtain.closed .curtain-panel {
+        transform: translateX(0);
+    }
+
+    /* シークレットページ */
+    .secret-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 1s ease 1.5s, visibility 1s ease 1.5s;
+        z-index: 100;
+        background-image: url('https://www.transparenttextures.com/patterns/wood-planks.png');
+    }
+    .secret-overlay.visible {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .secret-content {
+        text-align: center;
+        color: #fff;
+        padding: 40px;
+        max-width: 600px;
+        position: relative;
+        animation: spotlight-flicker 10s infinite linear;
+    }
+    @keyframes spotlight-flicker {
+        0%, 100% { box-shadow: 0 0 150px 80px rgba(255, 235, 180, 0.15); }
+        50% { box-shadow: 0 0 165px 88px rgba(255, 242, 210, 0.19); }
+    }
+
+    .secret-content h2 {
+        font-family: 'Noto Serif JP', serif;
+        /* フォントサイズを縮小 */
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--accent-gold);
+        margin-bottom: 20px;
+        text-shadow: 0 0 10px var(--accent-gold);
+    }
+
+    .secret-content p {
+        /* フォントサイズを縮小 */
+        font-size: 16px; 
+        line-height: 1.8;
+        margin-bottom: 30px;
+        color: #f0f0f0;
+    }
+
+    .secret-content .prize-info {
+        border: 1px dashed var(--accent-gold);
+        padding: 20px;
+        background: rgba(212, 175, 55, 0.1);
+        border-radius: 5px;
+        font-size: 16px;
+        color: #fff;
+        font-weight: bold;
+    }
+    
+    /* レスポンシブ対応 */
     @media (max-width: 768px) {
-        body {
-            padding: 20px 10px;
-        }
-        .container {
-            padding: 25px;
-        }
+        body { padding: 20px 10px; }
+        .container { padding: 25px; }
+        h1 { font-size: 26px; }
+        .info h2 { font-size: 20px; }
+        .info p { font-size: 14px; }
+        .secret-content { width: 90%; padding: 30px; }
+        .secret-content h2 { font-size: 24px; }
+        .secret-content p { font-size: 16px; }
+    }
 
-        h1 {
-            font-size: 26px;
-        }
-
-        .info h2 {
-            font-size: 20px;
-        }
-
-        .info p {
-            font-size: 14px;
-        }
+    /* 管理者用パネル */
+    .admin-panel {
+        position: fixed;
+        bottom: 10px;
+        right: 10px;
+        z-index: 101;
+    }
+    .admin-panel button {
+        background: #555;
+        color: white;
+        border: none;
+        /* ボタンの余白とフォントサイズを縮小 */
+        padding: 6px 10px; 
+        cursor: pointer;
+        border-radius: 5px;
+        /* 通常時の透明度をさらに下げる */
+        opacity: 0.3; 
+        font-size: 11px;
+        transition: opacity 0.3s;
+    }
+    .admin-panel button:hover {
+        opacity: 1;
     }
 </style>
 </head>
