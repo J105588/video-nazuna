@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -70,7 +71,7 @@
 
     /* 動画プレイヤーのラッパー */
     .video-wrapper {
-        position: relative;
+        position: relative; /* 透かしの基準位置にする */
         width: 100%;
         border-radius: 8px;
         overflow: hidden;
@@ -85,6 +86,27 @@
         background: #000;
         border-radius: 8px;
     }
+
+    /* --- ▼▼▼ ここからIPアドレス透かし用のCSSを追加 ▼▼▼ --- */
+    .ip-watermark {
+        position: absolute;
+        color: rgba(255, 255, 255, 0.15); /* 色を薄く */
+        font-size: 11px; /* 文字を小さく */
+        font-family: monospace;
+        white-space: nowrap;
+        pointer-events: none;
+        user-select: none;
+        -webkit-user-select: none;
+        will-change: transform;
+        transition: transform 8s linear, opacity 0.5s ease; /* 動きをゆっくりに */
+        z-index: 10;
+        opacity: 0; /* 初期状態では非表示 */
+    }
+    .ip-watermark.visible {
+        opacity: 1; /* 表示状態 */
+    }
+    /* --- ▲▲▲ ここまでIPアドレス透かし用のCSSを追加 ▲▲▲ --- */
+
 
     /* 動画情報セクション */
     .info {
@@ -119,23 +141,18 @@
 
     /* ギミックのトリガー */
     #secret-trigger {
-    /* --- フォントの見た目を親要素と完全に同一にするための修正 --- */
-    /* font-weight, font-size, vertical-align を削除またはリセット */
-    
-        color: #777; /* 通常時の色を親要素と完全に同じにする */
+        color: #777;
         cursor: pointer;
-        display: inline-block; /* クリック領域を確保するために必要 */
-        transition: color 0.2s; /* 色の変化を滑らかに */
-    
-    /* スマートフォンでのタップ操作の補助 */
+        display: inline-block;
+        transition: color 0.2s;
         user-select: none;
         -webkit-tap-highlight-color: transparent;
     }
     #secret-trigger:hover {
-        color: var(--accent-gold); /* マウスオーバーで色が変わる */
+        color: var(--accent-gold);
     }
     #secret-trigger:active {
-        color: #fff; /* クリック/タップ時に一瞬白く光るように見せる */
+        color: #fff;
     }
 
     /* === 豪華な演出のためのスタイル === */
@@ -258,11 +275,11 @@
         border-radius: 5px;
         font-size: 11px;
     
-        opacity: 0; /* 通常時は完全に透明にする */
-        transition: opacity 0.4s ease-in-out; /* ゆっくり表示/非表示を切り替える */
+        opacity: 0;
+        transition: opacity 0.4s ease-in-out;
     }
     .admin-panel button:hover {
-        opacity: 1; /* マウスが乗った時だけ表示する */
+        opacity: 1;
     }
 </style>
 </head>
@@ -271,7 +288,7 @@
 <div class="container">
     <h1>動画公開ページ</h1>
     <div class="video-wrapper">
-        <video controls poster="test-video-yozora.jpg">
+        <video id="myVideo" controls poster="test-video-yozora.jpg">
             <source src="test-yozora.mp4" type="video/mp4">
             お使いのブラウザは動画タグに対応していません。
         </video>
@@ -305,6 +322,7 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+    // 既存のギミック関連の処理
     const trigger = document.getElementById('secret-trigger');
     const curtain = document.getElementById('curtain');
     const secretPage = document.getElementById('secret-page');
@@ -314,26 +332,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const GAS_URL = "https://script.google.com/macros/s/AKfycbxNSu-PRQFCzRUQ-1hCDmJtHSs8yjkYPyV5ony0DBZBGOpBB8ZstqM7D8t2aLuS1bCK/exec";
     const hasVisitedKey = 'engeki5-has-attempted';
 
-    // ギミックを発動させる共通関数
     function activateGimmick() {
         clickCount++;
         if (clickCount >= requiredClicks) {
             clickCount = 0;
-
             if (sessionStorage.getItem(hasVisitedKey)) {
-                alert('本日分は既にご応募いただいております。');
-                return;
+                alert('本日分は既にご応募いただいております。'); return;
             }
-
             curtain.classList.add('closed');
-
             setTimeout(() => {
-                fetch(GAS_URL, {
-                    method: 'POST',
-                    redirect: "follow",
-                    muteHttpExceptions: true,
-                    contentType: 'application/json',
-                })
+                fetch(GAS_URL, {method: 'POST', redirect: "follow", muteHttpExceptions: true, contentType: 'application/json'})
                 .then(response => response.json())
                 .then(data => {
                     sessionStorage.setItem(hasVisitedKey, 'true');
@@ -356,35 +364,75 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 1500);
         }
     }
-
-    // PC用のclickイベントリスナー
     trigger.addEventListener('click', activateGimmick);
-    
-    // スマートフォン用のtouchstartイベントリスナー
-    trigger.addEventListener('touchstart', (e) => {
-        // clickイベントと重複して発火するのを防ぐ
-        e.preventDefault();
-        activateGimmick();
-    });
-
-    // 管理者用リセット機能
+    trigger.addEventListener('touchstart', (e) => { e.preventDefault(); activateGimmick(); });
     document.getElementById('admin-reset-button').addEventListener('click', () => {
         const password = prompt('管理者用パスワードを入力してください:');
         if (password === 'nazuna-engeki-5') {
-            const confirmReset = confirm(
-                '【管理者向け操作】\n\n' +
-                'スプレッドシートの当選者記録（A2以降の行）は手動で削除してください。\n\n' +
-                'このページの閲覧者記録のみをクリアしますか？'
-            );
+            const confirmReset = confirm('【管理者向け操作】\n\nスプレッドシートの当選者記録（A2以降の行）は手動で削除してください。\n\nこのページの閲覧者記録のみをクリアしますか？');
             if (confirmReset) {
                 sessionStorage.removeItem(hasVisitedKey);
                 alert('閲覧者記録をクリアしました。ページをリロードすると、再度ギミックを試すことができます。');
                 location.reload();
             }
-        } else if (password !== null && password !== "") {
-            alert('パスワードが違います。');
-        }
+        } else if (password !== null && password !== "") { alert('パスワードが違います。'); }
     });
+
+    /* --- ▼▼▼ ここからIPアドレス透かし用のScriptを追加 ▼▼▼ --- */
+    const video = document.getElementById('myVideo');
+    const videoWrapper = document.querySelector('.video-wrapper');
+    let userIp = 'IP not found';
+    let watermarkElement = null;
+
+    // IPアドレスを取得する
+    fetch('https://api.ipify.org?format=json')
+        .then(response => response.json())
+        .then(data => { userIp = data.ip; })
+        .catch(() => { console.error('Could not fetch IP address.'); });
+
+    // 透かしを生成してアニメーションさせる関数
+    const animateWatermark = (element) => {
+        const move = () => {
+            // videoWrapperのサイズを取得して移動範囲を制限
+            const rect = videoWrapper.getBoundingClientRect();
+            // テキストが完全にはみ出さないように調整
+            const x = Math.random() * (rect.width - element.offsetWidth);
+            const y = Math.random() * (rect.height - element.offsetHeight);
+            element.style.transform = `translate(${x}px, ${y}px)`;
+        };
+        move(); // 初回の移動
+        // transitionの時間（8秒）ごとに移動を繰り返す
+        element.animationInterval = setInterval(move, 8000);
+    };
+
+    // 動画再生時の処理
+    video.addEventListener('play', () => {
+        if (!watermarkElement) {
+            watermarkElement = document.createElement('div');
+            watermarkElement.className = 'ip-watermark';
+            watermarkElement.textContent = userIp;
+            videoWrapper.appendChild(watermarkElement);
+        }
+        // 表示クラスを追加（フェードインのため少し遅延させる）
+        setTimeout(() => {
+            watermarkElement.classList.add('visible');
+            animateWatermark(watermarkElement);
+        }, 100);
+    });
+
+    // 動画停止時の処理
+    const hideWatermark = () => {
+        if (watermarkElement) {
+            watermarkElement.classList.remove('visible');
+            // アニメーションのインターバルを停止
+            if (watermarkElement.animationInterval) {
+                clearInterval(watermarkElement.animationInterval);
+            }
+        }
+    };
+    video.addEventListener('pause', hideWatermark);
+    video.addEventListener('ended', hideWatermark);
+    /* --- ▲▲▲ ここまでIPアドレス透かし用のScriptを追加 ▲▲▲ --- */
 });
 </script>
 
