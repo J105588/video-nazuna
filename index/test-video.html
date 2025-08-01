@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>試験公開_動画公開ページ</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Noto+Sans+JP:wght@300;400&display=swap');
+
+    :root {
+        --background-color: #0a0a0a;
+        --text-color: #e0e0e0;
+        --accent-gold: #d4af37;
+        --card-background: #181818;
+        --border-color: rgba(212, 175, 55, 0.3);
+    }
+
+    body {
+        margin: 0;
+        padding: 40px 20px;
+        font-family: 'Noto Sans JP', sans-serif;
+        background-color: var(--background-color);
+        /* 舞台の幕のようなテクスチャをうっすらと追加 */
+        background-image: 
+            radial-gradient(ellipse at center, rgba(255, 255, 255, 0.05) 0%, transparent 70%),
+            url('https://www.transparenttextures.com/patterns/dark-denim-3.png');
+        color: var(--text-color);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        box-sizing: border-box;
+    }
+
+    .container {
+        max-width: 800px;
+        width: 100%;
+        padding: 40px;
+        background: var(--card-background);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        /* スポットライトのような柔らかな光 */
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.5), 0 0 15px var(--border-color);
+        /* 幕が上がるようなアニメーション */
+        animation: curtain-up 1.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    @keyframes curtain-up {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    h1 {
+        text-align: center;
+        font-family: 'Noto Serif JP', serif;
+        font-weight: 700;
+        font-size: 32px;
+        margin-bottom: 30px;
+        color: #fff;
+        /* ゴールドのテキストシャドウで上品な輝き */
+        text-shadow: 0 0 10px var(--accent-gold), 0 0 2px #fff;
+    }
+
+    .video-wrapper {
+        position: relative;
+        width: 100%;
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 30px;
+        /* 動画プレイヤーに少し立体感を */
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.7);
+    }
+
+    video {
+        width: 100%;
+        height: auto;
+        display: block;
+        background: #000;
+        border-radius: 8px;
+    }
+
+    .info {
+        text-align: left; /* 左揃えで読みやすく */
+        border-top: 1px solid var(--border-color);
+        padding-top: 25px;
+    }
+
+    .info h2 {
+        font-family: 'Noto Serif JP', serif;
+        font-weight: 400;
+        font-size: 24px;
+        margin-top: 0;
+        margin-bottom: 12px;
+        color: var(--accent-gold);
+    }
+
+    .info p {
+        font-size: 15px;
+        line-height: 1.8;
+        color: #ccc;
+    }
+
+    .info p.copyright {
+        font-size: 12px;
+        color: #777;
+        margin-top: 25px;
+        text-align: center;
+    }
+
+    @media (max-width: 768px) {
+        body {
+            padding: 20px 10px;
+        }
+        .container {
+            padding: 25px;
+        }
+
+        h1 {
+            font-size: 26px;
+        }
+
+        .info h2 {
+            font-size: 20px;
+        }
+
+        .info p {
+            font-size: 14px;
+        }
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>動画公開ページ</h1>
+    <div class="video-wrapper">
+        <video controls poster="test-video-yozora.jpg">
+            <source src="test-yozora.mp4" type="video/mp4">
+            お使いのブラウザは動画タグに対応していません。
+        </video>
+    </div>
+    <div class="info">
+        <h2>試験公開_アスノヨゾラ哨戒班</h2>
+        <p>これは試験公開動画です。<br>はじめにサムネイル画像が表示され、再生ボタンを押すと動画がスタートします。</p>
+        <p class="copyright">© 2025 NAZUNA ENGEKI5</p>
+    </div>
+</div>
+</body>
+</html>
