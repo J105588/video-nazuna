@@ -116,25 +116,27 @@
         user-select: none;
     }
 
-    /* ギミックのトリガー */
-    #secret-trigger {
-        font-weight: bold;
-        color: #888;
-        cursor: pointer;
-        display: inline-block;
-        transition: color 0.3s, transform 0.2s;
-        /* サイズと操作性を調整 */
-        font-size: 1.2em;
-        vertical-align: middle;
-        user-select: none;
-        -webkit-tap-highlight-color: transparent;
-    }
-    #secret-trigger:hover {
-        color: var(--accent-gold);
-    }
-    #secret-trigger:active {
-        transform: scale(0.9);
-    }
+/* styleタグ内の修正箇所 */
+
+/* ギミックのトリガー */
+#secret-trigger {
+    /* font-weight: bold; を削除 */
+    color: #999; /* 通常時の色を少し濃くして視認性を上げる */
+    cursor: pointer;
+    display: inline-block;
+    transition: color 0.3s, transform 0.2s;
+    /* サイズと操作性の調整 */
+    font-size: 1.2em;
+    vertical-align: middle;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+#secret-trigger:hover {
+    color: var(--accent-gold);
+}
+#secret-trigger:active {
+    transform: scale(0.9);
+}
 
     /* === 豪華な演出のためのスタイル === */
 
