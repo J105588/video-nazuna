@@ -339,7 +339,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (data.status === 'success') {
                         document.getElementById('secret-title').textContent = '特別なご招待状';
                         document.getElementById('secret-message').innerHTML = `おめでとうございます。<br>あなたは ${data.winnerNumber} 番目の特別な招待客として認められました。`;
-                        document.getElementById('prize-wrapper').innerHTML = '<div class="prize-info">第5回なずな演劇祭 本部テントにて、この画面をスタッフにご提示ください。<br>ささやかな記念品をお渡しいたします。</div>';
+                        document.getElementById('prize-wrapper').innerHTML = '<div class="prize-info">第5回なずな演劇祭 本部にて、この画面をスタッフにご提示ください。<br>ささやかな記念品をお渡しいたします。</div>';
                     } else {
                         document.getElementById('secret-title').textContent = '終演';
                         document.getElementById('secret-message').innerHTML = '誠に残念ながら、<br>本公演の特別ご招待は満席となりました。<br>またの機会のご来場を心よりお待ちしております。';
