@@ -87,27 +87,6 @@
         border-radius: 8px;
     }
 
-    /* --- ▼▼▼ ここからIPアドレス透かし用のCSSを追加 ▼▼▼ --- */
-    .ip-watermark {
-        position: absolute;
-        color: rgba(255, 255, 255, 0.15); /* 色を薄く */
-        font-size: 11px; /* 文字を小さく */
-        font-family: monospace;
-        white-space: nowrap;
-        pointer-events: none;
-        user-select: none;
-        -webkit-user-select: none;
-        will-change: transform;
-        transition: transform 8s linear, opacity 0.5s ease; /* 動きをゆっくりに */
-        z-index: 10;
-        opacity: 0; /* 初期状態では非表示 */
-    }
-    .ip-watermark.visible {
-        opacity: 1; /* 表示状態 */
-    }
-    /* --- ▲▲▲ ここまでIPアドレス透かし用のCSSを追加 ▲▲▲ --- */
-
-
     /* 動画情報セクション */
     .info {
         text-align: left;
@@ -377,62 +356,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } else if (password !== null && password !== "") { alert('パスワードが違います。'); }
     });
-
-    /* --- ▼▼▼ ここからIPアドレス透かし用のScriptを追加 ▼▼▼ --- */
-    const video = document.getElementById('myVideo');
-    const videoWrapper = document.querySelector('.video-wrapper');
-    let userIp = 'IP not found';
-    let watermarkElement = null;
-
-    // IPアドレスを取得する
-    fetch('https://api.ipify.org?format=json')
-        .then(response => response.json())
-        .then(data => { userIp = data.ip; })
-        .catch(() => { console.error('Could not fetch IP address.'); });
-
-    // 透かしを生成してアニメーションさせる関数
-    const animateWatermark = (element) => {
-        const move = () => {
-            // videoWrapperのサイズを取得して移動範囲を制限
-            const rect = videoWrapper.getBoundingClientRect();
-            // テキストが完全にはみ出さないように調整
-            const x = Math.random() * (rect.width - element.offsetWidth);
-            const y = Math.random() * (rect.height - element.offsetHeight);
-            element.style.transform = `translate(${x}px, ${y}px)`;
-        };
-        move(); // 初回の移動
-        // transitionの時間（8秒）ごとに移動を繰り返す
-        element.animationInterval = setInterval(move, 8000);
-    };
-
-    // 動画再生時の処理
-    video.addEventListener('play', () => {
-        if (!watermarkElement) {
-            watermarkElement = document.createElement('div');
-            watermarkElement.className = 'ip-watermark';
-            watermarkElement.textContent = userIp;
-            videoWrapper.appendChild(watermarkElement);
-        }
-        // 表示クラスを追加（フェードインのため少し遅延させる）
-        setTimeout(() => {
-            watermarkElement.classList.add('visible');
-            animateWatermark(watermarkElement);
-        }, 100);
-    });
-
-    // 動画停止時の処理
-    const hideWatermark = () => {
-        if (watermarkElement) {
-            watermarkElement.classList.remove('visible');
-            // アニメーションのインターバルを停止
-            if (watermarkElement.animationInterval) {
-                clearInterval(watermarkElement.animationInterval);
-            }
-        }
-    };
-    video.addEventListener('pause', hideWatermark);
-    video.addEventListener('ended', hideWatermark);
-    /* --- ▲▲▲ ここまでIPアドレス透かし用のScriptを追加 ▲▲▲ --- */
 });
 </script>
 
