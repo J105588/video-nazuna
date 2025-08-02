@@ -6,6 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="https://raw.githubusercontent.com/J105588/video-nazuna/main/IMG_5316.png" type="image/png">
 <style>
+    /* ... (CSSスタイルは前回のものから変更ありません) ... */
     @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Noto+Sans+JP:wght@300;400&display=swap');
     :root {
         --background-color: #0a0a0a; --text-color: #e0e0e0; --accent-gold: #d4af37;
@@ -15,6 +16,7 @@
         margin: 0; padding: 20px; font-family: 'Noto Sans JP', sans-serif; background-color: var(--background-color);
         background-image: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.05) 0%, transparent 70%), url('https://www.transparenttextures.com/patterns/dark-denim-3.png');
         color: var(--text-color); display: flex; justify-content: center; align-items: center; min-height: 100vh; box-sizing: border-box; overflow: hidden;
+        transition: background-image 1.5s ease-in-out;
     }
     .container {
         max-width: 720px; width: 100%; padding: 30px; background: var(--card-background); border: 1px solid var(--border-color); border-radius: 8px;
@@ -24,122 +26,100 @@
     @keyframes content-fade-in { to { opacity: 1; transform: translateY(0); } }
     h1 {
         text-align: center; font-family: 'Noto Serif JP', serif; font-weight: 700; font-size: 28px; margin-bottom: 25px; color: #fff;
-        text-shadow: 0 0 10px var(--accent-gold), 0 0 2px #fff;
+        text-shadow: 0 0 10px var(--accent-gold), 0 0 2px #fff; transition: all 1s ease-in-out;
     }
     .video-wrapper { position: relative; width: 100%; border-radius: 8px; overflow: hidden; margin-bottom: 30px; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.7); }
     video { width: 100%; height: auto; display: block; background: #000; border-radius: 8px; }
-    .info { text-align: left; border-top: 1px solid var(--border-color); padding-top: 25px; }
-    .info h2 { font-family: 'Noto Serif JP', serif; font-weight: 400; font-size: 22px; margin-top: 0; margin-bottom: 12px; color: var(--accent-gold); }
+    .info { text-align: left; border-top: 1px solid var(--border-color); padding-top: 25px; transition: all 1s ease-in-out; }
+    .info h2 { font-family: 'Noto Serif JP', serif; font-weight: 400; font-size: 22px; margin-top: 0; margin-bottom: 12px; color: var(--accent-gold); transition: color 1s ease-in-out; }
     .info p { font-size: 14px; line-height: 1.7; color: #ccc; }
     .info p.copyright { font-size: 12px; color: #777; margin-top: 25px; text-align: center; user-select: none; }
-    #secret-trigger { color: #777; cursor: pointer; display: inline-block; transition: color 0.2s; user-select: none; -webkit-tap-highlight-color: transparent; }
+    #secret-trigger { color: #888; cursor: pointer; display: inline-block; transition: color 0.2s; user-select: none; -webkit-tap-highlight-color: transparent; font-weight: bold; }
     #secret-trigger:hover { color: var(--accent-gold); }
-    #secret-trigger:active { color: #fff; }
     .curtain { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex; z-index: 99; pointer-events: none; }
     .curtain-panel { width: 50%; height: 100%; background-color: var(--curtain-color); background-image: linear-gradient(to right, rgba(0,0,0,0.4), transparent 20%), linear-gradient(90deg, var(--curtain-color) 0%, #3a0c0c 100%); box-shadow: inset -5px 0 20px rgba(0,0,0,0.5); transform: translateX(-100%); transition: transform 1.5s cubic-bezier(0.86, 0, 0.07, 1); }
     .curtain-panel.right { transform: translateX(100%); box-shadow: inset 5px 0 20px rgba(0,0,0,0.5); }
     .curtain.closed .curtain-panel { transform: translateX(0); }
     .secret-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #000; display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: opacity 1s ease 1.5s, visibility 1s ease 1.5s; z-index: 100; background-image: url('https://www.transparenttextures.com/patterns/wood-planks.png'); }
     .secret-overlay.visible { opacity: 1; visibility: visible; }
-    .secret-content { text-align: center; color: #fff; padding: 40px; max-width: 600px; position: relative; animation: spotlight-flicker 10s infinite linear; }
-    @keyframes spotlight-flicker { 0%, 100% { box-shadow: 0 0 150px 80px rgba(255, 235, 180, 0.15); } 50% { box-shadow: 0 0 165px 88px rgba(255, 242, 210, 0.19); } }
+    .secret-content { text-align: center; color: #fff; padding: 40px; max-width: 600px; position: relative; }
     .secret-content h2 { font-family: 'Noto Serif JP', serif; font-size: 28px; font-weight: 700; color: var(--accent-gold); margin-bottom: 20px; text-shadow: 0 0 10px var(--accent-gold); }
     .secret-content p { font-size: 16px; line-height: 1.8; margin-bottom: 30px; color: #f0f0f0; }
     .secret-content .prize-info { border: 1px dashed var(--accent-gold); padding: 20px; background: rgba(212, 175, 55, 0.1); border-radius: 5px; font-size: 16px; color: #fff; font-weight: bold; }
     .admin-panel { position: fixed; bottom: 10px; right: 10px; z-index: 101; }
-    .admin-panel button { background: #555; color: white; border: none; padding: 6px 10px; cursor: pointer; border-radius: 5px; font-size: 11px; opacity: 0; transition: opacity 0.4s ease-in-out; }
-    .admin-panel button:hover { opacity: 1; }
-
+    .admin-panel button { background: #555; color: white; border: none; padding: 6px 10px; cursor: pointer; border-radius: 5px; font-size: 11px; opacity: 0.2; transition: opacity 0.4s ease-in-out; }
+    .admin-panel:hover button { opacity: 1; }
     /* === 荒廃ページ用のスタイル === */
-    body.ruined { background-image: url('https://www.transparenttextures.com/patterns/worn-dots.png'); }
-    .ruined .container { border-color: #444; box-shadow: 0 0 15px #000; }
-    .ruined h1 { color: #888; text-shadow: none; animation: flicker 3s infinite steps(1); }
-    @keyframes flicker { 50% { opacity: 0.6; } }
-    .ruined .info { border-color: #444; }
-    .ruined h2, .ruined #secret-trigger { color: #666; }
-    .projector-container { text-align: center; padding: 40px 20px; border: 1px dashed #444; border-radius: 8px; background: rgba(0,0,0,0.2); }
-    .projector-container h3 { font-family: 'Noto Serif JP'; font-size: 20px; color: #888; margin: 0 0 15px 0; }
-    .projector-container p { color: #666; margin-bottom: 25px; }
-    #projector-button { font-size: 3rem; cursor: pointer; transition: transform 0.2s, filter 0.5s; filter: grayscale(100%); user-select: none; }
-    #projector-button:hover { transform: scale(1.1); }
-    #projector-button.active { filter: grayscale(0) drop-shadow(0 0 15px var(--accent-gold)); }
-    #ensemble-status { font-family: 'Noto Serif JP'; color: var(--accent-gold); margin-top: 20px; height: 2em; transition: opacity 0.5s; }
-    .container.restoring { animation: restore-glow 3s forwards; }
-    @keyframes restore-glow {
-        0% { box-shadow: 0 0 10px #000; }
-        50% { box-shadow: 0 0 180px 40px var(--accent-gold); }
-        100% { box-shadow: 0 0 30px rgba(0, 0, 0, 0.5), 0 0 15px var(--border-color); }
-    }
+    body.ruined { background-image: url('https://www.transparenttextures.com/patterns/45-degree-fabric-light.png'); }
+    .ruined .container { border-color: #444; box-shadow: 0 0 10px #000; background: #111; }
+    .ruined h1 { color: #666; text-shadow: 0 0 2px #000; animation: text-flicker 4s infinite linear; }
+    @keyframes text-flicker { 0%, 19%, 21%, 59%, 61%, 100% { opacity: 0.8; } 20%, 60% { opacity: 0.4; } }
+    .ruined .info { border-color: #333; }
+    .ruined h2 { color: #555; }
+    .projector-container { text-align: center; padding: 40px 20px; border: 1px dashed #333; border-radius: 8px; background: rgba(0,0,0,0.2); }
+    .projector-container h3 { font-family: 'Noto Serif JP'; font-size: 20px; color: #777; margin: 0 0 15px 0; font-weight: 400; }
+    .projector-container p { color: #555; margin-bottom: 25px; }
+    #projector-button { font-size: 3.5rem; cursor: pointer; transition: transform 0.2s, filter 0.5s; filter: grayscale(80%); user-select: none; display: inline-block; }
+    #projector-button:not(.active):hover { transform: scale(1.1); filter: grayscale(20%); }
+    #projector-button.active { cursor: default; animation: projector-loading 1.5s infinite ease-in-out; }
+    @keyframes projector-loading { 0%, 100% { transform: scale(1); filter: grayscale(0) drop-shadow(0 0 8px var(--accent-gold)); } 50% { transform: scale(1.05); filter: grayscale(0) drop-shadow(0 0 20px var(--accent-gold)); } }
+    #ensemble-status { font-family: 'Noto Serif JP'; color: var(--accent-gold); margin-top: 20px; height: 2em; transition: opacity 0.5s; opacity: 0; }
+    #ensemble-status.visible { opacity: 1; }
+    .container.restoring { animation: restore-glow 2.5s forwards ease-out; }
+    @keyframes restore-glow { 0% { box-shadow: 0 0 10px #000; border-color: #444; } 50% { box-shadow: 0 0 180px 40px var(--accent-gold); border-color: var(--accent-gold); } 100% { box-shadow: 0 0 30px rgba(0, 0, 0, 0.5), 0 0 15px var(--border-color); border-color: var(--border-color); } }
     .container.gorgeous { border: 2px solid var(--accent-gold); background: linear-gradient(145deg, #1a1a1a, #2c2a22); }
-    
-    @media (max-width: 768px) {
-        body { padding: 20px 10px; } .container { padding: 25px; } h1 { font-size: 26px; } .info h2 { font-size: 20px; }
-        .info p { font-size: 14px; } .secret-content { width: 90%; padding: 30px; } .secret-content h2 { font-size: 24px; } .secret-content p { font-size: 16px; }
-    }
 </style>
 </head>
 <body>
 
 <div class="container">
     <h1 id="main-title">動画公開ページ</h1>
-    <div id="content-wrapper">
-        <!-- コンテンツはJSで挿入 -->
-    </div>
+    <div id="content-wrapper"></div>
     <div class="info">
         <h2 id="info-title">試験公開_アスノヨゾラ哨戒班</h2>
         <p id="info-desc">これは試験公開動画です。<br>はじめにサムネイル画像が表示され、再生ボタンを押すと動画がスタートします。</p>
+        <!-- ★★★ 修正点: copyrightの5をspanで囲む ★★★ -->
         <p class="copyright">© 2025 NAZUNA ENGEKI<span id="secret-trigger">5</span></p>
     </div>
 </div>
-
 <div id="curtain" class="curtain"><div class="curtain-panel left"></div><div class="curtain-panel right"></div></div>
 <div id="secret-page" class="secret-overlay"><div class="secret-content"><h2 id="secret-title"></h2><p id="secret-message"></p><div id="prize-wrapper"></div></div></div>
 <div class="admin-panel"><button id="admin-reset-button">管理者用リセット</button></div>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // --- 定数と要素取得 ---
-    // 下記URLを、ご自身でデプロイした協力ギミック用GASのURLに置き換えてください
-    const GAS_URL_ENSEMBLE = "https://script.google.com/macros/s/AKfycbz4U4Dzn3TxtMBVIPZhf7b8oCV5y5YjsZ62V9IrFBVsFm7R2eW6IWEt45IB7K2wJACGWg/exec"; 
-    const ADMIN_PASSWORD = "nazuna-engeki-5"; // GAS側と合わせたパスワード
+    // --- 定数 ---
+    const GAS_URL_ENSEMBLE = "https://script.google.com/macros/s/AKfycbwO0-cdbLbTq9QgrUb-O3oDLTAkBRyEp4MAeTsErUaJg1cHFew0O596oMUxckv0BVqeQw/exec"; 
+    const ADMIN_PASSWORD = "nazuna-engeki-5";
+    
+    // --- 初期設定 ---
+    setupNormalPage();
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const isRuinedMode = urlParams.get('scene') === 'past';
+    // ★★★ 修正点: クリックイベントによるギミック発動 ★★★
+    let clickCount = 0;
+    document.getElementById('secret-trigger').addEventListener('click', () => {
+        clickCount++;
+        if (clickCount >= 5) {
+            // 5回クリックされたら荒廃ページをセットアップ
+            setupRuinedPage();
+        }
+    });
 
-    // --- モードに応じてページを初期化 ---
-    if (isRuinedMode) {
-        setupRuinedPage();
-    } else {
-        // 通常ページのギミックは今回はないため、セットアップを簡略化
-        setupNormalPage();
-    }
-
-    // --- 通常ページのセットアップ ---
+    // --- 通常ページのセットアップ関数 ---
     function setupNormalPage() {
-        document.getElementById('content-wrapper').innerHTML = `
-            <div class="video-wrapper">
-                <video id="myVideo" controls poster="test-video-yozora.jpg">
-                    <source src="test-yozora.mp4" type="video/mp4">
-                    お使いのブラウザは動画タグに対応していません。
-                </video>
-            </div>`;
-        // 通常ページのギミックをここに実装する場合は追記
+        document.getElementById('content-wrapper').innerHTML = `<div class="video-wrapper"><video controls poster="test-video-yozora.jpg"><source src="test-yozora.mp4" type="video/mp4"></video></div>`;
     }
 
-    // --- 荒廃ページのセットアップ ---
+    // --- 荒廃ページのセットアップ関数（旧: isRuinedModeにあった処理） ---
     function setupRuinedPage() {
+        // 既に荒廃モードなら何もしない
+        if (document.body.classList.contains('ruined')) return;
+
         document.body.classList.add('ruined');
         document.getElementById('main-title').textContent = '動画公開ページだった場所';
         document.getElementById('info-title').textContent = '記録：アスノヨゾラ哨戒班';
         document.getElementById('info-desc').innerHTML = 'これは試験公開動画だった。<br>はじめにサムネイル画像が表示され、再生ボタンを押すと動画がスタートした。';
-
-        document.getElementById('content-wrapper').innerHTML = `
-            <div class="projector-container">
-                <h3>壊れた映写機</h3>
-                <p>かつての光を取り戻すには、三人の同時接続が必要だった…。</p>
-                <div id="projector-button">📽️</div>
-                <p id="ensemble-status"></p>
-            </div>`;
+        document.getElementById('content-wrapper').innerHTML = `<div class="projector-container"><h3>壊れた映写機</h3><p>三つの灯火が同時に灯る時、奇跡は起きる…。</p><div id="projector-button">📽️</div><p id="ensemble-status"></p></div>`;
 
         const projectorButton = document.getElementById('projector-button');
         const statusDisplay = document.getElementById('ensemble-status');
@@ -150,44 +130,44 @@ document.addEventListener('DOMContentLoaded', () => {
             if (isWaiting) return;
             isWaiting = true;
             projectorButton.classList.add('active');
-            statusDisplay.textContent = '接続を試みています…';
+            statusDisplay.textContent = '起動を試みています…';
+            statusDisplay.classList.add('visible');
             
-            checkInterval = setInterval(requestJoin, 5000); // 5秒ごとにサーバーに状態を問い合わせ
-            requestJoin(); // 初回も即時実行
+            checkInterval = setInterval(requestJoin, 5000);
+            requestJoin();
         });
         
         function requestJoin() {
             fetch(GAS_URL_ENSEMBLE, {
-                method: 'POST',
-                body: JSON.stringify({ action: 'join' }),
-                mode: 'cors'
+                method: 'POST', body: JSON.stringify({ action: 'join' }), mode: 'cors'
             })
             .then(res => res.json())
             .then(data => {
-                if (!isWaiting) return; // 既に成功済みの場合は何もしない
+                if (!isWaiting) return;
+                statusDisplay.classList.add('visible');
 
                 switch (data.status) {
                     case 'success':
                         clearInterval(checkInterval);
                         isWaiting = false;
-                        statusDisplay.textContent = `魂が共鳴した！ 劇場を修復します…`;
+                        statusDisplay.textContent = `劇場を修復します…`;
                         restoreTheater(data.winnerNumber);
                         break;
                     case 'waiting':
-                        statusDisplay.textContent = `${data.count}人目が接続しました…残りの人を待っています…`;
+                        statusDisplay.textContent = `${data.count}つ目の光が灯りました…残りの光が灯るのを待っています…`;
                         break;
                     case 'limit_exceeded':
                         clearInterval(checkInterval);
                         isWaiting = false;
-                        projectorButton.style.cursor = 'not-allowed';
                         projectorButton.classList.remove('active');
-                        statusDisplay.textContent = '残念ながら、本日の受付は終了しました。';
+                        projectorButton.style.cursor = 'not-allowed';
+                        statusDisplay.textContent = '残念ながら、あなたより先に訪れた人がいたようです。';
                         break;
                     default:
                         statusDisplay.textContent = `エラー: ${data.message || '不明なエラー'}`;
-                        isWaiting = false; // エラー時は待機を解除
+                        isWaiting = false;
                         projectorButton.classList.remove('active');
-                        clearInterval(checkInterval);
+clearInterval(checkInterval);
                 }
             }).catch(error => {
                 console.error('Fetch Error:', error);
@@ -199,42 +179,39 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- 劇場修復と豪華ページへの遷移 ---
+    // --- 劇場修復の関数 (変更なし) ---
     function restoreTheater(winnerGroupNumber) {
         const container = document.querySelector('.container');
-        const secretPage = document.getElementById('secret-page');
-        
         document.body.classList.remove('ruined');
         container.classList.add('restoring');
 
         setTimeout(() => {
             container.classList.add('gorgeous');
             document.getElementById('main-title').textContent = '真の劇場';
-            document.getElementById('content-wrapper').innerHTML = `<p style="text-align:center; font-size: 1.1em;">観客たちの想いが奇跡を起こした。<br>今、あなた達のためだけに幕が開く。</p>`;
-            document.getElementById('info').style.display = 'none'; // 古い情報は隠す
-        }, 1500);
+            document.getElementById('content-wrapper').innerHTML = `<p style="text-align:center; font-size: 1.1em; line-height:1.8;">観客たちの想いが奇跡を起こした。<br>今、あなた達のためだけに幕が開く。</p>`;
+            document.getElementById('info').style.display = 'none';
+        }, 2500);
 
         setTimeout(() => {
             document.getElementById('curtain').classList.add('closed');
-        }, 3500);
+        }, 4000);
 
         setTimeout(() => {
+            const secretPage = document.getElementById('secret-page');
             document.getElementById('secret-title').textContent = '特別なご招待状';
             document.getElementById('secret-message').innerHTML = `おめでとうございます。<br>あなた達は <strong>${winnerGroupNumber}組目</strong> の特別な招待客として認められました。<br>この奇跡は、見知らぬ誰かとの協力の証です。`;
             document.getElementById('prize-wrapper').innerHTML = '<div class="prize-info">第5回なずな演劇祭 本部にて、この画面をスタッフにご提示ください。<br>ささやかな記念品をお渡しいたします。</div>';
             secretPage.classList.add('visible');
-        }, 5000);
+        }, 5500);
     }
     
-    // --- 管理者用機能 ---
+    // --- 管理者機能の関数 (変更なし) ---
     document.getElementById('admin-reset-button').addEventListener('click', () => {
         const password = prompt('管理者用パスワードを入力してください:');
         if (password === ADMIN_PASSWORD) {
-            if (confirm('【管理者向け操作】\n\n協力ギミックの当選記録と待機者リストを全てリセットします。よろしいですか？')) {
+            if (confirm('【管理者向け操作】\n協力ギミックの当選記録と待機者リストを全てリセットします。よろしいですか？')) {
                 fetch(GAS_URL_ENSEMBLE, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: 'reset', password: password }),
-                    mode: 'cors'
+                    method: 'POST', body: JSON.stringify({ action: 'reset', password: password }), mode: 'cors'
                 })
                 .then(res => res.json())
                 .then(data => {
@@ -242,7 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         alert(data.message);
                         location.reload();
                     } else {
-                        alert(`エラー: ${data.message}`);
+                        alert(`リセット失敗: ${data.message}`);
                     }
                 })
                 .catch(error => alert(`通信エラー: ${error}`));
@@ -253,7 +230,5 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 </script>
-
 </body>
 </html>
-
