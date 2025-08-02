@@ -116,7 +116,6 @@
         user-select: none;
     }
 
-
     /* ギミックのトリガー */
     #secret-trigger {
         color: #777;
@@ -252,7 +251,6 @@
         cursor: pointer;
         border-radius: 5px;
         font-size: 11px;
-    
         opacity: 0;
         transition: opacity 0.4s ease-in-out;
     }
@@ -260,43 +258,54 @@
         opacity: 1;
     }
 
-    /* === スポットライト・ギミック用スタイル（ぼかし表現版） === */
+    /* === スポットライト・ギミック用スタイル（SVGマスク最終版） === */
+    @keyframes fadeInOverlay {
+        from { opacity: 0; }
+        to   { opacity: 1; }
+    }
+
     #spotlight-overlay {
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
-        height: 100vh;
-        background-color: rgba(0, 0, 0, 0.98);
+        height: 100%;
+        background: rgba(0, 0, 0, 0.95);
         z-index: 1000;
         pointer-events: none;
-        opacity: 1;
-
-        mask-image: radial-gradient(
-            circle 120px at 50% 50%,
-            rgba(0,0,0,1) 0%,
-            rgba(0,0,0,1) 40%,
-            rgba(0,0,0,0) 70%
-        );
-        -webkit-mask-image: radial-gradient(
-            circle 120px at 50% 50%,
-            rgba(0,0,0,1) 0%,
-            rgba(0,0,0,1) 40%,
-            rgba(0,0,0,0) 70%
-        );
-
-        transition: -webkit-mask-position 1.2s ease-in-out,
-                    mask-position 1.2s ease-in-out,
-                    opacity 1.5s ease;
         
-        -webkit-mask-position: -200px -200px;
-        mask-position: -200px -200px;
+        /* SVGマスクを参照 */
+        mask: url(#spotlight-mask);
+        -webkit-mask: url(#spotlight-mask);
+
+        /* オーバーレイ自体のフェードアウト用 */
+        transition: opacity 1.5s ease-in-out;
+        
+        /* ページの読み込みと同時に確実に表示させる */
+        opacity: 1;
+        animation: fadeInOverlay 0.3s ease-in forwards;
     }
 </style>
 </head>
 
 <body>
     
+<!-- SVGマスク定義：画面に表示されないが、CSSから参照される -->
+<svg width="0" height="0" style="position:absolute;">
+    <defs>
+        <radialGradient id="spotlight-gradient">
+            <stop offset="50%" stop-color="white" stop-opacity="1" />
+            <stop offset="90%" stop-color="white" stop-opacity="0" />
+        </radialGradient>
+        <mask id="spotlight-mask">
+            <!-- マスクの背景は黒（＝完全に透明になる部分） -->
+            <rect width="100%" height="100%" fill="black"/>
+            <!-- グラデーションを適用した円（＝スポットライトの光） -->
+            <circle id="spotlight-circle" cx="-200" cy="-200" r="120" fill="url(#spotlight-gradient)"/>
+        </mask>
+    </defs>
+</svg>
+
 <div class="container">
     <h1>動画公開ページ</h1>
     <div class="video-wrapper">
@@ -332,50 +341,58 @@
     <button id="admin-reset-button">管理者用リセット</button>
 </div>
 
+<!-- スポットライト演出用のオーバーレイ本体 -->
+<div id="spotlight-overlay"></div>
+
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // === スポットライト・ギミックの処理（ぼかし表現版） ===
-    // このinitPageは、ページの全要素（画像など）が読み込まれてから実行される
+    // === スポットライト・ギミックの処理（SVGマスク最終版） ===
     const initPage = () => {
         const overlay = document.getElementById('spotlight-overlay');
+        const spotlightCircle = document.getElementById('spotlight-circle');
         const videoWrapper = document.querySelector('.video-wrapper');
         const secretTrigger = document.getElementById('secret-trigger');
 
-        // overlayが見つからない場合は、エラーをコンソールに出して処理を中断
-        if (!overlay || !videoWrapper || !secretTrigger) {
+        if (!overlay || !spotlightCircle || !videoWrapper || !secretTrigger) {
             console.error('スポットライト演出に必要な要素が見つかりませんでした。');
+            if (overlay) overlay.remove();
             return;
         }
 
-        const playSpotlightAnimation = async () => {
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js';
+        document.head.appendChild(script);
+
+        script.onload = () => {
+            const tl = gsap.timeline();
             const videoRect = videoWrapper.getBoundingClientRect();
             const triggerRect = secretTrigger.getBoundingClientRect();
+            const videoTarget = { x: videoRect.left + videoRect.width / 2, y: videoRect.top + videoRect.height / 2 };
+            const triggerTarget = { x: triggerRect.left + triggerRect.width / 2, y: triggerRect.top + triggerRect.height / 2 };
 
-            // マスクの中心座標を計算（マスクサイズ120pxの半分=60pxを引く）
-            const videoX = videoRect.left + videoRect.width / 2 - 60;
-            const videoY = videoRect.top + videoRect.height / 2 - 60;
-            const triggerX = triggerRect.left + triggerRect.width / 2 - 60;
-            const triggerY = triggerRect.top + triggerRect.height / 2 - 60;
-
-            // ステップ1: スポットライト出現＆動画へ
-            await new Promise(resolve => setTimeout(resolve, 500));
-            overlay.style.webkitMaskPosition = `${videoX}px ${videoY}px`;
-            overlay.style.maskPosition = `${videoX}px ${videoY}px`;
-
-            // ステップ2: 秘密のトリガーへ移動
-            await new Promise(resolve => setTimeout(resolve, 2500));
-            overlay.style.webkitMaskPosition = `${triggerX}px ${triggerY}px`;
-            overlay.style.maskPosition = `${triggerX}px ${triggerY}px`;
-
-            // ステップ3: オーバーレイをフェードアウト
-            await new Promise(resolve => setTimeout(resolve, 2500));
-            overlay.style.opacity = '0';
-
-            // 演出完了後、要素をDOMから削除
-            setTimeout(() => overlay.remove(), 2000);
+            tl.to(spotlightCircle, {
+                attr: { cx: videoTarget.x, cy: videoTarget.y },
+                duration: 1.2,
+                ease: "power2.inOut",
+                delay: 0.8
+            })
+            .to(spotlightCircle, {
+                attr: { cx: triggerTarget.x, cy: triggerTarget.y },
+                duration: 1.5,
+                ease: "power2.inOut",
+                delay: 1
+            })
+            .to(overlay, {
+                opacity: 0,
+                duration: 1.5,
+                delay: 1,
+                onComplete: () => {
+                    const svgElement = document.querySelector('svg');
+                    if (overlay) overlay.remove();
+                    if (svgElement) svgElement.remove();
+                }
+            });
         };
-
-        playSpotlightAnimation();
 
         // === ここから下は元のギミック処理 ===
         const trigger = document.getElementById('secret-trigger');
@@ -383,7 +400,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const secretPage = document.getElementById('secret-page');
         let clickCount = 0;
         const requiredClicks = 5;
-
         const GAS_URL = "https://script.google.com/macros/s/AKfycbwqB0kXqVzwtIYsLQ9HSrCz27MwwN_jzyW8C_T0tqQHO9VK58LgRTWULF83wocBycDp/exec";
         const hasVisitedKey = 'engeki5-has-attempted';
 
@@ -392,43 +408,35 @@ document.addEventListener('DOMContentLoaded', () => {
             if (clickCount >= requiredClicks) {
                 clickCount = 0;
                 if (sessionStorage.getItem(hasVisitedKey)) {
-                    alert('本日分は既にご応募いただいております。');
-                    return;
+                    alert('本日分は既にご応募いただいております。'); return;
                 }
                 curtain.classList.add('closed');
                 setTimeout(() => {
-                    fetch(GAS_URL, {
-                        method: 'POST', redirect: "follow", muteHttpExceptions: true, contentType: 'application/json',
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        sessionStorage.setItem(hasVisitedKey, 'true');
-                        if (data.status === 'success') {
-                            document.getElementById('secret-title').textContent = '特別なご招待状';
-                            document.getElementById('secret-message').innerHTML = `おめでとうございます。<br>あなたは ${data.winnerNumber} 番目の特別な招待客として認められました。`;
-                            document.getElementById('prize-wrapper').innerHTML = '<div class="prize-info">第5回なずな演劇祭 本部にて、この画面をスタッフにご提示ください。<br>ささやかな記念品をお渡しいたします。</div>';
-                        } else {
-                            document.getElementById('secret-title').textContent = '終演';
-                            document.getElementById('secret-message').innerHTML = '誠に残念ながら、<br>本公演の特別ご招待は満席となりました。<br>またの機会のご来場を心よりお待ちしております。';
-                            document.getElementById('prize-wrapper').innerHTML = '';
-                        }
-                        secretPage.classList.add('visible');
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('エラーが発生しました。時間をおいて再度お試しください。');
-                        curtain.classList.remove('closed');
-                    });
+                    fetch(GAS_URL, { method: 'POST', redirect: "follow", muteHttpExceptions: true, contentType: 'application/json' })
+                        .then(response => response.json())
+                        .then(data => {
+                            sessionStorage.setItem(hasVisitedKey, 'true');
+                            if (data.status === 'success') {
+                                document.getElementById('secret-title').textContent = '特別なご招待状';
+                                document.getElementById('secret-message').innerHTML = `おめでとうございます。<br>あなたは ${data.winnerNumber} 番目の特別な招待客として認められました。`;
+                                document.getElementById('prize-wrapper').innerHTML = '<div class="prize-info">第5回なずな演劇祭 本部にて、この画面をスタッフにご提示ください。<br>ささやかな記念品をお渡しいたします。</div>';
+                            } else {
+                                document.getElementById('secret-title').textContent = '終演';
+                                document.getElementById('secret-message').innerHTML = '誠に残念ながら、<br>本公演の特別ご招待は満席となりました。<br>またの機会のご来場を心よりお待ちしております。';
+                                document.getElementById('prize-wrapper').innerHTML = '';
+                            }
+                            secretPage.classList.add('visible');
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('エラーが発生しました。時間をおいて再度お試しください。');
+                            curtain.classList.remove('closed');
+                        });
                 }, 1500);
             }
         }
-
         trigger.addEventListener('click', activateGimmick);
-        trigger.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            activateGimmick();
-        });
-
+        trigger.addEventListener('touchstart', (e) => { e.preventDefault(); activateGimmick(); });
         document.getElementById('admin-reset-button').addEventListener('click', () => {
             const password = prompt('管理者用パスワードを入力してください:');
             if (password === 'nazuna-engeki-5') {
@@ -451,8 +459,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 </script>
-
-<div id="spotlight-overlay"></div>
-
 </body>
 </html>
