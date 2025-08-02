@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>舞台の灯 - はじまり</title>
+  <style>
+    body { background: #191716; color: #efcab3; font-family: 'Noto Serif JP', sans-serif; margin:0; text-align:center; }
+    .center { max-width:400px; margin:9em auto; background:#28211c; padding:2.5em 2em 2em; border-radius:1rem; border: 1.5px solid #c7a97b33;}
+    button { background:#c8a14b; color:#222; font-size:1.4em; border:none; border-radius:.5em; padding:.5em 2.5em; box-shadow:0 2px 6px #0004; margin-top:2em; }
+    h1 { color:gold; font-size:1.9em; margin-bottom:.5em; }
+    .note { color:#eee; font-size:1.1em; margin-bottom:1.6em; }
+  </style>
+</head>
+<body>
+  <div class="center">
+    <h1>舞台の灯</h1>
+    <div class="note">
+      かつての光を失った劇場。<br>
+      だが今宵、三つの灯が集い、<br>
+      再び舞台に命が吹きこまれる。
+    </div>
+    <button id="btn">物語を始める</button>
+    <div id="msg" style="margin-top:1.2em; color:#f99;"></div>
+  </div>
+  <script>
+    const GAS = 'https://script.google.com/macros/s/【ここにGAS_URL】/exec';
+    document.getElementById('btn').onclick = async ()=>{
+      document.getElementById('msg').textContent = "舞台の準備中・・・";
+      let resp = await fetch(GAS+"?cmd=newRoom");
+      let data = await resp.json();
+      if(data && data.roomID && data.userID){
+        sessionStorage.setItem("roomID", data.roomID);
+        sessionStorage.setItem("userID", data.userID);
+        sessionStorage.setItem("role", data.role);
+        location.href = "representative.html";
+      } else {
+        document.getElementById('msg').textContent = "通信エラー。少し待って再度お試しください。";
+      }
+    }
+  </script>
+</body>
+</html>
