@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>舞台の灯 - 参加</title>
+  <style>
+    body{ background:#181716; color:#ebebf6; text-align:center; font-family: 'Noto Serif JP', serif; }
+    .frame{ margin:5em auto 0; background:#232024;padding:2.2em 1.5em 1.6em; border-radius:.7em;max-width:420px;}
+    h2 { color:gold; margin-bottom:.5em;}
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <h2>舞台の灯へ</h2>
+    <div>代表者の灯（QR）を<br>カメラで読み取ってください。</div>
+    <video id="preview" width="260" autoplay playsinline style="margin-top:1em;border-radius:.5em;" ></video>
+    <div id="msg"></div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jsqr/1.4.0/jsQR.min.js"></script>
+  <script>
+    // ガスURLと参加登録
+    const GAS = 'https://script.google.com/macros/s/【ここにGAS_URL】/exec';
+    let roomID, userID;
+    // もしもう登録済みなら復帰
+    if(sessionStorage.getItem('roomID')&&sessionStorage.getItem('userID')){
+      roomID = sessionStorage.getItem('roomID');
+      userID = sessionStorage.getItem('userID');
+    }else{
+      const search=location.search; // ?room=xxx のとき用
+      // 通常は、代表のQRから値を受け取る
+    }
+    // QR読取
+    const video = document.getElementById('preview');
+    const msg = document.getElementById('msg');
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+    .then(stream => {
+      video.srcObject = stream;
+      const canvas=document.createElement('canvas');
+      const ctx=canvas.getContext('2d');
+      function scanLoop(){
+        if(video.readyState===video.HAVE_ENOUGH_DATA){
+          canvas.width=video.videoWidth;canvas.height=video.videoHeight;
+          ctx.drawImage(video,0,0,canvas.width,canvas.height);
+          const img=ctx.getImageData(0,0,canvas.width,canvas.height);
+          const code=jsQR(img.data,img.width,img.height);
+          if(code){
+            video.srcObject.getTracks().forEach(t=>t.stop());
+            // QR内容: roomID:xxxx;leader:xxxx 形式
+            let mt = /roomID:([^;]+);leader:([^;]+)/.exec(code.data);
+            if(!mt) { msg.textContent="不正なQRです。"; return; }
+            roomID = mt[1];
+            // まず参加登録
+            fetch(`${GAS}?cmd=join&roomID=${roomID}`)
+            .then(r=>r.json())
+            .then(d=>{
+              if(d && d.userID){
+                userID = d.userID;
+                sessionStorage.setItem('roomID', roomID);
+                sessionStorage.setItem('userID', userID);
+                // スキャン済み記録
+                return fetch(`${GAS}?cmd=scan&roomID=${roomID}&userID=${userID}`);
+              }else{
+                msg.textContent="この部屋は満員です。";
+              }
+            }).then(()=>{ 
+              msg.innerHTML="参加が完了しました。舞台修復をお待ちください。";
+              setTimeout(()=>location.href="restore.html",1600);
+            });
+          }
+        }
+        requestAnimationFrame(scanLoop);
+      }
+      scanLoop();
+    })
+    .catch(e=>{msg.textContent="カメラがご利用いただけません";});
+  </script>
+</body>
+</html>
