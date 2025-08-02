@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>舞台裏より</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+<style>
+    :root {
+        --bg: #0a0a0a; --text: #e0e0e0; --gold: #d4af37;
+        --card-bg: #181818; --border: rgba(212, 175, 55, 0.3); --curtain: #4a0e0e;
+        --font-serif: 'Noto Serif JP', serif; --font-sans: 'Noto Sans JP', sans-serif;
+    }
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP&family=Noto+Serif+JP&display=swap');
+    body {
+        margin: 0; padding: 20px; font-family: var(--font-sans); background: var(--bg);
+        color: var(--text); display: flex; justify-content: center; align-items: center;
+        min-height: 100vh; box-sizing: border-box;
+        /* スクロールを許可 */
+    }
+    .container { max-width: 720px; width: 100%; margin: auto; }
+    .page {
+        padding: 30px; box-sizing: border-box; background: var(--card-bg);
+        border: 1px solid var(--border); border-radius: 8px;
+        box-shadow: 0 0 30px #000; opacity: 1;
+        transition: opacity 1.5s, transform 1.5s;
+    }
+    .page.hidden { opacity: 0; pointer-events: none; position: absolute; }
+    h1 {
+        text-align: center; font-family: var(--font-serif); font-size: 26px; margin-bottom: 25px;
+        color: #fff; text-shadow: 0 0 10px var(--gold), 0 0 2px #fff;
+    }
+    .video-wrapper { position: relative; width: 100%; margin-bottom: 30px; background: #000; border-radius: 8px; }
+    video { width: 100%; display: block; border-radius: 8px; }
+    .info { border-top: 1px solid var(--border); padding-top: 25px; }
+    h2 { font-family: var(--font-serif); font-size: 22px; margin: 0 0 12px 0; color: var(--gold); }
+    p { font-size: 14px; line-height: 1.7; color: #ccc; }
+    .copyright { font-size: 12px; color: #777; margin-top: 25px; text-align: center; }
+    #secret-trigger { color: #777; cursor: pointer; user-select: none; display: inline-block; padding: 5px; font-weight: bold; }
+    #secret-trigger:hover { color: var(--gold); }
+    
+    /* Weathered State */
+    #weathered-page.active { animation: shake 25s infinite ease-in-out; }
+    #weathered-page h1 { text-shadow: 0 0 3px #ff7752; color: #bbb; filter: blur(0.5px); }
+    .interaction-area {
+        min-height: 360px; display: flex; flex-direction: column; justify-content: center; align-items: center;
+        text-align: center; border: 1px dashed var(--border); border-radius: 8px; margin-bottom: 30px; padding: 20px;
+    }
+    #connection-status, #qr-container { display: none; }
+    #connection-text { font-size: 1.2rem; letter-spacing: 1px; }
+
+    /* Chat UI */
+    #chat-ui { display: none; width: 100%; height: 320px; flex-direction: column; }
+    #chat-messages { flex-grow: 1; overflow-y: auto; padding: 10px; margin-bottom: 10px; display: flex; flex-direction: column-reverse; }
+    .message { padding: 8px 12px; border-radius: 12px; margin-bottom: 8px; max-width: 80%; word-wrap: break-word; font-size: 14px; }
+    .message.mine { background: var(--gold); color: #000; align-self: flex-end; }
+    .message.others { background: #333; align-self: flex-start; }
+    .message.system { border: 1px solid #444; font-style: italic; color: #888; align-self: center; text-align:center; font-size: 12px; background:none; }
+    #chat-form { display: flex; }
+    #chat-input { flex-grow: 1; background: #222; border: 1px solid #444; color: #eee; padding: 10px; border-radius: 5px; }
+    #chat-send { background: var(--gold); color: #000; border: none; padding: 0 15px; margin-left: 10px; border-radius: 5px; cursor: pointer; }
+
+    /* Restored State */
+    #restored-page { border: 2px solid var(--gold); box-shadow: 0 0 40px var(--gold); animation: restore 3s forwards; }
+    @keyframes restore { from { filter: blur(5px) grayscale(1); } to { filter: blur(0) grayscale(0); } }
+    .restored-message { min-height: 360px; display: flex; justify-content: center; align-items: center; font-size: 1.2em; }
+
+    /* Curtain */
+    .curtain { position: fixed; inset: 0; display: flex; z-index: 99; pointer-events: none; }
+    .curtain-panel { width: 50%; height: 100%; background: var(--curtain); transition: transform 1.5s cubic-bezier(0.86, 0, 0.07, 1); }
+    .left { transform: translateX(-100%); } .right { transform: translateX(100%); }
+    .curtain.closed .left, .curtain.closed .right { transform: translateX(0); }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <!-- State 1: Normal Page -->
+    <div id="normal-page" class="page">
+        <h1>動画公開ページ</h1>
+        <div class="video-wrapper">
+            <!-- ▼▼ GitHub Pagesで公開したファイル名を指定 ▼▼ -->
+            <video controls poster="test-video-yozora.jpg" src="test-yozora.mp4"></video>
+        </div>
+        <div class="info">
+            <h2>試験公開_アスノヨゾラ哨戒班</h2>
+            <p>これは試験公開動画です。<br>再生ボタンを押すと動画がスタートします。</p>
+            <p class="copyright">© 2025 NAZUNA ENGEKI <span id="secret-trigger">5</span></p>
+        </div>
+    </div>
+    <!-- State 2: Weathered Page -->
+    <div id="weathered-page" class="page hidden">
+        <h1>...接続を待機しています...</h1>
+        <div class="interaction-area">
+            <div id="connection-status"><p id="connection-text">サーバーに接続中...</p></div>
+            <div id="qr-container"><p>仲間を待っています。リーダーがQRコードを表示します。</p><canvas id="qr-code"></canvas></div>
+            <div id="chat-ui">
+                <div id="chat-messages"></div>
+                <form id="chat-form">
+                    <input type="text" id="chat-input" placeholder="メッセージ..." autocomplete="off">
+                    <button type="submit" id="chat-send">送信</button>
+                </form>
+            </div>
+        </div>
+        <div class="info">
+            <h2>舞台の残響</h2>
+            <p>声が、聞こえる...。互いに位置を伝え合い、仲間を探さなければ...</p>
+        </div>
+    </div>
+    <!-- State 3: Restored Page -->
+    <div id="restored-page" class="page hidden">
+        <h1>舞台は、再び光を取り戻した</h1>
+        <div class="restored-message"><p>三つの魂が共鳴し、奇跡が起きる。<br>まもなく、本当の幕が上がる...</p></div>
+    </div>
+</div>
+
+<!-- Curtain -->
+<div id="curtain" class="curtain">
+    <div class="curtain-panel left"></div>
+    <div class="curtain-panel right"></div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // --- このURLを、あなたのGASウェブアプリURLに書き換えてください ---
+    const GAS_URL = 'https://script.google.com/macros/s/AKfycbxK7e9J6Vn17K0bmWihh4TSkSNou0uoOD--EM9h0koFPaz2zoc2SxobFFrn_grk2FF4EQ/exec';
+
+    const dom = {
+        pages: {
+            normal: document.getElementById('normal-page'),
+            weathered: document.getElementById('weathered-page'),
+            restored: document.getElementById('restored-page'),
+        },
+        trigger: document.getElementById('secret-trigger'),
+        curtain: document.getElementById('curtain'),
+        connStatus: document.getElementById('connection-status'),
+        connText: document.getElementById('connection-text'),
+        qrContainer: document.getElementById('qr-container'),
+        qrCanvas: document.getElementById('qr-code'),
+        chat: {
+            ui: document.getElementById('chat-ui'),
+            messages: document.getElementById('chat-messages'),
+            form: document.getElementById('chat-form'),
+            input: document.getElementById('chat-input'),
+            send: document.getElementById('chat-send'),
+        }
+    };
+
+    const state = {
+        appStatus: 'initial', // initial -> waiting -> chatting -> restoring -> finished
+        sessionId: `sid_${Date.now()}_${Math.random()}`,
+        roomId: null,
+        isLeader: false,
+        lastTimestamp: null,
+        intervals: {},
+        // ▼▼ ギミック用のクリックカウンターを追加 ▼▼
+        triggerClickCount: 0,
+    };
+
+    function switchPage(pageName) {
+        Object.values(dom.pages).forEach(p => p.classList.add('hidden'));
+        dom.pages[pageName].classList.remove('hidden');
+    }
+
+    function updateUI() {
+        if (state.appStatus === 'waiting') {
+            dom.connStatus.style.display = 'block';
+            dom.qrContainer.style.display = 'none';
+            dom.chat.ui.style.display = 'none';
+            if (state.isLeader) {
+                dom.connStatus.style.display = 'none';
+                dom.qrContainer.style.display = 'block';
+                if (!dom.qrCanvas.qrious) {
+                     // QRコードに含めるURLを、ハッシュ(#)のつかないクリーンなものに変更
+                    const cleanUrl = `${location.protocol}//${location.host}${location.pathname}`;
+                    new QRious({ element: dom.qrCanvas, value: `${cleanUrl}#${state.roomId}`, size: 200, padding: 10 });
+                }
+            }
+        } else if (state.appStatus === 'chatting') {
+            dom.connStatus.style.display = 'none';
+            dom.qrContainer.style.display = 'none';
+            dom.chat.ui.style.display = 'flex';
+        }
+    }
+    
+    async function apiCall(params) {
+        try {
+            const url = `${GAS_URL}?${new URLSearchParams(params)}`;
+            const response = await fetch(url, { method: 'GET', redirect: 'follow' });
+            if (!response.ok) throw new Error(`API Error: ${response.statusText}`);
+            return await response.json();
+        } catch (error) {
+            console.error("API Call Failed:", error);
+            dom.connText.textContent = "サーバーとの通信に失敗しました。";
+        }
+    }
+
+    function handleServerResponse(data) {
+        if (!data || data.status === 'error') {
+            console.error("Server returned an error:", data.message);
+            return;
+        }
+
+        state.roomId = data.roomId || state.roomId;
+        state.isLeader = data.isLeader || false;
+        const users = data.users || 0;
+
+        if (data.status === 'ready' && state.appStatus !== 'restoring') {
+            state.appStatus = 'restoring';
+            clearIntervals();
+            apiCall({ action: 'sendMessage', roomId: state.roomId, sessionId: 'SYSTEM', message: '全員の接続が確認されました。' });
+            
+            setTimeout(() => {
+                switchPage('restored');
+                setTimeout(() => {
+                    dom.curtain.classList.add('closed');
+                    setTimeout(() => location.reload(), 2000);
+                }, 4000);
+            }, 2000);
+
+        } else if (data.status === 'waiting') {
+            if (users >= 2 && state.appStatus !== 'chatting') {
+                state.appStatus = 'chatting';
+                state.intervals.chat = setInterval(fetchMessages, 2500);
+            } else if (users < 2) {
+                state.appStatus = 'waiting';
+            }
+            dom.connText.textContent = `${users} / 3 人が接続を待っています...`;
+        }
+        updateUI();
+    }
+    
+    async function fetchMessages() {
+        const data = await apiCall({ action: 'getMessages', roomId: state.roomId, lastTimestamp: state.lastTimestamp });
+        if (data && data.messages && data.messages.length > 0) {
+            data.messages.forEach(msg => {
+                const el = document.createElement('div');
+                el.className = `message ${msg.sessionId === 'SYSTEM' ? 'system' : msg.sessionId === state.sessionId ? 'mine' : 'others'}`;
+                el.textContent = msg.message;
+                dom.chat.messages.prepend(el);
+            });
+            state.lastTimestamp = data.messages[data.messages.length - 1].timestamp;
+        }
+    }
+
+    function clearIntervals() {
+        Object.values(state.intervals).forEach(clearInterval);
+    }
+    
+    // --- Initializer ---
+    dom.trigger.addEventListener('click', () => {
+        // ▼▼ ギミックのロジックを修正 ▼▼
+        state.triggerClickCount++; // 内部カウンターを増やす
+
+        // 表示する数字を計算
+        const displayCount = 6 - state.triggerClickCount;
+
+        // 指定されたロジックに合わせて表示を更新
+        if (state.triggerClickCount === 1) {
+            dom.trigger.textContent = '5'; // 1回目は5のまま
+        } else if (displayCount >= 1) {
+            dom.trigger.textContent = displayCount;
+        } else {
+             dom.trigger.textContent = '1';
+        }
+        
+        if (state.triggerClickCount >= 5) { // 5回クリックされたら...
+            dom.trigger.style.pointerEvents = 'none'; // それ以上クリックできないようにする
+            state.appStatus = 'waiting';
+            
+            // ページ遷移とAPI呼び出しを少し遅らせて、最後の数字「1」をユーザーが見れるようにする
+            setTimeout(() => {
+                switchPage('weathered');
+                dom.pages.weathered.classList.add('active');
+                
+                const roomIdFromHash = location.hash.substring(1);
+                apiCall({ action: 'startOrJoin', sessionId: state.sessionId, roomId: roomIdFromHash }).then(handleServerResponse);
+                
+                state.intervals.status = setInterval(() => {
+                    apiCall({ action: 'checkStatus', roomId: state.roomId }).then(handleServerResponse);
+                }, 5000);
+            }, 300); // 0.3秒後に実行
+        }
+    });
+
+    dom.chat.form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const message = dom.chat.input.value;
+        if (!message.trim()) return;
+        dom.chat.input.value = '';
+        dom.chat.input.disabled = true;
+        await apiCall({ action: 'sendMessage', roomId: state.roomId, sessionId: state.sessionId, message: message });
+        await fetchMessages(); // 即時反映
+        dom.chat.input.disabled = false;
+        dom.chat.input.focus();
+    });
+
+    // ページ読み込み時にURLの#以降（ハッシュ）をチェック
+    const roomIdFromHash = location.hash.substring(1);
+    if (roomIdFromHash) {
+        // ハッシュがある場合は、ギミックを強制的に発動させる
+        for (let i = 0; i < 5; i++) {
+            dom.trigger.click();
+        }
+        // URLからハッシュを消してリロードを防ぐ
+        history.replaceState(null, document.title, location.pathname + location.search);
+    }
+});
+</script>
+
+</body>
+</html>
