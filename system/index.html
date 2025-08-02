@@ -23,7 +23,7 @@
     <div id="msg" style="margin-top:1.2em; color:#f99;"></div>
   </div>
   <script>
-    const GAS = 'https://script.google.com/macros/s/【ここにGAS_URL】/exec';
+    const GAS = 'https://script.google.com/macros/s/AKfycbxOhXaHg2WVUpuKDwUjCl4UwuqObFgZzH38MWyOi49lHvg4Pdhw_RlXWhZatpcTSNd8Tw/exec';
     document.getElementById('btn').onclick = async ()=>{
       document.getElementById('msg').textContent = "舞台の準備中・・・";
       let resp = await fetch(GAS+"?cmd=newRoom");
