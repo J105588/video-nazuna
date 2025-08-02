@@ -160,7 +160,6 @@ document.addEventListener('DOMContentLoaded', () => {
             fetch(GAS_URL_ENSEMBLE, {
                 method: 'POST',
                 body: JSON.stringify({ action: 'join' }),
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // GASの仕様に合わせる
                 mode: 'cors'
             })
             .then(res => res.json())
@@ -235,7 +234,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 fetch(GAS_URL_ENSEMBLE, {
                     method: 'POST',
                     body: JSON.stringify({ action: 'reset', password: password }),
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     mode: 'cors'
                 })
                 .then(res => res.json())
@@ -258,3 +256,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
