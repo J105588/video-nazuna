@@ -119,23 +119,18 @@
 
     /* ギミックのトリガー */
     #secret-trigger {
-    /* --- フォントの見た目を親要素と完全に同一にするための修正 --- */
-    /* font-weight, font-size, vertical-align を削除またはリセット */
-    
-        color: #777; /* 通常時の色を親要素と完全に同じにする */
+        color: #777;
         cursor: pointer;
-        display: inline-block; /* クリック領域を確保するために必要 */
-        transition: color 0.2s; /* 色の変化を滑らかに */
-    
-    /* スマートフォンでのタップ操作の補助 */
+        display: inline-block;
+        transition: color 0.2s;
         user-select: none;
         -webkit-tap-highlight-color: transparent;
     }
     #secret-trigger:hover {
-        color: var(--accent-gold); /* マウスオーバーで色が変わる */
+        color: var(--accent-gold);
     }
     #secret-trigger:active {
-        color: #fff; /* クリック/タップ時に一瞬白く光るように見せる */
+        color: #fff;
     }
 
     /* === 豪華な演出のためのスタイル === */
@@ -258,57 +253,49 @@
         border-radius: 5px;
         font-size: 11px;
     
-        opacity: 0; /* 通常時は完全に透明にする */
-        transition: opacity 0.4s ease-in-out; /* ゆっくり表示/非表示を切り替える */
+        opacity: 0;
+        transition: opacity 0.4s ease-in-out;
     }
     .admin-panel button:hover {
-        opacity: 1; /* マウスが乗った時だけ表示する */
+        opacity: 1;
     }
+
     /* === スポットライト・ギミック用スタイル（ぼかし表現版） === */
+    #spotlight-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.98);
+        z-index: 1000;
+        pointer-events: none;
+        opacity: 1;
 
-#spotlight-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.98); /* 完全な黒より少しだけ透明にすると質感が上がる */
-    z-index: 1000;
-    pointer-events: none;
-    opacity: 1;
+        mask-image: radial-gradient(
+            circle 120px at 50% 50%,
+            rgba(0,0,0,1) 0%,
+            rgba(0,0,0,1) 40%,
+            rgba(0,0,0,0) 70%
+        );
+        -webkit-mask-image: radial-gradient(
+            circle 120px at 50% 50%,
+            rgba(0,0,0,1) 0%,
+            rgba(0,0,0,1) 40%,
+            rgba(0,0,0,0) 70%
+        );
 
-    /* スポットライトの「ぼかし」を作るためのマスク */
-    /* 注：IEはサポート外 */
-    mask-image: radial-gradient(
-        circle 120px at 50% 50%, /* スポットライトの大きさ */
-        rgba(0,0,0,1) 0%,   /* 中心は完全に見える */
-        rgba(0,0,0,1) 40%,  /* 40%まではくっきり */
-        rgba(0,0,0,0) 70%   /* 70%にかけて滑らかに消える（ぼかし部分）*/
-    );
-    /* Chrome, Safari, EdgeなどWebKit系ブラウザ用のプレフィックス */
-    -webkit-mask-image: radial-gradient(
-        circle 120px at 50% 50%,
-        rgba(0,0,0,1) 0%,
-        rgba(0,0,0,1) 40%,
-        rgba(0,0,0,0) 70%
-    );
-
-    /* マスクの位置とオーバーレイの透明度をアニメーションさせる */
-    transition: -webkit-mask-position 1.2s ease-in-out,
-                mask-position 1.2s ease-in-out,
-                opacity 1.5s ease;
-    
-    /* 初期位置は画面外に設定 */
-    -webkit-mask-position: -200px -200px;
-    mask-position: -200px -200px;
-}
-
+        transition: -webkit-mask-position 1.2s ease-in-out,
+                    mask-position 1.2s ease-in-out,
+                    opacity 1.5s ease;
+        
+        -webkit-mask-position: -200px -200px;
+        mask-position: -200px -200px;
+    }
 </style>
 </head>
 
 <body>
-<!-- スポットライト・ギミック用HTML -->
-<div id="spotlight-overlay"></div>
     
 <div class="container">
     <h1>動画公開ページ</h1>
@@ -344,14 +331,21 @@
 <div class="admin-panel">
     <button id="admin-reset-button">管理者用リセット</button>
 </div>
+
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     // === スポットライト・ギミックの処理（ぼかし表現版） ===
-    const overlay = document.getElementById('spotlight-overlay');
-
+    // このinitPageは、ページの全要素（画像など）が読み込まれてから実行される
     const initPage = () => {
+        const overlay = document.getElementById('spotlight-overlay');
         const videoWrapper = document.querySelector('.video-wrapper');
         const secretTrigger = document.getElementById('secret-trigger');
+
+        // overlayが見つからない場合は、エラーをコンソールに出して処理を中断
+        if (!overlay || !videoWrapper || !secretTrigger) {
+            console.error('スポットライト演出に必要な要素が見つかりませんでした。');
+            return;
+        }
 
         const playSpotlightAnimation = async () => {
             const videoRect = videoWrapper.getBoundingClientRect();
@@ -457,7 +451,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 </script>
-<!-- スポットライト・ギミック用HTML -->
+
 <div id="spotlight-overlay"></div>
+
 </body>
 </html>
