@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>試験公開_動画公開ページ</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="https://raw.githubusercontent.com/J105588/video-nazuna/main/IMG_5316.png" type="image/png">
+<style>
+    /* フォントのインポート */
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Noto+Sans+JP:wght@300;400&display=swap');
+
+    /* 色や基本的な変数の定義 */
+    :root {
+        --background-color: #0a0a0a;
+        --text-color: #e0e0e0;
+        --accent-gold: #d4af37;
+        --card-background: #181818;
+        --border-color: rgba(212, 175, 55, 0.3);
+        --curtain-color: #4a0e0e; /* 緞帳の色 */
+    }
+
+    /* 基本的なページ設定 */
+    body {
+        margin: 0;
+        padding: 20px; 
+        font-family: 'Noto Sans JP', sans-serif;
+        background-color: var(--background-color);
+        background-image:
+            radial-gradient(ellipse at center, rgba(255, 255, 255, 0.05) 0%, transparent 70%),
+            url('https://www.transparenttextures.com/patterns/dark-denim-3.png');
+        color: var(--text-color);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        box-sizing: border-box;
+        overflow: hidden; 
+    }
+
+    /* メインコンテンツのコンテナ */
+    .container {
+        max-width: 720px; 
+        width: 100%;
+        padding: 30px; 
+        background: var(--card-background);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.5), 0 0 15px var(--border-color);
+        animation: curtain-up 1.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        opacity: 0;
+        transform: translateY(30px);
+        position: relative;
+        z-index: 1;
+    }
+
+    @keyframes curtain-up {
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* メインタイトル */
+    h1 {
+        text-align: center;
+        font-family: 'Noto Serif JP', serif;
+        font-weight: 700;
+        font-size: 28px; 
+        margin-bottom: 25px; 
+        color: #fff;
+        text-shadow: 0 0 10px var(--accent-gold), 0 0 2px #fff;
+    }
+
+    /* 動画プレイヤーのラッパー */
+    .video-wrapper {
+        position: relative;
+        width: 100%;
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 30px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.7);
+    }
+
+    video {
+        width: 100%;
+        height: auto;
+        display: block;
+        background: #000;
+        border-radius: 8px;
+    }
+
+    /* 動画情報セクション */
+    .info {
+        text-align: left;
+        border-top: 1px solid var(--border-color);
+        padding-top: 25px;
+    }
+
+    .info h2 {
+        font-family: 'Noto Serif JP', serif;
+        font-weight: 400;
+        font-size: 22px; 
+        margin-top: 0;
+        margin-bottom: 12px;
+        color: var(--accent-gold);
+    }
+
+    .info p {
+        font-size: 14px; 
+        line-height: 1.7;
+        color: #ccc;
+    }
+
+    .info p.copyright {
+        font-size: 12px;
+        color: #777;
+        margin-top: 25px;
+        text-align: center;
+        user-select: none;
+    }
+
+
+    /* ギミックのトリガー */
+    #secret-trigger {
+    /* --- フォントの見た目を親要素と完全に同一にするための修正 --- */
+    /* font-weight, font-size, vertical-align を削除またはリセット */
+    
+        color: #777; /* 通常時の色を親要素と完全に同じにする */
+        cursor: pointer;
+        display: inline-block; /* クリック領域を確保するために必要 */
+        transition: color 0.2s; /* 色の変化を滑らかに */
+    
+    /* スマートフォンでのタップ操作の補助 */
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+    #secret-trigger:hover {
+        color: var(--accent-gold); /* マウスオーバーで色が変わる */
+    }
+    #secret-trigger:active {
+        color: #fff; /* クリック/タップ時に一瞬白く光るように見せる */
+    }
+
+    /* === 豪華な演出のためのスタイル === */
+
+    /* 緞帳 */
+    .curtain {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        z-index: 99;
+        pointer-events: none;
+    }
+    .curtain-panel {
+        width: 50%;
+        height: 100%;
+        background-color: var(--curtain-color);
+        background-image: linear-gradient(to right, rgba(0,0,0,0.4), transparent 20%),
+                          linear-gradient(90deg, var(--curtain-color) 0%, #3a0c0c 100%);
+        box-shadow: inset -5px 0 20px rgba(0,0,0,0.5);
+        transform: translateX(-100%);
+        transition: transform 1.5s cubic-bezier(0.86, 0, 0.07, 1);
+    }
+    .curtain-panel.right {
+        transform: translateX(100%);
+        box-shadow: inset 5px 0 20px rgba(0,0,0,0.5);
+    }
+    .curtain.closed .curtain-panel {
+        transform: translateX(0);
+    }
+
+    /* シークレットページ */
+    .secret-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 1s ease 1.5s, visibility 1s ease 1.5s;
+        z-index: 100;
+        background-image: url('https://www.transparenttextures.com/patterns/wood-planks.png');
+    }
+    .secret-overlay.visible {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .secret-content {
+        text-align: center;
+        color: #fff;
+        padding: 40px;
+        max-width: 600px;
+        position: relative;
+        animation: spotlight-flicker 10s infinite linear;
+    }
+    @keyframes spotlight-flicker {
+        0%, 100% { box-shadow: 0 0 150px 80px rgba(255, 235, 180, 0.15); }
+        50% { box-shadow: 0 0 165px 88px rgba(255, 242, 210, 0.19); }
+    }
+
+    .secret-content h2 {
+        font-family: 'Noto Serif JP', serif;
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--accent-gold);
+        margin-bottom: 20px;
+        text-shadow: 0 0 10px var(--accent-gold);
+    }
+
+    .secret-content p {
+        font-size: 16px; 
+        line-height: 1.8;
+        margin-bottom: 30px;
+        color: #f0f0f0;
+    }
+
+    .secret-content .prize-info {
+        border: 1px dashed var(--accent-gold);
+        padding: 20px;
+        background: rgba(212, 175, 55, 0.1);
+        border-radius: 5px;
+        font-size: 16px;
+        color: #fff;
+        font-weight: bold;
+    }
+    
+    /* レスポンシブ対応 */
+    @media (max-width: 768px) {
+        body { padding: 20px 10px; }
+        .container { padding: 25px; }
+        h1 { font-size: 26px; }
+        .info h2 { font-size: 20px; }
+        .info p { font-size: 14px; }
+        .secret-content { width: 90%; padding: 30px; }
+        .secret-content h2 { font-size: 24px; }
+        .secret-content p { font-size: 16px; }
+    }
+
+    /* 管理者用パネル */
+    .admin-panel {
+        position: fixed;
+        bottom: 10px;
+        right: 10px;
+        z-index: 101;
+    }
+    .admin-panel button {
+        background: #555;
+        color: white;
+        border: none;
+        padding: 6px 10px; 
+        cursor: pointer;
+        border-radius: 5px;
+        font-size: 11px;
+    
+        opacity: 0; /* 通常時は完全に透明にする */
+        transition: opacity 0.4s ease-in-out; /* ゆっくり表示/非表示を切り替える */
+    }
+    .admin-panel button:hover {
+        opacity: 1; /* マウスが乗った時だけ表示する */
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>動画公開ページ</h1>
+    <div class="video-wrapper">
+        <video controls poster="test-video-yozora.jpg">
+            <source src="test-yozora.mp4" type="video/mp4">
+            お使いのブラウザは動画タグに対応していません。
+        </video>
+    </div>
+    <div class="info">
+        <h2>試験公開_アスノヨゾラ哨戒班</h2>
+        <p>これは試験公開動画です。<br>はじめにサムネイル画像が表示され、再生ボタンを押すと動画がスタートします。</p>
+        <p class="copyright">© 2025 NAZUNA ENGEKI<span id="secret-trigger">5</span></p>
+    </div>
+</div>
+
+<!-- 緞帳 -->
+<div id="curtain" class="curtain">
+    <div class="curtain-panel left"></div>
+    <div class="curtain-panel right"></div>
+</div>
+
+<!-- シークレットページ -->
+<div id="secret-page" class="secret-overlay">
+    <div class="secret-content">
+        <h2 id="secret-title"></h2>
+        <p id="secret-message"></p>
+        <div id="prize-wrapper"></div>
+    </div>
+</div>
+
+<!-- 管理者用パネル -->
+<div class="admin-panel">
+    <button id="admin-reset-button">管理者用リセット</button>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const trigger = document.getElementById('secret-trigger');
+    const curtain = document.getElementById('curtain');
+    const secretPage = document.getElementById('secret-page');
+    let clickCount = 0;
+    const requiredClicks = 5;
+
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbxNSu-PRQFCzRUQ-1hCDmJtHSs8yjkYPyV5ony0DBZBGOpBB8ZstqM7D8t2aLuS1bCK/exec";
+    const hasVisitedKey = 'engeki5-has-attempted';
+
+    // ギミックを発動させる共通関数
+    function activateGimmick() {
+        clickCount++;
+        if (clickCount >= requiredClicks) {
+            clickCount = 0;
+
+            if (sessionStorage.getItem(hasVisitedKey)) {
+                alert('本日分は既にご応募いただいております。');
+                return;
+            }
+
+            curtain.classList.add('closed');
+
+            setTimeout(() => {
+                fetch(GAS_URL, {
+                    method: 'POST',
+                    redirect: "follow",
+                    muteHttpExceptions: true,
+                    contentType: 'application/json',
+                })
+                .then(response => response.json())
+                .then(data => {
+                    sessionStorage.setItem(hasVisitedKey, 'true');
+                    if (data.status === 'success') {
+                        document.getElementById('secret-title').textContent = '特別なご招待状';
+                        document.getElementById('secret-message').innerHTML = `おめでとうございます。<br>あなたは ${data.winnerNumber} 番目の特別な招待客として認められました。`;
+                        document.getElementById('prize-wrapper').innerHTML = '<div class="prize-info">第5回なずな演劇祭 本部にて、この画面をスタッフにご提示ください。<br>ささやかな記念品をお渡しいたします。</div>';
+                    } else {
+                        document.getElementById('secret-title').textContent = '終演';
+                        document.getElementById('secret-message').innerHTML = '誠に残念ながら、<br>本公演の特別ご招待は満席となりました。<br>またの機会のご来場を心よりお待ちしております。';
+                        document.getElementById('prize-wrapper').innerHTML = '';
+                    }
+                    secretPage.classList.add('visible');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('エラーが発生しました。時間をおいて再度お試しください。');
+                    curtain.classList.remove('closed');
+                });
+            }, 1500);
+        }
+    }
+
+    // PC用のclickイベントリスナー
+    trigger.addEventListener('click', activateGimmick);
+    
+    // スマートフォン用のtouchstartイベントリスナー
+    trigger.addEventListener('touchstart', (e) => {
+        // clickイベントと重複して発火するのを防ぐ
+        e.preventDefault();
+        activateGimmick();
+    });
+
+    // 管理者用リセット機能
+    document.getElementById('admin-reset-button').addEventListener('click', () => {
+        const password = prompt('管理者用パスワードを入力してください:');
+        if (password === 'nazuna-engeki-5') {
+            const confirmReset = confirm(
+                '【管理者向け操作】\n\n' +
+                'スプレッドシートの当選者記録（A2以降の行）は手動で削除してください。\n\n' +
+                'このページの閲覧者記録のみをクリアしますか？'
+            );
+            if (confirmReset) {
+                sessionStorage.removeItem(hasVisitedKey);
+                alert('閲覧者記録をクリアしました。ページをリロードすると、再度ギミックを試すことができます。');
+                location.reload();
+            }
+        } else if (password !== null && password !== "") {
+            alert('パスワードが違います。');
+        }
+    });
+});
+</script>
+
+</body>
+</html>
