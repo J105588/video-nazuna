@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>舞台修復</title>
+  <style>
+    body { background:#231d18; color:#ffe5b2; font-family:'Noto Serif JP',serif; text-align:center;}
+    #restore { width:360px; margin:7em auto 0; border-radius:1.4em; background:#2e211c; box-shadow:0 0 35px #222a; padding:3em 2em 2.3em;}
+    .subtitle { color:#cbb070; font-size:1.3em;margin:1em 0 1.7em;}
+    #stageimg { width:320px; border-radius:1.1em; transition:1s all; margin:1em 0;}
+    .fadeup{ animation: fadeup 1.7s cubic-bezier(.86,0,.07,1) both;}
+    @keyframes fadeup { 0%{opacity:0;transform:translateY(25px);} 100%{opacity:1;transform:none;} }
+  </style>
+</head>
+<body>
+  <div id="restore">
+    <h2 class="fadeup">三つの灯が集い、舞台が甦る…</h2>
+    <div class="subtitle fadeup">
+      闇の中で希望の灯が重なり合う。<br>
+      舞台に、かつての輝きが戻ろうとしている。
+    </div>
+    <img id="stageimg" class="fadeup" src="stage_before.jpg">
+    <div id="msg" class="fadeup" style="margin-top:1.8em;"></div>
+  </div>
+  <script>
+    // 演出：順に画像をstage_after.jpgへと切り替え
+    setTimeout(()=>{
+      document.getElementById('stageimg').src="stage_after.jpg";
+      document.getElementById('msg').innerHTML =
+        "<b style='color:gold;'>あなたたちの灯が、劇場を修復しました！</b><br>まもなく幕が下ります。";
+    }, 3000);
+    setTimeout(()=>location.href="curtain.html", 6100);
+  </script>
+</body>
+</html>
