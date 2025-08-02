@@ -6,306 +6,99 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="https://raw.githubusercontent.com/J105588/video-nazuna/main/IMG_5316.png" type="image/png">
 <style>
-    /* フォントのインポート */
+    /* --- フォントと基本設定（変更なし） --- */
     @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Noto+Sans+JP:wght@300;400&display=swap');
-
-    /* 色や基本的な変数の定義 */
     :root {
-        --background-color: #0a0a0a;
-        --text-color: #e0e0e0;
-        --accent-gold: #d4af37;
-        --card-background: #181818;
-        --border-color: rgba(212, 175, 55, 0.3);
-        --curtain-color: #4a0e0e; /* 緞帳の色 */
+        --background-color: #0a0a0a; --text-color: #e0e0e0; --accent-gold: #d4af37;
+        --card-background: #181818; --border-color: rgba(212, 175, 55, 0.3); --curtain-color: #4a0e0e;
     }
-
-    /* 基本的なページ設定 */
     body {
-        margin: 0;
-        padding: 20px; 
-        font-family: 'Noto Sans JP', sans-serif;
+        margin: 0; padding: 20px; font-family: 'Noto Sans JP', sans-serif;
         background-color: var(--background-color);
-        background-image:
-            radial-gradient(ellipse at center, rgba(255, 255, 255, 0.05) 0%, transparent 70%),
-            url('https://www.transparenttextures.com/patterns/dark-denim-3.png');
-        color: var(--text-color);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-        box-sizing: border-box;
-        overflow: hidden; 
+        background-image: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.05) 0%, transparent 70%),
+                          url('https://www.transparenttextures.com/patterns/dark-denim-3.png');
+        color: var(--text-color); display: flex; justify-content: center; align-items: center;
+        min-height: 100vh; box-sizing: border-box; overflow: hidden;
     }
 
-    /* メインコンテンツのコンテナ */
+    /* --- コンテンツスタイル（変更なし） --- */
     .container {
-        max-width: 720px; 
-        width: 100%;
-        padding: 30px; 
-        background: var(--card-background);
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
+        max-width: 720px; width: 100%; padding: 30px; background: var(--card-background);
+        border: 1px solid var(--border-color); border-radius: 8px;
         box-shadow: 0 0 30px rgba(0, 0, 0, 0.5), 0 0 15px var(--border-color);
-        animation: curtain-up 1.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-        opacity: 0;
-        transform: translateY(30px);
-        position: relative;
-        z-index: 1;
+        opacity: 0; /* JSで表示 */ position: relative; z-index: 1;
     }
+    h1 { text-align: center; font-family: 'Noto Serif JP', serif; font-weight: 700; font-size: 28px; margin-bottom: 25px; color: #fff; text-shadow: 0 0 10px var(--accent-gold), 0 0 2px #fff; }
+    .video-wrapper { position: relative; width: 100%; border-radius: 8px; overflow: hidden; margin-bottom: 30px; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.7); }
+    video { width: 100%; height: auto; display: block; background: #000; border-radius: 8px; }
+    .info { text-align: left; border-top: 1px solid var(--border-color); padding-top: 25px; }
+    .info h2 { font-family: 'Noto Serif JP', serif; font-weight: 400; font-size: 22px; margin-top: 0; margin-bottom: 12px; color: var(--accent-gold); }
+    .info p { font-size: 14px; line-height: 1.7; color: #ccc; }
+    .info p.copyright { font-size: 12px; color: #777; margin-top: 25px; text-align: center; user-select: none; }
+    #secret-trigger { color: #777; cursor: pointer; display: inline-block; transition: color 0.2s; user-select: none; -webkit-tap-highlight-color: transparent; }
+    #secret-trigger:hover { color: var(--accent-gold); }
+    #secret-trigger:active { color: #fff; }
+    .curtain { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex; z-index: 99; pointer-events: none; }
+    .curtain-panel { width: 50%; height: 100%; background-color: var(--curtain-color); background-image: linear-gradient(to right, rgba(0,0,0,0.4), transparent 20%), linear-gradient(90deg, var(--curtain-color) 0%, #3a0c0c 100%); box-shadow: inset -5px 0 20px rgba(0,0,0,0.5); transform: translateX(-100%); transition: transform 1.5s cubic-bezier(0.86, 0, 0.07, 1); }
+    .curtain-panel.right { transform: translateX(100%); box-shadow: inset 5px 0 20px rgba(0,0,0,0.5); }
+    .curtain.closed .curtain-panel { transform: translateX(0); }
+    .secret-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #000; display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: opacity 1s ease 1.5s, visibility 1s ease 1.5s; z-index: 100; background-image: url('https://www.transparenttextures.com/patterns/wood-planks.png'); }
+    .secret-overlay.visible { opacity: 1; visibility: visible; }
+    .secret-content { text-align: center; color: #fff; padding: 40px; max-width: 600px; position: relative; animation: spotlight-flicker 10s infinite linear; }
+    @keyframes spotlight-flicker { 0%, 100% { box-shadow: 0 0 150px 80px rgba(255, 235, 180, 0.15); } 50% { box-shadow: 0 0 165px 88px rgba(255, 242, 210, 0.19); } }
+    .secret-content h2 { font-family: 'Noto Serif JP', serif; font-size: 28px; font-weight: 700; color: var(--accent-gold); margin-bottom: 20px; text-shadow: 0 0 10px var(--accent-gold); }
+    .secret-content p { font-size: 16px; line-height: 1.8; margin-bottom: 30px; color: #f0f0f0; }
+    .secret-content .prize-info { border: 1px dashed var(--accent-gold); padding: 20px; background: rgba(212, 175, 55, 0.1); border-radius: 5px; font-size: 16px; color: #fff; font-weight: bold; }
+    @media (max-width: 768px) { body { padding: 20px 10px; } .container { padding: 25px; } h1 { font-size: 26px; } .info h2 { font-size: 20px; } .info p { font-size: 14px; } .secret-content { width: 90%; padding: 30px; } .secret-content h2 { font-size: 24px; } .secret-content p { font-size: 16px; } }
+    .admin-panel { position: fixed; bottom: 10px; right: 10px; z-index: 101; }
+    .admin-panel button { background: #555; color: white; border: none; padding: 6px 10px; cursor: pointer; border-radius: 5px; font-size: 11px; opacity: 0; transition: opacity 0.4s ease-in-out; }
+    .admin-panel button:hover { opacity: 1; }
 
-    @keyframes curtain-up {
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* メインタイトル */
-    h1 {
-        text-align: center;
-        font-family: 'Noto Serif JP', serif;
-        font-weight: 700;
-        font-size: 28px; 
-        margin-bottom: 25px; 
-        color: #fff;
-        text-shadow: 0 0 10px var(--accent-gold), 0 0 2px #fff;
-    }
-
-    /* 動画プレイヤーのラッパー */
-    .video-wrapper {
-        position: relative;
-        width: 100%;
-        border-radius: 8px;
-        overflow: hidden;
-        margin-bottom: 30px;
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.7);
-    }
-
-    video {
-        width: 100%;
-        height: auto;
-        display: block;
-        background: #000;
-        border-radius: 8px;
-    }
-
-    /* 動画情報セクション */
-    .info {
-        text-align: left;
-        border-top: 1px solid var(--border-color);
-        padding-top: 25px;
-    }
-
-    .info h2 {
-        font-family: 'Noto Serif JP', serif;
-        font-weight: 400;
-        font-size: 22px; 
-        margin-top: 0;
-        margin-bottom: 12px;
-        color: var(--accent-gold);
-    }
-
-    .info p {
-        font-size: 14px; 
-        line-height: 1.7;
-        color: #ccc;
-    }
-
-    .info p.copyright {
-        font-size: 12px;
-        color: #777;
-        margin-top: 25px;
-        text-align: center;
-        user-select: none;
-    }
-
-    /* ギミックのトリガー */
-    #secret-trigger {
-        color: #777;
-        cursor: pointer;
-        display: inline-block;
-        transition: color 0.2s;
-        user-select: none;
-        -webkit-tap-highlight-color: transparent;
-    }
-    #secret-trigger:hover {
-        color: var(--accent-gold);
-    }
-    #secret-trigger:active {
-        color: #fff;
-    }
-
-    /* === 豪華な演出のためのスタイル === */
-
-    /* 緞帳 */
-    .curtain {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        z-index: 99;
-        pointer-events: none;
-    }
-    .curtain-panel {
-        width: 50%;
-        height: 100%;
-        background-color: var(--curtain-color);
-        background-image: linear-gradient(to right, rgba(0,0,0,0.4), transparent 20%),
-                          linear-gradient(90deg, var(--curtain-color) 0%, #3a0c0c 100%);
-        box-shadow: inset -5px 0 20px rgba(0,0,0,0.5);
-        transform: translateX(-100%);
-        transition: transform 1.5s cubic-bezier(0.86, 0, 0.07, 1);
-    }
-    .curtain-panel.right {
-        transform: translateX(100%);
-        box-shadow: inset 5px 0 20px rgba(0,0,0,0.5);
-    }
-    .curtain.closed .curtain-panel {
-        transform: translateX(0);
-    }
-
-    /* シークレットページ */
-    .secret-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: #000;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        opacity: 0;
-        visibility: hidden;
-        transition: opacity 1s ease 1.5s, visibility 1s ease 1.5s;
-        z-index: 100;
-        background-image: url('https://www.transparenttextures.com/patterns/wood-planks.png');
-    }
-    .secret-overlay.visible {
-        opacity: 1;
-        visibility: visible;
-    }
-
-    .secret-content {
-        text-align: center;
-        color: #fff;
-        padding: 40px;
-        max-width: 600px;
-        position: relative;
-        animation: spotlight-flicker 10s infinite linear;
-    }
-    @keyframes spotlight-flicker {
-        0%, 100% { box-shadow: 0 0 150px 80px rgba(255, 235, 180, 0.15); }
-        50% { box-shadow: 0 0 165px 88px rgba(255, 242, 210, 0.19); }
-    }
-
-    .secret-content h2 {
-        font-family: 'Noto Serif JP', serif;
-        font-size: 28px;
-        font-weight: 700;
-        color: var(--accent-gold);
-        margin-bottom: 20px;
-        text-shadow: 0 0 10px var(--accent-gold);
-    }
-
-    .secret-content p {
-        font-size: 16px; 
-        line-height: 1.8;
-        margin-bottom: 30px;
-        color: #f0f0f0;
-    }
-
-    .secret-content .prize-info {
-        border: 1px dashed var(--accent-gold);
-        padding: 20px;
-        background: rgba(212, 175, 55, 0.1);
-        border-radius: 5px;
-        font-size: 16px;
-        color: #fff;
-        font-weight: bold;
-    }
-    
-    /* レスポンシブ対応 */
-    @media (max-width: 768px) {
-        body { padding: 20px 10px; }
-        .container { padding: 25px; }
-        h1 { font-size: 26px; }
-        .info h2 { font-size: 20px; }
-        .info p { font-size: 14px; }
-        .secret-content { width: 90%; padding: 30px; }
-        .secret-content h2 { font-size: 24px; }
-        .secret-content p { font-size: 16px; }
-    }
-
-    /* 管理者用パネル */
-    .admin-panel {
-        position: fixed;
-        bottom: 10px;
-        right: 10px;
-        z-index: 101;
-    }
-    .admin-panel button {
-        background: #555;
-        color: white;
-        border: none;
-        padding: 6px 10px; 
-        cursor: pointer;
-        border-radius: 5px;
-        font-size: 11px;
-        opacity: 0;
-        transition: opacity 0.4s ease-in-out;
-    }
-    .admin-panel button:hover {
-        opacity: 1;
-    }
-
-    /* === スポットライト・ギミック用スタイル（SVGマスク最終版） === */
-    @keyframes fadeInOverlay {
-        from { opacity: 0; }
-        to   { opacity: 1; }
-    }
-
+    /* ★★★★★★★★★★★★★★★★★★★★★★ */
+    /* ★  スポットライトCSS：最終修正版  ★ */
+    /* ★★★★★★★★★★★★★★★★★★★★★★ */
     #spotlight-overlay {
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.95);
+        background: #000000; /* 黒いオーバーレイ */
         z-index: 1000;
         pointer-events: none;
-        
+
         /* SVGマスクを参照 */
         mask: url(#spotlight-mask);
         -webkit-mask: url(#spotlight-mask);
 
-        /* オーバーレイ自体のフェードアウト用 */
-        transition: opacity 1.5s ease-in-out;
-        
-        /* ページの読み込みと同時に確実に表示させる */
-        opacity: 1;
-        animation: fadeInOverlay 0.3s ease-in forwards;
+        /* JavaScriptで制御するため、初期状態は非表示 */
+        opacity: 0;
     }
 </style>
 </head>
-
 <body>
-    
-<!-- SVGマスク定義：画面に表示されないが、CSSから参照される -->
+
+<!-- ★★★★★★★★★★★★★★★★★★★★★★ -->
+<!-- ★    SVGマスク定義：最終修正版      ★ -->
+<!-- ★★★★★★★★★★★★★★★★★★★★★★ -->
 <svg width="0" height="0" style="position:absolute;">
     <defs>
+        <!-- ぼかし効果のための放射グラデーション -->
         <radialGradient id="spotlight-gradient">
             <stop offset="50%" stop-color="white" stop-opacity="1" />
             <stop offset="90%" stop-color="white" stop-opacity="0" />
         </radialGradient>
+        <!-- マスク本体の定義 -->
         <mask id="spotlight-mask">
-            <!-- マスクの背景は黒（＝完全に透明になる部分） -->
+            <!-- マスクの背景は「黒」＝見えない部分 -->
             <rect width="100%" height="100%" fill="black"/>
-            <!-- グラデーションを適用した円（＝スポットライトの光） -->
+            <!-- スポットライトの円は「白」＝見える部分。グラデーションを適用 -->
             <circle id="spotlight-circle" cx="-200" cy="-200" r="120" fill="url(#spotlight-gradient)"/>
         </mask>
     </defs>
 </svg>
 
+<!-- メインコンテンツ -->
 <div class="container">
     <h1>動画公開ページ</h1>
     <div class="video-wrapper">
@@ -321,80 +114,76 @@
     </div>
 </div>
 
-<!-- 緞帳 -->
-<div id="curtain" class="curtain">
-    <div class="curtain-panel left"></div>
-    <div class="curtain-panel right"></div>
-</div>
-
-<!-- シークレットページ -->
-<div id="secret-page" class="secret-overlay">
-    <div class="secret-content">
-        <h2 id="secret-title"></h2>
-        <p id="secret-message"></p>
-        <div id="prize-wrapper"></div>
-    </div>
-</div>
-
-<!-- 管理者用パネル -->
-<div class="admin-panel">
-    <button id="admin-reset-button">管理者用リセット</button>
-</div>
+<!-- 緞帳、シークレットページ、管理者パネル -->
+<div id="curtain" class="curtain"><div class="curtain-panel left"></div><div class="curtain-panel right"></div></div>
+<div id="secret-page" class="secret-overlay"><div class="secret-content"><h2 id="secret-title"></h2><p id="secret-message"></p><div id="prize-wrapper"></div></div></div>
+<div class="admin-panel"><button id="admin-reset-button">管理者用リセット</button></div>
 
 <!-- スポットライト演出用のオーバーレイ本体 -->
 <div id="spotlight-overlay"></div>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // === スポットライト・ギミックの処理（SVGマスク最終版） ===
-    const initPage = () => {
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js'; // 最新版のGSAP
+    document.head.appendChild(script);
+
+    script.onload = () => {
+        // === スポットライト・ギミックの処理（最終修正版） ===
         const overlay = document.getElementById('spotlight-overlay');
         const spotlightCircle = document.getElementById('spotlight-circle');
+        const mainContainer = document.querySelector('.container');
         const videoWrapper = document.querySelector('.video-wrapper');
         const secretTrigger = document.getElementById('secret-trigger');
 
-        if (!overlay || !spotlightCircle || !videoWrapper || !secretTrigger) {
-            console.error('スポットライト演出に必要な要素が見つかりませんでした。');
+        if (!overlay || !spotlightCircle || !mainContainer || !videoWrapper || !secretTrigger) {
+            console.error('演出に必要な要素が見つかりません。');
             if (overlay) overlay.remove();
             return;
         }
 
-        const script = document.createElement('script');
-        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js';
-        document.head.appendChild(script);
+        // GSAPのタイムライン機能でアニメーションを厳密に制御
+        const tl = gsap.timeline();
 
-        script.onload = () => {
-            const tl = gsap.timeline();
-            const videoRect = videoWrapper.getBoundingClientRect();
-            const triggerRect = secretTrigger.getBoundingClientRect();
-            const videoTarget = { x: videoRect.left + videoRect.width / 2, y: videoRect.top + videoRect.height / 2 };
-            const triggerTarget = { x: triggerRect.left + triggerRect.width / 2, y: triggerRect.top + triggerRect.height / 2 };
+        // ターゲットの座標を事前に計算
+        const videoRect = videoWrapper.getBoundingClientRect();
+        const triggerRect = secretTrigger.getBoundingClientRect();
+        const videoTarget = { x: videoRect.left + videoRect.width / 2, y: videoRect.top + videoRect.height / 2 };
+        const triggerTarget = { x: triggerRect.left + triggerRect.width / 2, y: triggerRect.top + triggerRect.height / 2 };
 
-            tl.to(spotlightCircle, {
-                attr: { cx: videoTarget.x, cy: videoTarget.y },
-                duration: 1.2,
-                ease: "power2.inOut",
-                delay: 0.8
-            })
-            .to(spotlightCircle, {
-                attr: { cx: triggerTarget.x, cy: triggerTarget.y },
-                duration: 1.5,
-                ease: "power2.inOut",
-                delay: 1
-            })
-            .to(overlay, {
-                opacity: 0,
-                duration: 1.5,
-                delay: 1,
-                onComplete: () => {
-                    const svgElement = document.querySelector('svg');
-                    if (overlay) overlay.remove();
-                    if (svgElement) svgElement.remove();
-                }
-            });
-        };
+        // アニメーションシーケンス
+        tl.to(overlay, { // 1. まず黒いオーバーレイをフェードインさせる（確実な暗転）
+            opacity: 1,
+            duration: 0.3
+        })
+        .to(mainContainer, { // 2. 背景のコンテンツをフェードインさせる（暗転の裏で準備完了）
+            opacity: 1,
+            duration: 1.0
+        }, "-=0.3") // 1のアニメーションと少し重ねて開始
+        .to(spotlightCircle, { // 3. スポットライトが動画の中央へ移動
+            attr: { cx: videoTarget.x, cy: videoTarget.y },
+            duration: 1.2,
+            ease: "power2.inOut"
+        }, "+=0.2") // 2のアニメーションが終わって0.2秒後に開始
+        .to(spotlightCircle, { // 4. スポットライトが秘密のトリガーへ移動
+            attr: { cx: triggerTarget.x, cy: triggerTarget.y },
+            duration: 1.5,
+            ease: "power2.inOut",
+            delay: 1.0 // 3が終わって1秒待つ
+        })
+        .to(overlay, { // 5. 最後にオーバーレイ全体がフェードアウトして消える
+            opacity: 0,
+            duration: 1.5,
+            delay: 1.0, // 4が終わって1秒待つ
+            onComplete: () => {
+                // 演出完了後、不要な要素をDOMから削除してメモリを解放
+                const svgElement = document.querySelector('svg');
+                if (overlay) overlay.remove();
+                if (svgElement) svgElement.remove();
+            }
+        });
 
-        // === ここから下は元のギミック処理 ===
+        // === ここから下は元のギミック処理（変更なし） ===
         const trigger = document.getElementById('secret-trigger');
         const curtain = document.getElementById('curtain');
         const secretPage = document.getElementById('secret-page');
@@ -451,12 +240,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     };
-
-    if (document.readyState === 'complete') {
-        initPage();
-    } else {
-        window.addEventListener('load', initPage);
-    }
 });
 </script>
 </body>
