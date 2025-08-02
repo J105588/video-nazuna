@@ -27,7 +27,7 @@
     QRCode.toCanvas(document.getElementById('qrcode'), QRVAL, { width: 240 });
     
     // 進行チェック: 2名がスキャンでreadyなら次へ
-    const GAS = 'https://script.google.com/macros/s/【ここにGAS_URL】/exec';
+    const GAS = 'https://script.google.com/macros/s/AKfycbxOhXaHg2WVUpuKDwUjCl4UwuqObFgZzH38MWyOi49lHvg4Pdhw_RlXWhZatpcTSNd8Tw/exec';
     function poll() {
       fetch(GAS+`?cmd=status&roomID=${roomID}`)
       .then(resp=>resp.json())
