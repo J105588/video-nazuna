@@ -264,8 +264,48 @@
     .admin-panel button:hover {
         opacity: 1; /* マウスが乗った時だけ表示する */
     }
+    /* === スポットライト・フィンガーギミック用スタイル === */
+
+/* 全体を覆う黒いオーバーレイ */
+#spotlight-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: #000;
+    z-index: 1000; /* 最前面に表示 */
+    pointer-events: none; /* 下の要素をクリックさせない */
+    opacity: 1;
+    transition: opacity 1.5s ease; /* フェードアウト用 */
+}
+
+/* スポットライト（くり抜き）部分 */
+#spotlight-finger {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    /* radial-gradientで円形の穴を作成 */
+    mask-image: radial-gradient(
+        circle 80px at center, /* 80pxの円形 */
+        transparent 50%, 
+        black 100%
+    );
+    /* Safari/Chrome向け */
+    -webkit-mask-image: radial-gradient(
+        circle 80px at center,
+        transparent 50%,
+        black 100%
+    );
+    /* 動きを滑らかにする */
+    transition: transform 0.2s linear; 
+}
 </style>
 </head>
+ <!-- スポットライト・フィンガーギミック用HTML -->
+<div id="spotlight-overlay">
+    <div id="spotlight-finger"></div>
+</div>
 <body>
 
 <div class="container">
@@ -305,6 +345,54 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+        // === スポットライト・フィンガーギミックの処理 ===
+    const overlay = document.getElementById('spotlight-overlay');
+    const finger = document.getElementById('spotlight-finger');
+    const videoWrapper = document.querySelector('.video-wrapper');
+    const secretTrigger = document.getElementById('secret-trigger');
+
+    // 指の動きを定義する座標データ
+    const actions = [
+        { element: videoWrapper, duration: 1500 },  // 1.5秒かけて動画の中央へ
+        { duration: 800 }, // 0.8秒待機
+        { element: secretTrigger, duration: 1200 }, // 1.2秒かけて秘密のトリガーへ
+        { duration: 1000 }, // 1秒待機
+    ];
+
+    // アニメーションを非同期で実行する関数
+    async function playSpotlightAnimation() {
+        // 各要素の位置を取得
+        const videoRect = videoWrapper.getBoundingClientRect();
+        const triggerRect = secretTrigger.getBoundingClientRect();
+
+        // アニメーションのシーケンス
+        const sequence = [
+            { x: videoRect.left + videoRect.width / 2, y: videoRect.top + videoRect.height / 2, duration: actions[0].duration },
+            { duration: actions[1].duration },
+            { x: triggerRect.left + triggerRect.width / 2, y: triggerRect.top + triggerRect.height / 2, duration: actions[2].duration },
+            { duration: actions[3].duration },
+        ];
+        
+        // 最初の位置を画面外に設定
+        finger.style.transform = `translate(-100px, -100px)`;
+
+        // アニメーションを順番に実行
+        for (const step of sequence) {
+            await new Promise(resolve => setTimeout(resolve, step.duration));
+            if (step.x !== undefined) {
+                 finger.style.transform = `translate(${step.x}px, ${step.y}px)`;
+            }
+        }
+        
+        // 演出終了後、オーバーレイを消す
+        overlay.style.opacity = '0';
+        // DOMから要素を削除してパフォーマンスを確保
+        setTimeout(() => overlay.remove(), 1500); 
+    }
+    
+    // ページが完全に表示された後にアニメーションを開始
+    playSpotlightAnimation();
+    // === ここまでが追加分 ===
     const trigger = document.getElementById('secret-trigger');
     const curtain = document.getElementById('curtain');
     const secretPage = document.getElementById('secret-page');
