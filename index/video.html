@@ -6,90 +6,472 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="" type="image/png">
 <style>
-    /* --- フォントと基本設定 --- */
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Noto+Serif+JP:wght@400;700&display=swap');
+    /* フォントのインポート */
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700&family=Noto+Serif+JP:wght@400;700&display=swap');
+
+    /* 色や基本的な変数の定義 */
     :root {
-        --background-color: #0a0a0a; --text-color: #e0e0e0; --accent-gold: #d4af37;
-        --card-background: #181818; --border-color: rgba(212, 175, 55, 0.3); --curtain-color: #4a0e0e;
+        --background-color: #0a0a0a;
+        --text-color: #e0e0e0;
+        --accent-gold: #d4af37;
+        --card-background: #181818;
+        --border-color: rgba(212, 175, 55, 0.3);
+        --curtain-color: #4a0e0e; /* 緞帳の色 */
+        --spotlight-color: rgba(255, 248, 220, 0.3);
     }
+
+    /* 基本的なページ設定 */
     body {
-        margin: 0; padding: 20px; font-family: 'Noto Sans JP', sans-serif;
+        margin: 0;
+        padding: 20px; 
+        font-family: 'Noto Sans JP', sans-serif;
         background-color: var(--background-color);
-        background-image: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
-        color: var(--text-color); display: flex; justify-content: center; align-items: center;
-        min-height: 100vh; box-sizing: border-box; overflow: hidden;
+        background-image:
+            radial-gradient(ellipse at center, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
+        color: var(--text-color);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        box-sizing: border-box;
+        overflow: hidden; 
     }
 
-    /* --- コンテンツスタイル --- */
+    /* === オープニング スポットライト演出 === */
+    .opening-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        z-index: 999;
+        opacity: 1;
+        visibility: visible;
+        transition: opacity 1.5s ease-out, visibility 0s linear 1.5s;
+    }
+
+    .opening-overlay.fade-out {
+        opacity: 0;
+        visibility: hidden;
+    }
+
+    .spotlight {
+        position: absolute;
+        width: 200px;
+        height: 200px;
+        background: radial-gradient(
+            circle at center,
+            var(--spotlight-color) 0%,
+            rgba(255, 248, 220, 0.2) 40%,
+            rgba(255, 248, 220, 0.1) 60%,
+            transparent 100%
+        );
+        border-radius: 50%;
+        filter: blur(2px);
+        transform: translate(-50%, -50%);
+        animation: spotlight-roam 4s ease-in-out forwards;
+    }
+
+    @keyframes spotlight-roam {
+        0% {
+            left: 20%;
+            top: 30%;
+            width: 150px;
+            height: 150px;
+        }
+        15% {
+            left: 80%;
+            top: 20%;
+            width: 180px;
+            height: 180px;
+        }
+        30% {
+            left: 70%;
+            top: 70%;
+            width: 160px;
+            height: 160px;
+        }
+        45% {
+            left: 30%;
+            top: 80%;
+            width: 200px;
+            height: 200px;
+        }
+        60% {
+            left: 15%;
+            top: 15%;
+            width: 170px;
+            height: 170px;
+        }
+        75% {
+            left: 85%;
+            top: 60%;
+            width: 190px;
+            height: 190px;
+        }
+        90% {
+            /* 「5」の位置に移動開始 */
+            left: 50%;
+            top: 85%;
+            width: 100px;
+            height: 100px;
+        }
+        100% {
+            /* 「5」の正確な位置で停止 */
+            left: 50%;
+            top: 85%;
+            width: 80px;
+            height: 80px;
+        }
+    }
+
+    .spotlight-expand {
+        position: absolute;
+        left: 50%;
+        top: 85%;
+        width: 80px;
+        height: 80px;
+        background: radial-gradient(
+            circle at center,
+            var(--spotlight-color) 0%,
+            rgba(255, 248, 220, 0.2) 30%,
+            rgba(255, 248, 220, 0.1) 50%,
+            transparent 100%
+        );
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        filter: blur(1px);
+        opacity: 0;
+        animation: spotlight-expand-animation 2s ease-out 4s forwards;
+    }
+
+    @keyframes spotlight-expand-animation {
+        0% {
+            opacity: 1;
+            width: 80px;
+            height: 80px;
+        }
+        50% {
+            opacity: 0.8;
+            width: 400px;
+            height: 400px;
+        }
+        100% {
+            opacity: 0;
+            width: 120vw;
+            height: 120vh;
+        }
+    }
+
+    /* === ページが表示される前は非表示 === */
     .container {
-        max-width: 720px; width: 100%; padding: 30px; background: var(--card-background);
-        border: 1px solid var(--border-color); border-radius: 8px;
+        max-width: 720px; 
+        width: 100%;
+        padding: 30px; 
+        background: var(--card-background);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
         box-shadow: 0 0 30px rgba(0, 0, 0, 0.5), 0 0 15px var(--border-color);
-        opacity: 0; /* JSで表示 */ position: relative; z-index: 1;
-    }
-    h1 { text-align: center; font-family: 'Noto Serif JP', serif; font-weight: 700; font-size: 28px; margin-bottom: 25px; color: #fff; text-shadow: 0 0 10px var(--accent-gold), 0 0 2px #fff; }
-    .video-wrapper { position: relative; width: 100%; border-radius: 8px; overflow: hidden; margin-bottom: 30px; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.7); }
-    video { width: 100%; height: auto; display: block; background: #000; border-radius: 8px; }
-    .info { text-align: left; border-top: 1px solid var(--border-color); padding-top: 25px; }
-    .info h2 { font-family: 'Noto Serif JP', serif; font-weight: 400; font-size: 22px; margin-top: 0; margin-bottom: 12px; color: var(--accent-gold); }
-    .info p { font-size: 14px; line-height: 1.7; color: #ccc; }
-    .info p.copyright { font-size: 12px; color: #777; margin-top: 25px; text-align: center; user-select: none; }
-    #secret-trigger { color: #777; cursor: pointer; display: inline-block; transition: color 0.2s; user-select: none; -webkit-tap-highlight-color: transparent; }
-    #secret-trigger:hover { color: var(--accent-gold); }
-    #secret-trigger:active { color: #fff; }
-
-    /* --- スポットライトCSS：オープニング演出用 --- */
-    #spotlight-overlay {
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: #000000; z-index: 1000; pointer-events: none;
-        mask: url(#spotlight-mask); -webkit-mask: url(#spotlight-mask);
-        opacity: 1; /* 初期状態で表示 */
+        opacity: 0;
+        transform: translateY(30px);
+        position: relative;
+        z-index: 1;
+        animation: page-appear 1s ease-out 5.5s forwards;
     }
 
-    /* --- その他のギミック用CSS (★★UI崩れ修正★★) --- */
-    .curtain { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex; z-index: 99; pointer-events: none; }
-    .curtain-panel { width: 50%; height: 100%; background-color: var(--curtain-color); background-image: linear-gradient(to right, rgba(0,0,0,0.4), transparent 20%), linear-gradient(90deg, var(--curtain-color) 0%, #3a0c0c 100%); box-shadow: inset -5px 0 20px rgba(0,0,0,0.5); transform: translateX(-100%); transition: transform 1.5s cubic-bezier(0.86, 0, 0.07, 1); }
-    .curtain-panel.right { transform: translateX(100%); box-shadow: inset 5px 0 20px rgba(0,0,0,0.5); }
-    .curtain.closed .curtain-panel { transform: translateX(0); }
-    .secret-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #000; display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: opacity 1s ease 1.5s, visibility 1s ease 1.5s; z-index: 100; }
-    .secret-overlay.visible { opacity: 1; visibility: visible; }
-    .secret-content { text-align: center; color: #fff; padding: 40px; max-width: 600px; }
-    .prize-info { border: 1px dashed var(--accent-gold); padding: 20px; background: rgba(212, 175, 55, 0.1); border-radius: 5px; font-size: 16px; color: #fff; font-weight: bold; }
+    @keyframes page-appear {
+        to { 
+            opacity: 1; 
+            transform: translateY(0); 
+        }
+    }
 
-    .admin-panel { position: fixed; bottom: 10px; right: 10px; z-index: 101; }
-    .admin-panel button { background: #555; color: white; border: none; padding: 6px 10px; cursor: pointer; border-radius: 5px; font-size: 11px; opacity: 0.1; transition: opacity 0.4s ease-in-out; }
-    .admin-panel button:hover { opacity: 1; }
+    /* メインタイトル */
+    h1 {
+        text-align: center;
+        font-family: 'Noto Serif JP', serif;
+        font-weight: 700;
+        font-size: 28px; 
+        margin-bottom: 25px; 
+        color: #fff;
+        text-shadow: 0 0 10px var(--accent-gold), 0 0 2px #fff;
+    }
 
+    /* 動画プレイヤーのラッパー */
+    .video-wrapper {
+        position: relative;
+        width: 100%;
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 30px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.7);
+    }
+
+    video {
+        width: 100%;
+        height: auto;
+        display: block;
+        background: #000;
+        border-radius: 8px;
+    }
+
+    /* 動画情報セクション */
+    .info {
+        text-align: left;
+        border-top: 1px solid var(--border-color);
+        padding-top: 25px;
+    }
+
+    .info h2 {
+        font-family: 'Noto Serif JP', serif;
+        font-weight: 400;
+        font-size: 22px; 
+        margin-top: 0;
+        margin-bottom: 12px;
+        color: var(--accent-gold);
+    }
+
+    .info p {
+        font-size: 14px; 
+        line-height: 1.7;
+        color: #ccc;
+    }
+
+    .info p.copyright {
+        font-size: 12px;
+        color: #777;
+        margin-top: 25px;
+        text-align: center;
+        user-select: none;
+    }
+
+    /* ギミックのトリガー */
+    #secret-trigger {
+        color: #777;
+        cursor: pointer;
+        display: inline-block;
+        transition: color 0.2s;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+    #secret-trigger:hover {
+        color: var(--accent-gold);
+    }
+    #secret-trigger:active {
+        color: #fff;
+    }
+
+    /* === 豪華な演出のためのスタイル === */
+
+    /* 緞帳 */
+    .curtain {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        z-index: 99;
+        pointer-events: none;
+    }
+    .curtain-panel {
+        width: 50%;
+        height: 100%;
+        background-color: var(--curtain-color);
+        background-image: linear-gradient(to right, rgba(0,0,0,0.4), transparent 20%),
+                          linear-gradient(90deg, var(--curtain-color) 0%, #3a0c0c 100%);
+        box-shadow: inset -5px 0 20px rgba(0,0,0,0.5);
+        transform: translateX(-100%);
+        transition: transform 1.5s cubic-bezier(0.86, 0, 0.07, 1);
+    }
+    .curtain-panel.right {
+        transform: translateX(100%);
+        box-shadow: inset 5px 0 20px rgba(0,0,0,0.5);
+    }
+    .curtain.closed .curtain-panel {
+        transform: translateX(0);
+    }
+
+    /* シークレットページ */
+    .secret-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 1s ease 1.5s, visibility 1s ease 1.5s;
+        z-index: 100;
+    }
+    .secret-overlay.visible {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .secret-content {
+        text-align: center;
+        color: #fff;
+        padding: 40px;
+        max-width: 600px;
+        position: relative;
+        animation: spotlight-flicker 10s infinite linear;
+    }
+    @keyframes spotlight-flicker {
+        0%, 100% { box-shadow: 0 0 150px 80px rgba(255, 235, 180, 0.15); }
+        50% { box-shadow: 0 0 165px 88px rgba(255, 242, 210, 0.19); }
+    }
+
+    .secret-content h2 {
+        font-family: 'Noto Serif JP', serif;
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--accent-gold);
+        margin-bottom: 20px;
+        text-shadow: 0 0 10px var(--accent-gold);
+    }
+
+    .secret-content p {
+        font-size: 16px; 
+        line-height: 1.8;
+        margin-bottom: 30px;
+        color: #f0f0f0;
+    }
+
+    .secret-content .prize-info {
+        border: 1px dashed var(--accent-gold);
+        padding: 20px;
+        background: rgba(212, 175, 55, 0.1);
+        border-radius: 5px;
+        font-size: 16px;
+        color: #fff;
+        font-weight: bold;
+    }
+    
     /* レスポンシブ対応 */
     @media (max-width: 768px) {
         body { padding: 20px 10px; }
         .container { padding: 25px; }
         h1 { font-size: 26px; }
         .info h2 { font-size: 20px; }
+        .info p { font-size: 14px; }
         .secret-content { width: 90%; padding: 30px; }
+        .secret-content h2 { font-size: 24px; }
+        .secret-content p { font-size: 16px; }
+        
+        /* スマートフォンでのスポットライト調整 */
+        @keyframes spotlight-roam {
+            0% {
+                left: 25%;
+                top: 20%;
+                width: 120px;
+                height: 120px;
+            }
+            15% {
+                left: 75%;
+                top: 15%;
+                width: 140px;
+                height: 140px;
+            }
+            30% {
+                left: 70%;
+                top: 60%;
+                width: 130px;
+                height: 130px;
+            }
+            45% {
+                left: 30%;
+                top: 70%;
+                width: 150px;
+                height: 150px;
+            }
+            60% {
+                left: 20%;
+                top: 25%;
+                width: 135px;
+                height: 135px;
+            }
+            75% {
+                left: 80%;
+                top: 50%;
+                width: 145px;
+                height: 145px;
+            }
+            90% {
+                left: 50%;
+                top: 80%;
+                width: 80px;
+                height: 80px;
+            }
+            100% {
+                left: 50%;
+                top: 80%;
+                width: 60px;
+                height: 60px;
+            }
+        }
+        
+        .spotlight-expand {
+            top: 80%;
+            width: 60px;
+            height: 60px;
+        }
+        
+        @keyframes spotlight-expand-animation {
+            0% {
+                opacity: 1;
+                width: 60px;
+                height: 60px;
+            }
+            50% {
+                opacity: 0.8;
+                width: 300px;
+                height: 300px;
+            }
+            100% {
+                opacity: 0;
+                width: 120vw;
+                height: 120vh;
+            }
+        }
+    }
+
+    /* 管理者用パネル */
+    .admin-panel {
+        position: fixed;
+        bottom: 10px;
+        right: 10px;
+        z-index: 101;
+    }
+    .admin-panel button {
+        background: #555;
+        color: white;
+        border: none;
+        padding: 6px 10px; 
+        cursor: pointer;
+        border-radius: 5px;
+        font-size: 11px;
+        opacity: 0;
+        transition: opacity 0.4s ease-in-out;
+    }
+    .admin-panel button:hover {
+        opacity: 1;
     }
 </style>
 </head>
 <body>
 
-<!-- SVGマスク定義 -->
-<svg width="0" height="0" style="position:absolute;">
-    <defs>
-        <radialGradient id="spotlight-gradient">
-            <stop offset="60%" stop-color="white" stop-opacity="1" />
-            <stop offset="100%" stop-color="white" stop-opacity="0" />
-        </radialGradient>
-        <mask id="spotlight-mask">
-            <rect width="100%" height="100%" fill="black"/>
-            <circle id="spotlight-circle" cx="-200" cy="-200" r="120" fill="url(#spotlight-gradient)"/>
-        </mask>
-    </defs>
-</svg>
+<!-- オープニング スポットライト演出 -->
+<div id="opening-overlay" class="opening-overlay">
+    <div class="spotlight"></div>
+    <div class="spotlight-expand"></div>
+</div>
 
-<!-- スポットライト演出用のオーバーレイ本体 -->
-<div id="spotlight-overlay"></div>
-
-<!-- メインコンテンツ -->
 <div class="container">
     <h1>動画公開ページ</h1>
     <div class="video-wrapper">
@@ -105,163 +487,115 @@
     </div>
 </div>
 
-<!-- 緞帳、シークレットページなど -->
-<div id="curtain" class="curtain"><div class="curtain-panel left"></div><div class="curtain-panel right"></div></div>
-<div id="secret-page" class="secret-overlay"><div class="secret-content"><h2 id="secret-title"></h2><p id="secret-message"></p><div id="prize-wrapper"></div></div></div>
-<div class="admin-panel"><button id="admin-reset-button">管理者用リセット</button></div>
+<!-- 緞帳 -->
+<div id="curtain" class="curtain">
+    <div class="curtain-panel left"></div>
+    <div class="curtain-panel right"></div>
+</div>
 
+<!-- シークレットページ -->
+<div id="secret-page" class="secret-overlay">
+    <div class="secret-content">
+        <h2 id="secret-title"></h2>
+        <p id="secret-message"></p>
+        <div id="prize-wrapper"></div>
+    </div>
+</div>
+
+<!-- 管理者用パネル -->
+<div class="admin-panel">
+    <button id="admin-reset-button">管理者用リセット</button>
+</div>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // GSAPライブラリを動的に読み込む
-    const script = document.createElement('script');
-    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js';
-    document.head.appendChild(script);
+    const openingOverlay = document.getElementById('opening-overlay');
+    const trigger = document.getElementById('secret-trigger');
+    const curtain = document.getElementById('curtain');
+    const secretPage = document.getElementById('secret-page');
+    let clickCount = 0;
+    const requiredClicks = 5;
 
-    // GSAPの読み込みが完了したらアニメーションを開始
-    script.onload = () => {
-        const overlay = document.getElementById('spotlight-overlay');
-        const spotlightCircle = document.getElementById('spotlight-circle');
-        const mainContainer = document.querySelector('.container');
-        const videoWrapper = document.querySelector('.video-wrapper');
-        const secretTrigger = document.getElementById('secret-trigger');
+    const GAS_URL = "";
+    const hasVisitedKey = 'engeki5-has-attempted';
 
-        if (!overlay || !spotlightCircle || !mainContainer || !videoWrapper || !secretTrigger) {
-            console.error('演出に必要な要素が見つかりません。');
-            if(mainContainer) mainContainer.style.opacity = 1;
-            if(overlay) overlay.remove();
-            return;
-        }
+    // オープニング演出の制御
+    setTimeout(() => {
+        openingOverlay.classList.add('fade-out');
+    }, 6000);
 
-        // ★★★ アニメーション実行関数 (★★実行されない問題修正★★) ★★★
-        function runSpotlightAnimation() {
-            // ターゲットの座標を計算（アニメーション実行直前に計算することで、レスポンシブ対応）
-            const videoRect = videoWrapper.getBoundingClientRect();
-            const triggerRect = secretTrigger.getBoundingClientRect();
-            const videoTarget = { x: videoRect.left + videoRect.width / 2, y: videoRect.top + videoRect.height / 2 };
-            const triggerTarget = { x: triggerRect.left + triggerRect.width / 2, y: triggerRect.top + triggerRect.height / 2 };
-            const randomTarget = { x: Math.random() * window.innerWidth, y: (Math.random() * 0.4 + 0.3) * window.innerHeight }; // Y軸を中央付近に制限
+    // ギミックを発動させる共通関数
+    function activateGimmick() {
+        clickCount++;
+        if (clickCount >= requiredClicks) {
+            clickCount = 0;
 
-            // GSAPタイムラインでアニメーションを厳密に制御
-            const tl = gsap.timeline();
-
-            tl.to(mainContainer, { opacity: 1, duration: 0.1 })
-              .to(spotlightCircle, {
-                  attr: { cx: videoTarget.x, cy: videoTarget.y },
-                  duration: 2.0,
-                  ease: "power1.inOut"
-              }, 0.5) // 0.5秒後に開始
-              .to(spotlightCircle, {
-                  attr: { cx: randomTarget.x, cy: randomTarget.y },
-                  duration: 2.5,
-                  ease: "sine.inOut"
-              }, "+=1.0") // 前のアニメーションが終わって1秒後に開始
-              .to(spotlightCircle, {
-                  attr: { cx: triggerTarget.x, cy: triggerTarget.y },
-                  duration: 2.0,
-                  ease: "power2.inOut"
-              }, "+=0.5") // 前のアニメーションが終わって0.5秒後に開始
-              .to(spotlightCircle, {
-                  attr: { r: Math.hypot(window.innerWidth, window.innerHeight) }, // 画面対角線より大きく
-                  duration: 2.5,
-                  ease: "power3.in",
-                  onStart: () => {
-                      gsap.to(overlay, { opacity: 0, duration: 2.8, ease: "power3.in" });
-                  }
-              }, "+=1.5") // 前のアニメーションが終わって1.5秒後に開始
-              .to([overlay, document.querySelector('svg')], {
-                  duration: 0.1,
-                  onComplete: () => {
-                      // 演出完了後、不要な要素をDOMから削除してメモリを解放
-                      const svgElement = document.querySelector('svg');
-                      if (overlay) overlay.remove();
-                      if (svgElement) svgElement.remove();
-                  }
-              });
-        }
-        
-        // ページ読み込み完了後、少し待ってからアニメーションを開始
-        //（画像の描画などを待つため）
-        setTimeout(runSpotlightAnimation, 100);
-
-
-        // === ここから下は元のギミック処理（変更なし） ===
-        const trigger = document.getElementById('secret-trigger');
-        const curtain = document.getElementById('curtain');
-        const secretPage = document.getElementById('secret-page');
-        let clickCount = 0;
-        const requiredClicks = 5;
-        // GAS_URLはご自身のものに差し替えてください
-        const GAS_URL = ""; // 例： const GAS_URL = "https://script.google.com/macros/s/AKfycbwXXXX/exec";
-        const hasVisitedKey = 'engeki5-has-attempted';
-
-        function activateGimmick() {
-            clickCount++;
-            if (clickCount >= requiredClicks) {
-                clickCount = 0;
-                if (sessionStorage.getItem(hasVisitedKey)) {
-                    alert('本日分は既にご応募いただいております。'); return;
-                }
-                curtain.classList.add('closed');
-                setTimeout(() => {
-                    // fetchのオプションを修正
-                    fetch(GAS_URL, { 
-                        method: 'POST', 
-                        mode: 'no-cors', // CORSエラーを回避する場合
-                        redirect: "follow",
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({}) // 空のオブジェクトでもbodyは必要
-                    })
-                    .then(response => {
-                        // no-corsモードではレスポンスボディを読めないため、成功したと仮定して処理を進める
-                        // もし戻り値が必要な場合は、GAS側でCORS設定が必要
-                        console.log('Request sent to GAS');
-                        sessionStorage.setItem(hasVisitedKey, 'true');
-                        // ここでは仮に成功時の表示を固定で行います。
-                        // 実際の当選番号などはGASからの戻り値が必要になります。
-                        document.getElementById('secret-title').textContent = '特別なご招待状';
-                        document.getElementById('secret-message').innerHTML = `おめでとうございます。<br>あなたは特別な招待客として認められました。`;
-                        document.getElementById('prize-wrapper').innerHTML = '<div class="prize-info">第5回なずな演劇祭 本部にて、この画面をスタッフにご提示ください。<br>ささやかな記念品をお渡しいたします。</div>';
-                        secretPage.classList.add('visible');
-                    })
-                    .catch(error => {
-                        console.error('GAS Fetch Error:', error);
-                        // エラー時もユーザーには何か表示する
-                        document.getElementById('secret-title').textContent = 'エラー';
-                        document.getElementById('secret-message').innerHTML = '通信中にエラーが発生しました。<br>時間をおいて再度お試しください。';
-                        document.getElementById('prize-wrapper').innerHTML = '';
-                        secretPage.classList.add('visible');
-                    }).finally(() => {
-                        // どちらの場合でもカーテンは開ける
-                        // ただし、成功時はsecretPageが表示されるので、閉じるタイミングを調整
-                        setTimeout(() => curtain.classList.remove('closed'), 500); 
-                    });
-                }, 1500);
+            if (sessionStorage.getItem(hasVisitedKey)) {
+                alert('本日分は既にご応募いただいております。');
+                return;
             }
-        }
 
-        trigger.addEventListener('click', activateGimmick);
-        trigger.addEventListener('touchstart', (e) => { e.preventDefault(); activateGimmick(); });
-        
-        const adminButton = document.getElementById('admin-reset-button');
-        if(adminButton) {
-            adminButton.addEventListener('click', () => {
-                const password = prompt('管理者用パスワードを入力してください:');
-                if (password === 'nazuna-engeki-5') {
-                    if (confirm('【管理者向け操作】\n\nスプレッドシートの記録は手動で削除してください。\n\nこのページの閲覧記録のみクリアしますか？')) {
-                        sessionStorage.removeItem(hasVisitedKey);
-                        alert('閲覧記録をクリアしました。');
-                        location.reload();
+            curtain.classList.add('closed');
+
+            setTimeout(() => {
+                fetch(GAS_URL, {
+                    method: 'POST',
+                    redirect: "follow",
+                    muteHttpExceptions: true,
+                    contentType: 'application/json',
+                })
+                .then(response => response.json())
+                .then(data => {
+                    sessionStorage.setItem(hasVisitedKey, 'true');
+                    if (data.status === 'success') {
+                        document.getElementById('secret-title').textContent = '特別なご招待状';
+                        document.getElementById('secret-message').innerHTML = `おめでとうございます。<br>あなたは ${data.winnerNumber} 番目の特別な招待客として認められました。`;
+                        document.getElementById('prize-wrapper').innerHTML = '<div class="prize-info">第5回なずな演劇祭 本部にて、この画面をスタッフにご提示ください。<br>ささやかな記念品をお渡しいたします。</div>';
+                    } else {
+                        document.getElementById('secret-title').textContent = '終演';
+                        document.getElementById('secret-message').innerHTML = '誠に残念ながら、<br>本公演の特別ご招待は満席となりました。<br>またの機会のご来場を心よりお待ちしております。';
+                        document.getElementById('prize-wrapper').innerHTML = '';
                     }
-                } else if (password) { // passwordがあり、かつ間違っている場合
-                    alert('パスワードが違います。');
-                }
-            });
+                    secretPage.classList.add('visible');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('エラーが発生しました。時間をおいて再度お試しください。');
+                    curtain.classList.remove('closed');
+                });
+            }, 1500);
         }
-    };
+    }
+
+    // PC用のclickイベントリスナー
+    trigger.addEventListener('click', activateGimmick);
+    
+    // スマートフォン用のtouchstartイベントリスナー
+    trigger.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        activateGimmick();
+    });
+
+    // 管理者用リセット機能
+    document.getElementById('admin-reset-button').addEventListener('click', () => {
+        const password = prompt('管理者用パスワードを入力してください:');
+        if (password === 'nazuna-engeki-5') {
+            const confirmReset = confirm(
+                '【管理者向け操作】\n\n' +
+                'スプレッドシートの当選者記録（A2以降の行）は手動で削除してください。\n\n' +
+                'このページの閲覧者記録のみをクリアしますか？'
+            );
+            if (confirmReset) {
+                sessionStorage.removeItem(hasVisitedKey);
+                alert('閲覧者記録をクリアしました。ページをリロードすると、再度ギミックを試すことができます。');
+                location.reload();
+            }
+        } else if (password !== null && password !== "") {
+            alert('パスワードが違います。');
+        }
+    });
 });
 </script>
+
 </body>
 </html>
