@@ -1,0 +1,155 @@
+/* 基本設定とフォント */
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    font-family: 'Kiwi Maru', 'sans-serif';
+    color: white;
+    background-color: #1a2836;
+}
+
+/* ローディング画面 */
+#loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #1a2836;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    transition: opacity 0.5s;
+}
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+#loader p {
+    margin-top: 20px;
+    font-size: 1rem;
+    letter-spacing: 0.1em;
+}
+
+/* シーンの基本設定と切り替え */
+.scene {
+    display: none; /* 初期状態では非表示 */
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+.scene.active {
+    display: flex; /* アクティブなシーンだけ表示 */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    opacity: 1;
+}
+
+/* --- 第一幕 --- */
+#scene-1 {
+    background-image: url('https://images.unsplash.com/photo-1577896851231-70ef18881754?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=3600');
+    transition: background-image 1s ease-in-out;
+}
+#scene-1.night {
+    background-image: url('https://images.unsplash.com/photo-1505322264936-b1a539598d12?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=3600');
+}
+.window-overlay {
+    position: absolute;
+    top: 15%; left: 10%;
+    width: 30%; height: 50%;
+    cursor: pointer;
+}
+.chalkboard {
+    width: 90vw;
+    max-width: 1000px;
+    height: 70vh;
+    background-image: url('https://i.imgur.com/kYqL4O8.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+}
+#chalk-container {
+    position: relative;
+    bottom: 10%;
+    cursor: pointer;
+    text-align: center;
+}
+#chalk-lottie {
+    width: 100px;
+    height: 100px;
+}
+.chalk-message {
+    font-size: 1rem;
+    margin-top: -15px;
+    opacity: 0.7;
+}
+
+/* --- 第二幕 --- */
+#scene-2 {
+    background-color: #1a2836;
+}
+.title-container {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 10;
+    opacity: 0;
+}
+.main-title { font-size: 7rem; margin: 0; letter-spacing: 0.2em; font-weight: 500; }
+.sub-title { font-size: 3rem; margin: 0; letter-spacing: 0.1em; font-weight: 500; }
+#lottie-animation {
+    width: 100%; height: 100%;
+    position: absolute;
+    transform: scale(1.5);
+}
+#skip-button {
+    position: absolute;
+    bottom: 20px; right: 20px;
+    background: none; border: 1px solid white;
+    color: white; padding: 8px 16px; cursor: pointer;
+    opacity: 0.5; transition: opacity 0.3s; z-index: 20;
+}
+#skip-button:hover { opacity: 1; }
+
+/* --- 第三幕 --- */
+/* このシーンは背景色だけあればOK */
+#scene-3 {
+    background-color: #1a2836;
+}
+.curtain-left, .curtain-right {
+    position: fixed;
+    top: 0;
+    width: 50vw;
+    height: 100vh;
+    background-color: #8B0000; /* 深い赤色 (緞帳の色) */
+    z-index: 50; /* 最前面に */
+}
+.curtain-left { left: 0; }
+.curtain-right { right: 0; }
+
+/* --- レスポンシブ対応 (スマホ用) --- */
+@media (max-width: 768px) {
+    .main-title { font-size: 4rem; }
+    .sub-title { font-size: 1.8rem; }
+    .main-nav a { font-size: 1.5rem; }
+}
