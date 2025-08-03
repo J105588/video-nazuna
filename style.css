@@ -21,7 +21,7 @@ html, body {
     z-index: 100;
 }
 
-/* --- タイトル関連 (変更なし) --- */
+/* --- タイトル関連 --- */
 .title-block { position: relative; display: flex; flex-direction: column; align-items: center; }
 .title-box { position: relative; display: inline-block; }
 .glow {
@@ -35,7 +35,7 @@ html, body {
     z-index: 1;
 }
 
-/* --- メイン・サブタイトル (変更なし) --- */
+/* --- メイン・サブタイトル --- */
 .main-title {
     font-family: 'Montserrat', sans-serif;
     font-weight: 900;
@@ -55,18 +55,17 @@ html, body {
     color: #34f3ff;
 }
 .sub-title {
-    font-family: 'Playfair Display', serif;
-    font-style: italic;
-    font-weight: 400;
-    font-size: clamp(1.5em, 5vw, 2.5em);
+    font-family: 'Dancing Script', cursive; /* ご指定のフォントに変更 */
+    font-size: clamp(1.8em, 7vw, 3.2em);
     color: #ffe082;
     text-shadow: 0 0 10px #664400;
     margin-top: 0.5em;
     opacity: 0;
     position: relative; z-index: 2;
+    text-align: center;
 }
 
-/* --- 小ネタ：舞台裏モーダル (変更なし) --- */
+/* --- 小ネタ：舞台裏モーダル --- */
 .backstage-modal {
     position: fixed;
     top: 0; left: 0;
@@ -99,7 +98,7 @@ html, body {
     display: block;
 }
 .photo-container p {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Dancing Script', cursive;
     font-style: italic;
     text-align: right;
     color: #ccc;
