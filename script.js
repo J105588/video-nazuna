@@ -13,7 +13,6 @@ const tl = gsap.timeline({
             opacity: 0,
             ease: 'power2.in',
             onComplete: () => {
-                // ★★ ここで遷移先のファイルを指定 ★★
                 window.location.href = 'index/video.html';
             }
         });
@@ -35,7 +34,11 @@ tl.to(subTitle, { duration: 1.5, opacity: 1, ease: 'power2.out' }, 1.8);
 // [SEQ 4] ページ遷移前の待機時間
 tl.to({}, {duration: 2});
 
-// ページが読み込まれたら、舞台裏のセットアップを実行
+
+// ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+// ★★★ ここが最重要ポイントです！★★★
+// ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+// ページが読み込まれたら（HTMLの準備が完了したら）、舞台裏のセットアップを実行
 document.addEventListener('DOMContentLoaded', () => {
     // メインタイムライン(tl)を渡して、一時停止・再開できるようにする
     setupBackstage(tl);
