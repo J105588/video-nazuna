@@ -5,7 +5,7 @@
 <title>試験公開_動画公開ページ</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="" type="image/png">
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<!-- スポットライト関連のhtml2canvas.min.jsを削除 -->
 <style>
     /* フォントのインポート */
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700&family=Noto+Serif+JP:wght@400;700&display=swap');
@@ -37,33 +37,7 @@
         overflow: hidden; 
     }
 
-    /* スポットライト マスクレイヤー */
-    #spotlight-mask-layer {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 999;
-        pointer-events: none;
-        background-size: cover;
-        background-position: center center;
-        opacity: 1;
-        transition: opacity 1s ease-out;
-        display: none;
-    }
-
-    /* 円形画像マスクの適用 */
-    .mask-applied {
-        -webkit-mask-image: url('circle-mask.png'); /* あなたの円形画像 */
-        mask-image: url('circle-mask.png');
-        -webkit-mask-size: 200px 200px;
-        mask-size: 200px 200px;
-        -webkit-mask-repeat: no-repeat;
-        mask-repeat: no-repeat;
-        -webkit-mask-position: 20% 30%; /* 初期位置 */
-        mask-position: 20% 30%;
-    }
+    /* スポットライト関連のCSSを全て削除 */
 
     /* メインコンテンツのコンテナ */
     .container {
@@ -155,21 +129,7 @@
         color: #fff;
     }
 
-    /* スポットライトが「5」の上にある時の特別エフェクト */
-    #secret-trigger.spotlight-focus {
-        color: var(--accent-gold) !important;
-        text-shadow: 0 0 15px var(--accent-gold), 0 0 25px rgba(212, 175, 55, 0.8) !important;
-        animation: secret-pulse 1.5s ease-in-out infinite;
-    }
-
-    @keyframes secret-pulse {
-        0%, 100% {
-            text-shadow: 0 0 15px var(--accent-gold), 0 0 25px rgba(212, 175, 55, 0.8);
-        }
-        50% {
-            text-shadow: 0 0 25px var(--accent-gold), 0 0 40px rgba(212, 175, 55, 1), 0 0 50px rgba(255, 255, 255, 0.5);
-        }
-    }
+    /* スポットライト関連の#secret-trigger.spotlight-focusと@keyframes secret-pulseを削除 */
 
     /* その他のスタイル（緞帳、シークレットページなど）は元のコードと同じ */
     .curtain {
@@ -279,8 +239,7 @@
 </head>
 <body>
 
-<!-- スポットライト マスクレイヤー -->
-<div id="spotlight-mask-layer"></div>
+<!-- スポットライト関連の<div id="spotlight-mask-layer"></div>を削除 -->
 
 <div class="container">
     <h1>動画公開ページ</h1>
@@ -318,148 +277,6 @@
 </div>
 
 <script>
-// スポットライト演出クラス
-class CircleMaskSpotlight {
-    constructor() {
-        this.maskLayer = document.getElementById('spotlight-mask-layer');
-        this.secretTrigger = document.getElementById('secret-trigger');
-        this.init();
-    }
-
-    async init() {
-        // ページ読み込み完了を待つ
-        await this.waitForPageLoad();
-        
-        // サイト全体をキャプチャ
-        const canvas = await html2canvas(document.body, {
-            backgroundColor: null,
-            scale: 1,
-            useCORS: true
-        });
-
-        // キャプチャした画像を背景に設定
-        this.maskLayer.style.backgroundImage = `url(${canvas.toDataURL()})`;
-        this.maskLayer.classList.add('mask-applied');
-        this.maskLayer.style.display = 'block';
-
-        // アニメーション開始
-        this.startAnimation();
-    }
-
-    waitForPageLoad() {
-        return new Promise(resolve => {
-            if (document.readyState === 'complete') {
-                setTimeout(resolve, 500); // フォント等の読み込み待ち
-            } else {
-                window.addEventListener('load', () => {
-                    setTimeout(resolve, 500);
-                });
-            }
-        });
-    }
-
-    // 「5」の位置を取得
-    getFivePosition() {
-        const rect = this.secretTrigger.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-        
-        return {
-            x: (centerX / window.innerWidth) * 100,
-            y: (centerY / window.innerHeight) * 100
-        };
-    }
-
-    startAnimation() {
-        const fivePos = this.getFivePosition();
-        
-        // スポットライトの移動経路
-        const waypoints = [
-            { x: 20, y: 30, duration: 0 },      // 開始位置
-            { x: 75, y: 20, duration: 800 },    // 右上へ
-            { x: 70, y: 65, duration: 1500 },   // 右下へ
-            { x: 25, y: 75, duration: 2200 },   // 左下へ
-            { x: 15, y: 15, duration: 2800 },   // 左上へ
-            { x: 80, y: 50, duration: 3400 },   // 右中央へ
-            { x: 60, y: 35, duration: 4000 },   // 中央上へ
-            { x: fivePos.x, y: fivePos.y, duration: 4800 }, // 「5」へ移動
-            { x: fivePos.x, y: fivePos.y, duration: 6500 }, // 「5」で長時間停止
-            { x: fivePos.x, y: fivePos.y, duration: 7000 }  // 終了準備
-        ];
-
-        this.animateWaypoints(waypoints, 0);
-    }
-
-    animateWaypoints(waypoints, index) {
-        if (index >= waypoints.length - 1) {
-            this.finishAnimation();
-            return;
-        }
-
-        const current = waypoints[index];
-        const next = waypoints[index + 1];
-        
-        // 「5」の上にいる間は特別エフェクト
-        if (index >= 7 && index <= 9) {
-            this.secretTrigger.classList.add('spotlight-focus');
-        } else {
-            this.secretTrigger.classList.remove('spotlight-focus');
-        }
-
-        // 現在の位置から次の位置へアニメーション
-        this.animateToPosition(current, next, () => {
-            this.animateWaypoints(waypoints, index + 1);
-        });
-    }
-
-    animateToPosition(from, to, callback) {
-        const duration = to.duration - from.duration;
-        const startTime = performance.now();
-        
-        const animate = (currentTime) => {
-            const elapsed = currentTime - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            
-            // イージング関数（ease-in-out）
-            const easeProgress = progress < 0.5 
-                ? 2 * progress * progress 
-                : -1 + (4 - 2 * progress) * progress;
-            
-            // 位置を補間
-            const x = from.x + (to.x - from.x) * easeProgress;
-            const y = from.y + (to.y - from.y) * easeProgress;
-            
-            // マスクの位置を更新
-            this.maskLayer.style.webkitMaskPosition = `${x}% ${y}%`;
-            this.maskLayer.style.maskPosition = `${x}% ${y}%`;
-            
-            if (progress < 1) {
-                requestAnimationFrame(animate);
-            } else {
-                callback();
-            }
-        };
-        
-        requestAnimationFrame(animate);
-    }
-
-    finishAnimation() {
-        // マスクサイズを拡大して全体を表示
-        this.maskLayer.style.webkitMaskSize = '300vw 300vh';
-        this.maskLayer.style.maskSize = '300vw 300vh';
-        
-        // フェードアウト
-        setTimeout(() => {
-            this.maskLayer.style.opacity = '0';
-            this.secretTrigger.classList.remove('spotlight-focus');
-            
-            setTimeout(() => {
-                this.maskLayer.style.display = 'none';
-            }, 1000);
-        }, 1000);
-    }
-}
-
 document.addEventListener('DOMContentLoaded', () => {
     const trigger = document.getElementById('secret-trigger');
     const curtain = document.getElementById('curtain');
@@ -470,8 +287,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const GAS_URL = "https://script.google.com/macros/s/AKfycbwqB0kXqVzwtIYsLQ9HSrCz27MwwN_jzyW8C_T0tqQHO9VK58LgRTWULF83wocBycDp/exec";
     const hasVisitedKey = 'engeki5-has-attempted';
 
-    // スポットライト演出を開始
-    new CircleMaskSpotlight();
+    // スポットライト関連のJavaScript(CircleMaskSpotlightクラスなど)を全て削除
 
     // ギミック機能（元のコードと同じ）
     function activateGimmick() {
