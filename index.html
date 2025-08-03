@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&family=Montserrat:wght@900&display=swap" rel="stylesheet">
     
+    <!-- 外部CSSファイルを読み込み -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -29,27 +30,25 @@
     <!-- 小ネタ：舞台裏モーダル -->
     <div class="backstage-modal" id="backstageModal">
         <div class="photo-container">
-            <!-- 自分のPCにある画像を使う場合は "images/my-photo.jpg" のように指定 -->
-            <img src="https://images.unsplash.com/photo-1542887841-8c83a86720e5?q=85&fm=jpg&crop=entropy&cs=srgb" alt="舞台裏の風景">
+            <!-- ↓↓↓ 画像を変更する場合はこの行の src="..." を書き換えます ↓↓↓ -->
+            <img src="images/my-backstage.jpg" alt="舞台裏の風景">
             <p>Rehearsal風景</p>
         </div>
         <div class="close-button" id="closeModal">×</div>
     </div>
 
-    <!-- JavaScriptライブラリ (これはこのまま) -->
+    <!-- JavaScriptライブラリ -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 
-    <!-- ★★★ 自作JavaScriptをここに直接記述 ★★★ -->
+    <!-- ★★★ 自作JavaScript（IDの指定ミスを修正済み） ★★★ -->
     <script>
-        // --- ここから script.js の内容 ---
+        // --- メインアニメーション部分 ---
 
-        // DOM要素を先に取得
         const opWrapper = document.getElementById('opWrapper');
         const glow = document.getElementById('glow');
         const mainTitle = document.getElementById('mainTitle');
         const subTitle = document.getElementById('subTitle');
 
-        // メインのアニメーションタイムライン
         const tl = gsap.timeline({
             onComplete: () => {
                 gsap.to(opWrapper, {
@@ -72,25 +71,23 @@
         tl.to({}, {duration: 2});
 
 
-        // --- ここから backstage.js の内容 ---
+        // --- 舞台裏モーダル機能部分 ---
 
-        // HTMLの準備が完了したら実行する、というおまじない
         document.addEventListener('DOMContentLoaded', () => {
 
-            // モーダル機能の要素を取得
             const backstageTrigger = document.getElementById('backstage-trigger');
-            const backstageModal = document.getElementById('backstage-modal'); // IDを修正
+            // ▼▼▼【修正点】ここのIDを 'backstageModal' に修正しました ▼▼▼
+            const backstageModal = document.getElementById('backstageModal'); 
             const closeModal = document.getElementById('closeModal');
 
-            // 要素が見つかるか最終チェック
             if (!backstageTrigger || !backstageModal || !closeModal) {
-                console.error('致命的エラー: HTML要素の取得に失敗しました。ID名を確認してください。');
-                return; // 処理を中断
+                console.error('致命的エラー: 舞台裏モーダルのHTML要素取得に失敗しました。ID名を確認してください。');
+                return;
             }
 
             // 開く処理
             backstageTrigger.addEventListener('click', () => {
-                tl.pause(); // メインアニメーションを一時停止
+                tl.pause();
                 backstageModal.style.display = 'flex';
                 gsap.to(backstageModal, { duration: 0.3, opacity: 1 });
             });
@@ -102,7 +99,7 @@
                     opacity: 0,
                     onComplete: () => {
                         backstageModal.style.display = 'none';
-                        tl.resume(); // メインアニメーションを再開
+                        tl.resume();
                     }
                 });
             });
