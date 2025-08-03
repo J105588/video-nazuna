@@ -1,5 +1,4 @@
-
-/* 基本設定 */
+/* style.css */
 body, html {
     margin: 0;
     padding: 0;
@@ -11,88 +10,61 @@ body, html {
     font-family: 'Helvetica Neue', Arial, sans-serif;
 }
 
-/* オープニング画面全体 */
 .op-wrapper {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: flex; justify-content: center; align-items: center;
 }
 
-/* タイトルブロック */
-.title-block {
-    text-align: center;
-}
+.title-block { text-align: center; }
+.title-box { position: relative; overflow: hidden; }
 
-.title-box {
-    position: relative; /* 光沢エフェクトの基準位置 */
-    overflow: hidden; /* はみ出した光沢を隠す */
-}
-
-/* メインタイトル */
 .main-title {
     font-family: 'Montserrat', sans-serif;
     font-weight: 900;
     font-size: clamp(40px, 10vw, 120px);
     letter-spacing: 0.1em;
-    opacity: 0; /* 初期状態は透明 */
+    opacity: 0;
 }
 
-/* 小ネタ発動のトリガー ("A"の文字) */
 #backstage-trigger {
     cursor: pointer;
     display: inline-block;
-}
-#backstage-trigger:hover {
-    color: #ffdd00; /* ホバー時に少し色が変わる */
-    transform: scale(1.1);
     transition: color 0.2s, transform 0.2s;
 }
+#backstage-trigger:hover {
+    color: #ffdd00;
+    transform: scale(1.1);
+}
 
-/* サブタイトル */
 .sub-title {
     font-family: 'Dancing Script', cursive;
     font-size: clamp(24px, 5vw, 60px);
     margin-top: 10px;
-    opacity: 0; /* 初期状態は透明 */
+    opacity: 0;
 }
 
-/* 光沢エフェクト */
 .glow {
-    position: absolute;
-    top: -50%;
-    left: 0;
-    width: 30%;
-    height: 200%;
-    background: linear-gradient(to right, 
-        rgba(255,255,255,0) 0%, 
-        rgba(255,255,255,0.6) 50%, 
-        rgba(255,255,255,0) 100%
-    );
+    position: absolute; top: -50%; left: 0;
+    width: 30%; height: 200%;
+    background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0) 100%);
     transform: skewX(-25deg);
-    opacity: 0; /* 初期状態は透明 */
+    opacity: 0;
 }
 
-/* --- 舞台裏モーダル関連のスタイル --- */
 .backstage-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.85); /* 半透明の黒い背景 */
-    display: none; /* 初期状態は非表示 */
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    display: none;
+    opacity: 0;
     justify-content: center;
     align-items: center;
     z-index: 1000;
-    opacity: 0; /* 初期状態は透明 */
 }
 
 .photo-container {
+    position: relative;
     text-align: center;
     color: #fff;
 }
@@ -102,22 +74,20 @@ body, html {
     max-height: 70vh;
     border: 3px solid #fff;
     border-radius: 5px;
+    object-fit: contain;
 }
 
 .photo-container p {
     font-family: 'Dancing Script', cursive;
-    font-size: 24px;
+    font-size: clamp(18px, 4vw, 24px);
     margin-top: 15px;
 }
 
 .close-button {
-    position: absolute;
-    top: 20px;
-    right: 30px;
+    position: absolute; top: 20px; right: 30px;
     font-size: 40px;
     color: #fff;
     cursor: pointer;
+    transition: color 0.2s;
 }
-.close-button:hover {
-    color: #ffdd00;
-}
+.close-button:hover { color: #ffdd00; }
