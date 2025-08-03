@@ -3,26 +3,25 @@ html, body {
     height: 100%;
     margin: 0; padding: 0;
     background: #080f13;
-    overflow-x: hidden; /* 横スクロールを禁止 */
-    overflow-y: auto; /* 縦スクロールは許可 */
+    overflow: hidden; /* スクロールを完全に無効化 */
 }
 
 /* --- ラッパー --- */
 .op-wrapper {
     width: 100vw;
-    height: 100vh; /* 画面の高さに固定 */
+    height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     box-sizing: border-box;
-    position: fixed; /* スクロールしても追従しないように */
+    position: fixed;
     top: 0; left: 0;
     background: #080f13;
     z-index: 100;
 }
 
-/* --- タイトル関連 --- */
+/* --- タイトル関連 (変更なし) --- */
 .title-block { position: relative; display: flex; flex-direction: column; align-items: center; }
 .title-box { position: relative; display: inline-block; }
 .glow {
@@ -36,7 +35,7 @@ html, body {
     z-index: 1;
 }
 
-/* --- メイン・サブタイトル --- */
+/* --- メイン・サブタイトル (変更なし) --- */
 .main-title {
     font-family: 'Montserrat', sans-serif;
     font-weight: 900;
@@ -49,11 +48,11 @@ html, body {
     position: relative; z-index: 2;
 }
 #backstage-trigger {
-    cursor: pointer; /* カーソルをポインターに */
+    cursor: pointer;
     transition: color 0.3s;
 }
 #backstage-trigger:hover {
-    color: #34f3ff; /* ホバー時に色が変わる */
+    color: #34f3ff;
 }
 .sub-title {
     font-family: 'Playfair Display', serif;
@@ -67,31 +66,7 @@ html, body {
     position: relative; z-index: 2;
 }
 
-/* --- 下部への誘導メッセージ --- */
-.scroll-tip {
-    position: absolute;
-    bottom: 5vh;
-    font-family: 'Montserrat', sans-serif;
-    font-size: clamp(0.9em, 2vw, 1.1em);
-    color: #8ff;
-    letter-spacing: 0.1em;
-    opacity: 0;
-    user-select: none;
-}
-.arrow {
-    width: 1px;
-    height: 40px;
-    background: linear-gradient(#8ff, transparent);
-    margin: 10px auto 0;
-    animation: stretch 1.8s infinite ease-out;
-}
-@keyframes stretch {
-    0% { transform: scaleY(0); transform-origin: top; }
-    50% { transform: scaleY(1); transform-origin: top; }
-    100% { transform: scaleY(0); transform-origin: bottom; }
-}
-
-/* --- 小ネタ：舞台裏モーダル --- */
+/* --- 小ネタ：舞台裏モーダル (変更なし) --- */
 .backstage-modal {
     position: fixed;
     top: 0; left: 0;
@@ -103,7 +78,7 @@ html, body {
     align-items: center;
     z-index: 999;
     opacity: 0;
-    pointer-events: none; /* 初期状態ではクリックできない */
+    pointer-events: none;
     transition: opacity 0.5s;
 }
 .backstage-modal.is-active {
@@ -114,7 +89,7 @@ html, body {
     position: relative;
     width: 90%;
     max-width: 600px;
-    filter: grayscale(1) contrast(1.1); /* モノクロでコントラスト強め */
+    filter: grayscale(1) contrast(1.1);
     border: 1px solid #444;
     padding: 10px;
     background: #111;
