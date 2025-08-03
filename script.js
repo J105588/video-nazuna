@@ -35,9 +35,8 @@ tl.to(subTitle, { duration: 1.5, opacity: 1, ease: 'power2.out' }, 1.8);
 // [SEQ 4] ページ遷移前の待機時間
 tl.to({}, {duration: 2});
 
-// --- ★★★ ここが変更点 ★★★ ---
 // ページが読み込まれたら、舞台裏のセットアップを実行
-// メインタイムライン(tl)を渡して、一時停止・再開できるようにする
 document.addEventListener('DOMContentLoaded', () => {
+    // メインタイムライン(tl)を渡して、一時停止・再開できるようにする
     setupBackstage(tl);
 });
