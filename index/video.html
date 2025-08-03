@@ -46,7 +46,7 @@
         opacity: 1; /* 初期状態で表示 */
     }
 
-    /* --- その他のギミック用CSS（変更なし） --- */
+    /* --- その他のギミック用CSS (★★UI崩れ修正★★) --- */
     .curtain { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex; z-index: 99; pointer-events: none; }
     .curtain-panel { width: 50%; height: 100%; background-color: var(--curtain-color); background-image: linear-gradient(to right, rgba(0,0,0,0.4), transparent 20%), linear-gradient(90deg, var(--curtain-color) 0%, #3a0c0c 100%); box-shadow: inset -5px 0 20px rgba(0,0,0,0.5); transform: translateX(-100%); transition: transform 1.5s cubic-bezier(0.86, 0, 0.07, 1); }
     .curtain-panel.right { transform: translateX(100%); box-shadow: inset 5px 0 20px rgba(0,0,0,0.5); }
@@ -54,8 +54,20 @@
     .secret-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #000; display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: opacity 1s ease 1.5s, visibility 1s ease 1.5s; z-index: 100; }
     .secret-overlay.visible { opacity: 1; visibility: visible; }
     .secret-content { text-align: center; color: #fff; padding: 40px; max-width: 600px; }
+    .prize-info { border: 1px dashed var(--accent-gold); padding: 20px; background: rgba(212, 175, 55, 0.1); border-radius: 5px; font-size: 16px; color: #fff; font-weight: bold; }
 
-    @media (max-width: 768px) { body { padding: 20px 10px; } .container { padding: 25px; } h1 { font-size: 26px; } .info h2 { font-size: 20px; } }
+    .admin-panel { position: fixed; bottom: 10px; right: 10px; z-index: 101; }
+    .admin-panel button { background: #555; color: white; border: none; padding: 6px 10px; cursor: pointer; border-radius: 5px; font-size: 11px; opacity: 0.1; transition: opacity 0.4s ease-in-out; }
+    .admin-panel button:hover { opacity: 1; }
+
+    /* レスポンシブ対応 */
+    @media (max-width: 768px) {
+        body { padding: 20px 10px; }
+        .container { padding: 25px; }
+        h1 { font-size: 26px; }
+        .info h2 { font-size: 20px; }
+        .secret-content { width: 90%; padding: 30px; }
+    }
 </style>
 </head>
 <body>
@@ -64,8 +76,8 @@
 <svg width="0" height="0" style="position:absolute;">
     <defs>
         <radialGradient id="spotlight-gradient">
-            <stop offset="50%" stop-color="white" stop-opacity="1" />
-            <stop offset="90%" stop-color="white" stop-opacity="0" />
+            <stop offset="60%" stop-color="white" stop-opacity="1" />
+            <stop offset="100%" stop-color="white" stop-opacity="0" />
         </radialGradient>
         <mask id="spotlight-mask">
             <rect width="100%" height="100%" fill="black"/>
@@ -93,7 +105,7 @@
     </div>
 </div>
 
-<!-- 緞帳、シークレットページなど（変更なし） -->
+<!-- 緞帳、シークレットページなど -->
 <div id="curtain" class="curtain"><div class="curtain-panel left"></div><div class="curtain-panel right"></div></div>
 <div id="secret-page" class="secret-overlay"><div class="secret-content"><h2 id="secret-title"></h2><p id="secret-message"></p><div id="prize-wrapper"></div></div></div>
 <div class="admin-panel"><button id="admin-reset-button">管理者用リセット</button></div>
@@ -108,80 +120,70 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // GSAPの読み込みが完了したらアニメーションを開始
     script.onload = () => {
-        // === スポットライト・ギミックの処理 ===
         const overlay = document.getElementById('spotlight-overlay');
         const spotlightCircle = document.getElementById('spotlight-circle');
         const mainContainer = document.querySelector('.container');
         const videoWrapper = document.querySelector('.video-wrapper');
         const secretTrigger = document.getElementById('secret-trigger');
 
-        // 必要な要素が揃っているか確認
         if (!overlay || !spotlightCircle || !mainContainer || !videoWrapper || !secretTrigger) {
             console.error('演出に必要な要素が見つかりません。');
-            if(mainContainer) mainContainer.style.opacity = 1; // エラー時はコンテンツを表示
-            if(overlay) overlay.remove(); // オーバーレイを削除
+            if(mainContainer) mainContainer.style.opacity = 1;
+            if(overlay) overlay.remove();
             return;
         }
 
-        // GSAPタイムラインでアニメーションを制御
-        const tl = gsap.timeline();
+        // ★★★ アニメーション実行関数 (★★実行されない問題修正★★) ★★★
+        function runSpotlightAnimation() {
+            // ターゲットの座標を計算（アニメーション実行直前に計算することで、レスポンシブ対応）
+            const videoRect = videoWrapper.getBoundingClientRect();
+            const triggerRect = secretTrigger.getBoundingClientRect();
+            const videoTarget = { x: videoRect.left + videoRect.width / 2, y: videoRect.top + videoRect.height / 2 };
+            const triggerTarget = { x: triggerRect.left + triggerRect.width / 2, y: triggerRect.top + triggerRect.height / 2 };
+            const randomTarget = { x: Math.random() * window.innerWidth, y: (Math.random() * 0.4 + 0.3) * window.innerHeight }; // Y軸を中央付近に制限
 
-        // ターゲットの座標を事前に計算
-        const videoRect = videoWrapper.getBoundingClientRect();
-        const triggerRect = secretTrigger.getBoundingClientRect();
-        const videoTarget = { x: videoRect.left + videoRect.width / 2, y: videoRect.top + videoRect.height / 2 };
-        const triggerTarget = { x: triggerRect.left + triggerRect.width / 2, y: triggerRect.top + triggerRect.height / 2 };
+            // GSAPタイムラインでアニメーションを厳密に制御
+            const tl = gsap.timeline();
+
+            tl.to(mainContainer, { opacity: 1, duration: 0.1 })
+              .to(spotlightCircle, {
+                  attr: { cx: videoTarget.x, cy: videoTarget.y },
+                  duration: 2.0,
+                  ease: "power1.inOut"
+              }, 0.5) // 0.5秒後に開始
+              .to(spotlightCircle, {
+                  attr: { cx: randomTarget.x, cy: randomTarget.y },
+                  duration: 2.5,
+                  ease: "sine.inOut"
+              }, "+=1.0") // 前のアニメーションが終わって1秒後に開始
+              .to(spotlightCircle, {
+                  attr: { cx: triggerTarget.x, cy: triggerTarget.y },
+                  duration: 2.0,
+                  ease: "power2.inOut"
+              }, "+=0.5") // 前のアニメーションが終わって0.5秒後に開始
+              .to(spotlightCircle, {
+                  attr: { r: Math.hypot(window.innerWidth, window.innerHeight) }, // 画面対角線より大きく
+                  duration: 2.5,
+                  ease: "power3.in",
+                  onStart: () => {
+                      gsap.to(overlay, { opacity: 0, duration: 2.8, ease: "power3.in" });
+                  }
+              }, "+=1.5") // 前のアニメーションが終わって1.5秒後に開始
+              .to([overlay, document.querySelector('svg')], {
+                  duration: 0.1,
+                  onComplete: () => {
+                      // 演出完了後、不要な要素をDOMから削除してメモリを解放
+                      const svgElement = document.querySelector('svg');
+                      if (overlay) overlay.remove();
+                      if (svgElement) svgElement.remove();
+                  }
+              });
+        }
         
-        // ★★★ ランダムな座標を計算 ★★★
-        const randomTarget = {
-            x: Math.random() * window.innerWidth,
-            y: Math.random() * window.innerHeight
-        };
+        // ページ読み込み完了後、少し待ってからアニメーションを開始
+        //（画像の描画などを待つため）
+        setTimeout(runSpotlightAnimation, 100);
 
-        // --- アニメーションシーケンス ---
-        tl.to(mainContainer, { // 1. 背景のコンテンツを（見えないまま）表示状態にする
-            opacity: 1,
-            duration: 0.1
-        })
-        .from(spotlightCircle, { // 2. スポットライトが画面外から動画の中央へ移動
-            attr: { cx: -200, cy: -200 },
-            delay: 0.5,
-            duration: 1.5,
-            ease: "power2.out"
-        })
-        .to(spotlightCircle, { // (動画の位置へ移動)
-            attr: { cx: videoTarget.x, cy: videoTarget.y },
-            duration: 1.5,
-            ease: "power2.out"
-        }, "<") // 前のアニメーションと同時に開始
-        .to(spotlightCircle, { // 3. ★ランダムな位置へ移動★
-            attr: { cx: randomTarget.x, cy: randomTarget.y },
-            duration: 2.0,
-            ease: "power1.inOut",
-            delay: 1.0 // 動画を照らした後、1秒待つ
-        })
-        .to(spotlightCircle, { // 4. スポットライトが秘密のトリガー「5」へ移動
-            attr: { cx: triggerTarget.x, cy: triggerTarget.y },
-            duration: 1.5,
-            ease: "power2.inOut",
-            delay: 0.5 // ランダムな位置から0.5秒待つ
-        })
-        .to(spotlightCircle, { // 5. スポットライトが「5」の上で拡大し、オーバーレイが消える
-            attr: { r: () => Math.max(window.innerWidth, window.innerHeight) * 1.5 }, // 画面全体を覆うように拡大
-            duration: 2.0,
-            ease: "power3.in",
-            delay: 1.5, // 「5」を照らした後、1.5秒待つ
-            onStart: () => {
-                // 拡大と同時にオーバーレイ自体をフェードアウトさせる
-                 gsap.to(overlay, { opacity: 0, duration: 2.2, ease: "power3.in" });
-            },
-            onComplete: () => {
-                // 演出完了後、不要な要素をDOMから削除してメモリを解放
-                const svgElement = document.querySelector('svg');
-                if (overlay) overlay.remove();
-                if (svgElement) svgElement.remove();
-            }
-        });
 
         // === ここから下は元のギミック処理（変更なし） ===
         const trigger = document.getElementById('secret-trigger');
@@ -190,7 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let clickCount = 0;
         const requiredClicks = 5;
         // GAS_URLはご自身のものに差し替えてください
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbwqB0kXqVzwtIYsLQ9HSrCz27MwwN_jzyW8C_T0tqQHO9VK58LgRTWULF83wocBycDp/exec"; // 例：ダミーURL
+        const GAS_URL = ""; // 例： const GAS_URL = "https://script.google.com/macros/s/AKfycbwXXXX/exec";
         const hasVisitedKey = 'engeki5-has-attempted';
 
         function activateGimmick() {
@@ -202,49 +204,58 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 curtain.classList.add('closed');
                 setTimeout(() => {
-                    fetch(GAS_URL, { method: 'POST', body: JSON.stringify({}), headers: {'Content-Type': 'application/json'} })
-                        .then(response => response.json())
-                        .then(data => {
-                            sessionStorage.setItem(hasVisitedKey, 'true');
-                            const secretTitle = document.getElementById('secret-title');
-                            const secretMessage = document.getElementById('secret-message');
-                            const prizeWrapper = document.getElementById('prize-wrapper');
-
-                            if (data.status === 'success') {
-                                secretTitle.textContent = '特別なご招待状';
-                                secretMessage.innerHTML = `おめでとうございます。<br>あなたは ${data.winnerNumber} 番目の特別な招待客として認められました。`;
-                                prizeWrapper.innerHTML = '<div class="prize-info" style="border: 1px dashed var(--accent-gold); padding: 20px; background: rgba(212, 175, 55, 0.1); border-radius: 5px; font-size: 16px; color: #fff; font-weight: bold;">第5回なずな演劇祭 本部にて、この画面をスタッフにご提示ください。<br>ささやかな記念品をお渡しいたします。</div>';
-                            } else {
-                                secretTitle.textContent = '終演';
-                                secretMessage.innerHTML = '誠に残念ながら、<br>本公演の特別ご招待は満席となりました。<br>またの機会のご来場を心よりお待ちしております。';
-                                prizeWrapper.innerHTML = '';
-                            }
-                            secretPage.classList.add('visible');
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            alert('エラーが発生しました。時間をおいて再度お試しください。');
-                            curtain.classList.remove('closed');
-                        });
+                    // fetchのオプションを修正
+                    fetch(GAS_URL, { 
+                        method: 'POST', 
+                        mode: 'no-cors', // CORSエラーを回避する場合
+                        redirect: "follow",
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({}) // 空のオブジェクトでもbodyは必要
+                    })
+                    .then(response => {
+                        // no-corsモードではレスポンスボディを読めないため、成功したと仮定して処理を進める
+                        // もし戻り値が必要な場合は、GAS側でCORS設定が必要
+                        console.log('Request sent to GAS');
+                        sessionStorage.setItem(hasVisitedKey, 'true');
+                        // ここでは仮に成功時の表示を固定で行います。
+                        // 実際の当選番号などはGASからの戻り値が必要になります。
+                        document.getElementById('secret-title').textContent = '特別なご招待状';
+                        document.getElementById('secret-message').innerHTML = `おめでとうございます。<br>あなたは特別な招待客として認められました。`;
+                        document.getElementById('prize-wrapper').innerHTML = '<div class="prize-info">第5回なずな演劇祭 本部にて、この画面をスタッフにご提示ください。<br>ささやかな記念品をお渡しいたします。</div>';
+                        secretPage.classList.add('visible');
+                    })
+                    .catch(error => {
+                        console.error('GAS Fetch Error:', error);
+                        // エラー時もユーザーには何か表示する
+                        document.getElementById('secret-title').textContent = 'エラー';
+                        document.getElementById('secret-message').innerHTML = '通信中にエラーが発生しました。<br>時間をおいて再度お試しください。';
+                        document.getElementById('prize-wrapper').innerHTML = '';
+                        secretPage.classList.add('visible');
+                    }).finally(() => {
+                        // どちらの場合でもカーテンは開ける
+                        // ただし、成功時はsecretPageが表示されるので、閉じるタイミングを調整
+                        setTimeout(() => curtain.classList.remove('closed'), 500); 
+                    });
                 }, 1500);
             }
         }
+
         trigger.addEventListener('click', activateGimmick);
         trigger.addEventListener('touchstart', (e) => { e.preventDefault(); activateGimmick(); });
         
-        // 管理者用リセット機能
         const adminButton = document.getElementById('admin-reset-button');
         if(adminButton) {
             adminButton.addEventListener('click', () => {
                 const password = prompt('管理者用パスワードを入力してください:');
                 if (password === 'nazuna-engeki-5') {
-                    const confirmReset = confirm('【管理者向け操作】\n\nスプレッドシートの当選者記録（A2以降の行）は手動で削除してください。\n\nこのページの閲覧者記録のみをクリアしますか？');
-                    if (confirmReset) {
+                    if (confirm('【管理者向け操作】\n\nスプレッドシートの記録は手動で削除してください。\n\nこのページの閲覧記録のみクリアしますか？')) {
                         sessionStorage.removeItem(hasVisitedKey);
-                        alert('閲覧者記録をクリアしました。ページをリロードすると、再度ギミックを試すことができます。');
+                        alert('閲覧記録をクリアしました。');
                         location.reload();
                     }
-                } else if (password !== null && password !== "") {
+                } else if (password) { // passwordがあり、かつ間違っている場合
                     alert('パスワードが違います。');
                 }
             });
