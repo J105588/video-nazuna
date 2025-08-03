@@ -4,10 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>NAZUNA ENGEKI 5</title>
-    <!-- 洗練されたフォントを読み込み -->
+    
+    <!-- Google Fonts: ご指定のフォントを読み込み -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Playfair+Display:ital,wght@1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&family=Montserrat:wght@900&display=swap" rel="stylesheet">
+    
+    <!-- スタイルシートを読み込み -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -24,28 +27,33 @@
                 </div>
             </div>
             <!-- サブタイトル -->
-            <div class="sub-title" id="subTitle">5th Aniversary</div>
-        </div>
-        
-        <!-- 下部への誘導メッセージ -->
-        <div class="scroll-tip" id="scrollTip">
-            <div class="arrow"></div>
+            <div class="sub-title" id="subTitle">5th Anniversary</div>
         </div>
     </div>
 
     <!-- 小ネタ：舞台裏モーダル -->
     <div class="backstage-modal" id="backstageModal">
         <div class="photo-container">
+            <!-- ↓↓↓ 画像を変更する場合はこの行の src="..." を書き換えます ↓↓↓ -->
             <img src="index/test-video-yozora.jpg" alt="舞台裏の風景">
-            <p>舞台裏風景</p>
+            
+            <p>Rehearsal風景</p>
         </div>
         <div class="close-button" id="closeModal">×</div>
     </div>
 
-
-    <!-- JavaScriptライブラリと自作スクリプト -->
+    <!-- 
+      JavaScriptライブラリと自作スクリプト
+      ★★【重要】この読み込み順が非常に重要です ★★
+    -->
+    <!-- 1. ライブラリ本体 (GSAP) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    
+    <!-- 2. メインのアニメーションスクリプト (script.js) -->
     <script src="script.js"></script>
+    
+    <!-- 3. 小ネタの機能スクリプト (backstage.js) -->
+    <script src="backstage.js"></script>
 
 </body>
 </html>
