@@ -36,8 +36,8 @@
         overflow: hidden; 
     }
 
-    /* === オープニング 黒幕とスポットライト演出 === */
-    .opening-curtain {
+    /* === オープニング演出 === */
+    .opening-black-curtain {
         position: fixed;
         top: 0;
         left: 0;
@@ -47,80 +47,93 @@
         z-index: 999;
         opacity: 1;
         visibility: visible;
-        /* スポットライトが当たったところだけ透明になるマスク */
-        mask: radial-gradient(circle 100px at var(--spotlight-x, 20%) var(--spotlight-y, 30%), transparent 0%, transparent 40%, black 60%);
-        -webkit-mask: radial-gradient(circle 100px at var(--spotlight-x, 20%) var(--spotlight-y, 30%), transparent 0%, transparent 40%, black 60%);
-        transition: opacity 1.5s ease-out 1s, visibility 0s linear 2.5s;
-        animation: spotlight-movement 5s ease-in-out forwards;
+        transition: opacity 1s ease-out, visibility 0s linear 1s;
     }
 
-    .opening-curtain.fade-out {
+    .opening-black-curtain.fade-out {
         opacity: 0;
         visibility: hidden;
     }
 
+    .spotlight-hole {
+        position: absolute;
+        background: radial-gradient(circle, transparent 0%, transparent 30%, rgba(0,0,0,0.95) 50%, black 70%);
+        border-radius: 50%;
+        width: 200px;
+        height: 200px;
+        left: 20%;
+        top: 30%;
+        transform: translate(-50%, -50%);
+        animation: spotlight-movement 5s ease-in-out forwards;
+    }
+
     @keyframes spotlight-movement {
         0% {
-            --spotlight-x: 20%;
-            --spotlight-y: 30%;
-            mask: radial-gradient(circle 80px at 20% 30%, transparent 0%, transparent 35%, black 55%);
-            -webkit-mask: radial-gradient(circle 80px at 20% 30%, transparent 0%, transparent 35%, black 55%);
+            left: 20%;
+            top: 30%;
+            width: 180px;
+            height: 180px;
         }
         12% {
-            --spotlight-x: 80%;
-            --spotlight-y: 20%;
-            mask: radial-gradient(circle 90px at 80% 20%, transparent 0%, transparent 35%, black 55%);
-            -webkit-mask: radial-gradient(circle 90px at 80% 20%, transparent 0%, transparent 35%, black 55%);
+            left: 80%;
+            top: 20%;
+            width: 200px;
+            height: 200px;
         }
         25% {
-            --spotlight-x: 75%;
-            --spotlight-y: 70%;
-            mask: radial-gradient(circle 85px at 75% 70%, transparent 0%, transparent 35%, black 55%);
-            -webkit-mask: radial-gradient(circle 85px at 75% 70%, transparent 0%, transparent 35%, black 55%);
+            left: 75%;
+            top: 70%;
+            width: 190px;
+            height: 190px;
         }
         37% {
-            --spotlight-x: 25%;
-            --spotlight-y: 80%;
-            mask: radial-gradient(circle 95px at 25% 80%, transparent 0%, transparent 35%, black 55%);
-            -webkit-mask: radial-gradient(circle 95px at 25% 80%, transparent 0%, transparent 35%, black 55%);
+            left: 25%;
+            top: 80%;
+            width: 210px;
+            height: 210px;
         }
         50% {
-            --spotlight-x: 15%;
-            --spotlight-y: 15%;
-            mask: radial-gradient(circle 88px at 15% 15%, transparent 0%, transparent 35%, black 55%);
-            -webkit-mask: radial-gradient(circle 88px at 15% 15%, transparent 0%, transparent 35%, black 55%);
+            left: 15%;
+            top: 15%;
+            width: 185px;
+            height: 185px;
         }
         62% {
-            --spotlight-x: 85%;
-            --spotlight-y: 60%;
-            mask: radial-gradient(circle 92px at 85% 60%, transparent 0%, transparent 35%, black 55%);
-            -webkit-mask: radial-gradient(circle 92px at 85% 60%, transparent 0%, transparent 35%, black 55%);
+            left: 85%;
+            top: 60%;
+            width: 205px;
+            height: 205px;
         }
         75% {
-            --spotlight-x: 60%;
-            --spotlight-y: 40%;
-            mask: radial-gradient(circle 87px at 60% 40%, transparent 0%, transparent 35%, black 55%);
-            -webkit-mask: radial-gradient(circle 87px at 60% 40%, transparent 0%, transparent 35%, black 55%);
+            left: 60%;
+            top: 40%;
+            width: 175px;
+            height: 175px;
         }
         85% {
             /* 「5」の位置に向かって移動開始 */
-            mask: radial-gradient(circle 70px at 50% 85%, transparent 0%, transparent 40%, black 60%);
-            -webkit-mask: radial-gradient(circle 70px at 50% 85%, transparent 0%, transparent 40%, black 60%);
+            left: 50%;
+            top: 82%;
+            width: 120px;
+            height: 120px;
         }
         95% {
             /* 「5」の正確な位置に到達 */
-            mask: radial-gradient(circle 40px at 50% 85%, transparent 0%, transparent 45%, black 65%);
-            -webkit-mask: radial-gradient(circle 40px at 50% 85%, transparent 0%, transparent 45%, black 65%);
+            left: 50%;
+            top: 84%;
+            width: 80px;
+            height: 80px;
         }
         100% {
             /* 最終的に「5」の位置で完全に停止 */
-            mask: radial-gradient(circle 35px at 50% 85%, transparent 0%, transparent 50%, black 70%);
-            -webkit-mask: radial-gradient(circle 35px at 50% 85%, transparent 0%, transparent 50%, black 70%);
+            left: 50%;
+            top: 85%;
+            width: 60px;
+            height: 60px;
         }
     }
 
-    /* スポットライトの拡散アニメーション */
-    .spotlight-expand {
+    .spotlight-expand-overlay {
         position: fixed;
         top: 0;
         left: 0;
@@ -130,33 +143,49 @@
         z-index: 998;
         opacity: 1;
         visibility: visible;
-        mask: radial-gradient(circle 35px at 50% 85%, transparent 0%, transparent 50%, black 70%);
-        -webkit-mask: radial-gradient(circle 35px at 50% 85%, transparent 0%, transparent 50%, black 70%);
-        animation: spotlight-expand-mask 2s ease-out 5s forwards;
+        animation: spotlight-expand 2s ease-out 5s forwards;
         transition: opacity 1s ease-out 6.5s, visibility 0s linear 7.5s;
     }
 
-    .spotlight-expand.fade-out {
+    .spotlight-expand-overlay.fade-out {
         opacity: 0;
         visibility: hidden;
     }
 
-    @keyframes spotlight-expand-mask {
+    .spotlight-expand-hole {
+        position: absolute;
+        left: 50%;
+        top: 85%;
+        width: 60px;
+        height: 60px;
+        background: radial-gradient(circle, transparent 0%, transparent 40%, black 70%);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        animation: expand-hole 2s ease-out 5s forwards;
+    }
+
+    @keyframes expand-hole {
         0% {
-            mask: radial-gradient(circle 35px at 50% 85%, transparent 0%, transparent 50%, black 70%);
-            -webkit-mask: radial-gradient(circle 35px at 50% 85%, transparent 0%, transparent 50%, black 70%);
+            width: 60px;
+            height: 60px;
         }
         30% {
-            mask: radial-gradient(circle 200px at 50% 85%, transparent 0%, transparent 40%, black 60%);
-            -webkit-mask: radial-gradient(circle 200px at 50% 85%, transparent 0%, transparent 40%, black 60%);
+            width: 300px;
+            height: 300px;
         }
         60% {
-            mask: radial-gradient(circle 400px at 50% 85%, transparent 0%, transparent 30%, black 50%);
-            -webkit-mask: radial-gradient(circle 400px at 50% 85%, transparent 0%, transparent 30%, black 50%);
+            width: 600px;
+            height: 600px;
         }
         100% {
-            mask: radial-gradient(circle 120vw at 50% 85%, transparent 0%, transparent 0%, black 0%);
-            -webkit-mask: radial-gradient(circle 120vw at 50% 85%, transparent 0%, transparent 0%, black 0%);
+            width: 150vw;
+            height: 150vh;
+        }
+    }
+
+    @keyframes spotlight-expand {
+        100% {
+            opacity: 0;
         }
     }
 
@@ -352,71 +381,92 @@
         .secret-content h2 { font-size: 24px; }
         .secret-content p { font-size: 16px; }
         
-        /* スマートフォンでのスポットライト位置調整 */
+        /* スマートフォンでのスポットライト調整 */
         @keyframes spotlight-movement {
             0% {
-                mask: radial-gradient(circle 60px at 25% 20%, transparent 0%, transparent 35%, black 55%);
-                -webkit-mask: radial-gradient(circle 60px at 25% 20%, transparent 0%, transparent 35%, black 55%);
+                left: 25%;
+                top: 20%;
+                width: 150px;
+                height: 150px;
             }
             12% {
-                mask: radial-gradient(circle 70px at 75% 15%, transparent 0%, transparent 35%, black 55%);
-                -webkit-mask: radial-gradient(circle 70px at 75% 15%, transparent 0%, transparent 35%, black 55%);
+                left: 75%;
+                top: 15%;
+                width: 160px;
+                height: 160px;
             }
             25% {
-                mask: radial-gradient(circle 65px at 70% 60%, transparent 0%, transparent 35%, black 55%);
-                -webkit-mask: radial-gradient(circle 65px at 70% 60%, transparent 0%, transparent 35%, black 55%);
+                left: 70%;
+                top: 60%;
+                width: 155px;
+                height: 155px;
             }
             37% {
-                mask: radial-gradient(circle 75px at 30% 70%, transparent 0%, transparent 35%, black 55%);
-                -webkit-mask: radial-gradient(circle 75px at 30% 70%, transparent 0%, transparent 35%, black 55%);
+                left: 30%;
+                top: 70%;
+                width: 170px;
+                height: 170px;
             }
             50% {
-                mask: radial-gradient(circle 68px at 20% 25%, transparent 0%, transparent 35%, black 55%);
-                -webkit-mask: radial-gradient(circle 68px at 20% 25%, transparent 0%, transparent 35%, black 55%);
+                left: 20%;
+                top: 25%;
+                width: 145px;
+                height: 145px;
             }
             62% {
-                mask: radial-gradient(circle 72px at 80% 50%, transparent 0%, transparent 35%, black 55%);
-                -webkit-mask: radial-gradient(circle 72px at 80% 50%, transparent 0%, transparent 35%, black 55%);
+                left: 80%;
+                top: 50%;
+                width: 165px;
+                height: 165px;
             }
             75% {
-                mask: radial-gradient(circle 67px at 60% 35%, transparent 0%, transparent 35%, black 55%);
-                -webkit-mask: radial-gradient(circle 67px at 60% 35%, transparent 0%, transparent 35%, black 55%);
+                left: 60%;
+                top: 35%;
+                width: 140px;
+                height: 140px;
             }
             85% {
-                mask: radial-gradient(circle 50px at 50% 80%, transparent 0%, transparent 40%, black 60%);
-                -webkit-mask: radial-gradient(circle 50px at 50% 80%, transparent 0%, transparent 40%, black 60%);
+                left: 50%;
+                top: 78%;
+                width: 100px;
+                height: 100px;
             }
             95% {
-                mask: radial-gradient(circle 30px at 50% 80%, transparent 0%, transparent 45%, black 65%);
-                -webkit-mask: radial-gradient(circle 30px at 50% 80%, transparent 0%, transparent 45%, black 65%);
+                left: 50%;
+                top: 80%;
+                width: 70px;
+                height: 70px;
             }
             100% {
-                mask: radial-gradient(circle 25px at 50% 80%, transparent 0%, transparent 50%, black 70%);
-                -webkit-mask: radial-gradient(circle 25px at 50% 80%, transparent 0%, transparent 50%, black 70%);
+                left: 50%;
+                top: 82%;
+                width: 50px;
+                height: 50px;
             }
         }
         
-        .spotlight-expand {
-            mask: radial-gradient(circle 25px at 50% 80%, transparent 0%, transparent 50%, black 70%);
-            -webkit-mask: radial-gradient(circle 25px at 50% 80%, transparent 0%, transparent 50%, black 70%);
+        .spotlight-expand-hole {
+            top: 82%;
+            width: 50px;
+            height: 50px;
         }
         
-        @keyframes spotlight-expand-mask {
+        @keyframes expand-hole {
             0% {
-                mask: radial-gradient(circle 25px at 50% 80%, transparent 0%, transparent 50%, black 70%);
-                -webkit-mask: radial-gradient(circle 25px at 50% 80%, transparent 0%, transparent 50%, black 70%);
+                width: 50px;
+                height: 50px;
             }
             30% {
-                mask: radial-gradient(circle 150px at 50% 80%, transparent 0%, transparent 40%, black 60%);
-                -webkit-mask: radial-gradient(circle 150px at 50% 80%, transparent 0%, transparent 40%, black 60%);
+                width: 250px;
+                height: 250px;
             }
             60% {
-                mask: radial-gradient(circle 300px at 50% 80%, transparent 0%, transparent 30%, black 50%);
-                -webkit-mask: radial-gradient(circle 300px at 50% 80%, transparent 0%, transparent 30%, black 50%);
+                width: 500px;
+                height: 500px;
             }
             100% {
-                mask: radial-gradient(circle 120vw at 50% 80%, transparent 0%, transparent 0%, black 0%);
-                -webkit-mask: radial-gradient(circle 120vw at 50% 80%, transparent 0%, transparent 0%, black 0%);
+                width: 150vw;
+                height: 150vh;
             }
         }
     }
@@ -446,9 +496,14 @@
 </head>
 <body>
 
-<!-- オープニング 黒幕演出 -->
-<div id="opening-curtain" class="opening-curtain"></div>
-<div id="spotlight-expand" class="spotlight-expand"></div>
+<!-- オープニング 黒幕とスポットライト演出 -->
+<div id="opening-black-curtain" class="opening-black-curtain">
+    <div class="spotlight-hole"></div>
+</div>
+
+<div id="spotlight-expand-overlay" class="spotlight-expand-overlay">
+    <div class="spotlight-expand-hole"></div>
+</div>
 
 <div class="container">
     <h1>動画公開ページ</h1>
@@ -487,8 +542,8 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    const openingCurtain = document.getElementById('opening-curtain');
-    const spotlightExpand = document.getElementById('spotlight-expand');
+    const openingCurtain = document.getElementById('opening-black-curtain');
+    const spotlightExpand = document.getElementById('spotlight-expand-overlay');
     const trigger = document.getElementById('secret-trigger');
     const curtain = document.getElementById('curtain');
     const secretPage = document.getElementById('secret-page');
@@ -501,6 +556,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // オープニング演出の制御
     setTimeout(() => {
         openingCurtain.classList.add('fade-out');
+    }, 6000);
+    
+    setTimeout(() => {
         spotlightExpand.classList.add('fade-out');
     }, 7500);
 
