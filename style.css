@@ -42,6 +42,7 @@ body, html {
     font-size: clamp(24px, 5vw, 60px);
     margin-top: 10px;
     opacity: 0;
+    color: #FFD700;
 }
 
 .glow {
