@@ -5,9 +5,10 @@
 <title>試験公開_動画公開ページ</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="" type="image/png">
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <style>
     /* フォントのインポート */
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700&family+Serif+JP:wght@400;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700&family=Noto+Serif+JP:wght@400;700&display=swap');
 
     /* 色や基本的な変数の定義 */
     :root {
@@ -36,27 +37,32 @@
         overflow: hidden; 
     }
 
-    /* スポットライト演出 */
-    .spotlight-stage {
+    /* スポットライト マスクレイヤー */
+    #spotlight-mask-layer {
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background: #000;
         z-index: 999;
+        pointer-events: none;
+        background-size: cover;
+        background-position: center center;
+        opacity: 1;
+        transition: opacity 1s ease-out;
+        display: none;
     }
 
-    .spotlight-hole {
-        position: absolute;
-        width: 200px;
-        height: 200px;
-        background: radial-gradient(circle, transparent 30%, #000 70%);
-        border-radius: 50%;
-        mix-blend-mode: multiply;
-        left: 20%;
-        top: 30%;
-        transform: translate(-50%, -50%);
+    /* 円形画像マスクの適用 */
+    .mask-applied {
+        -webkit-mask-image: url('circle-mask.png'); /* あなたの円形画像 */
+        mask-image: url('circle-mask.png');
+        -webkit-mask-size: 200px 200px;
+        mask-size: 200px 200px;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: 20% 30%; /* 初期位置 */
+        mask-position: 20% 30%;
     }
 
     /* メインコンテンツのコンテナ */
@@ -136,18 +142,36 @@
         color: #777;
         cursor: pointer;
         display: inline-block;
-        transition: color 0.2s;
+        transition: color 0.2s, text-shadow 0.3s;
         user-select: none;
         -webkit-tap-highlight-color: transparent;
     }
+
     #secret-trigger:hover {
         color: var(--accent-gold);
     }
+
     #secret-trigger:active {
         color: #fff;
     }
 
-    /* 緞帳 */
+    /* スポットライトが「5」の上にある時の特別エフェクト */
+    #secret-trigger.spotlight-focus {
+        color: var(--accent-gold) !important;
+        text-shadow: 0 0 15px var(--accent-gold), 0 0 25px rgba(212, 175, 55, 0.8) !important;
+        animation: secret-pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes secret-pulse {
+        0%, 100% {
+            text-shadow: 0 0 15px var(--accent-gold), 0 0 25px rgba(212, 175, 55, 0.8);
+        }
+        50% {
+            text-shadow: 0 0 25px var(--accent-gold), 0 0 40px rgba(212, 175, 55, 1), 0 0 50px rgba(255, 255, 255, 0.5);
+        }
+    }
+
+    /* その他のスタイル（緞帳、シークレットページなど）は元のコードと同じ */
     .curtain {
         position: fixed;
         top: 0;
@@ -176,7 +200,6 @@
         transform: translateX(0);
     }
 
-    /* シークレットページ */
     .secret-overlay {
         position: fixed;
         top: 0;
@@ -203,11 +226,6 @@
         padding: 40px;
         max-width: 600px;
         position: relative;
-        animation: spotlight-flicker 10s infinite linear;
-    }
-    @keyframes spotlight-flicker {
-        0%, 100% { box-shadow: 0 0 150px 80px rgba(255, 235, 180, 0.15); }
-        50% { box-shadow: 0 0 165px 88px rgba(255, 242, 210, 0.19); }
     }
 
     .secret-content h2 {
@@ -235,18 +253,6 @@
         color: #fff;
         font-weight: bold;
     }
-    
-    /* レスポンシブ対応 */
-    @media (max-width: 768px) {
-        body { padding: 20px 10px; }
-        .container { padding: 25px; }
-        h1 { font-size: 26px; }
-        .info h2 { font-size: 20px; }
-        .info p { font-size: 14px; }
-        .secret-content { width: 90%; padding: 30px; }
-        .secret-content h2 { font-size: 24px; }
-        .secret-content p { font-size: 16px; }
-    }
 
     /* 管理者用パネル */
     .admin-panel {
@@ -273,10 +279,8 @@
 </head>
 <body>
 
-<!-- スポットライト演出ステージ -->
-<div id="spotlight-stage" class="spotlight-stage">
-    <div id="spotlight-hole" class="spotlight-hole"></div>
-</div>
+<!-- スポットライト マスクレイヤー -->
+<div id="spotlight-mask-layer"></div>
 
 <div class="container">
     <h1>動画公開ページ</h1>
@@ -315,18 +319,48 @@
 
 <script>
 // スポットライト演出クラス
-class SimpleSpotlight {
+class CircleMaskSpotlight {
     constructor() {
-        this.stage = document.getElementById('spotlight-stage');
-        this.hole = document.getElementById('spotlight-hole');
-        this.trigger = document.getElementById('secret-trigger');
+        this.maskLayer = document.getElementById('spotlight-mask-layer');
+        this.secretTrigger = document.getElementById('secret-trigger');
+        this.init();
+    }
+
+    async init() {
+        // ページ読み込み完了を待つ
+        await this.waitForPageLoad();
         
+        // サイト全体をキャプチャ
+        const canvas = await html2canvas(document.body, {
+            backgroundColor: null,
+            scale: 1,
+            useCORS: true
+        });
+
+        // キャプチャした画像を背景に設定
+        this.maskLayer.style.backgroundImage = `url(${canvas.toDataURL()})`;
+        this.maskLayer.classList.add('mask-applied');
+        this.maskLayer.style.display = 'block';
+
+        // アニメーション開始
         this.startAnimation();
     }
-    
+
+    waitForPageLoad() {
+        return new Promise(resolve => {
+            if (document.readyState === 'complete') {
+                setTimeout(resolve, 500); // フォント等の読み込み待ち
+            } else {
+                window.addEventListener('load', () => {
+                    setTimeout(resolve, 500);
+                });
+            }
+        });
+    }
+
     // 「5」の位置を取得
     getFivePosition() {
-        const rect = this.trigger.getBoundingClientRect();
+        const rect = this.secretTrigger.getBoundingClientRect();
         const centerX = rect.left + rect.width / 2;
         const centerY = rect.top + rect.height / 2;
         
@@ -335,81 +369,94 @@ class SimpleSpotlight {
             y: (centerY / window.innerHeight) * 100
         };
     }
-    
-    // アニメーション開始
+
     startAnimation() {
         const fivePos = this.getFivePosition();
         
-        // 動くポイントを定義
-        const points = [
-            { x: 20, y: 30, size: 200, duration: 800 },
-            { x: 75, y: 20, size: 180, duration: 600 },
-            { x: 70, y: 65, size: 190, duration: 700 },
-            { x: 25, y: 75, size: 210, duration: 600 },
-            { x: 15, y: 15, size: 185, duration: 650 },
-            { x: 80, y: 50, size: 195, duration: 600 },
-            { x: 60, y: 35, size: 175, duration: 700 },
-            // 「5」の位置に向かう
-            { x: fivePos.x, y: fivePos.y, size: 120, duration: 800 },
-            // 「5」の上で停止（長めに）
-            { x: fivePos.x, y: fivePos.y, size: 80, duration: 1500 },
-            // 点滅効果
-            { x: fivePos.x, y: fivePos.y, size: 60, duration: 300 },
-            { x: fivePos.x, y: fivePos.y, size: 100, duration: 300 },
-            { x: fivePos.x, y: fivePos.y, size: 40, duration: 400 },
+        // スポットライトの移動経路
+        const waypoints = [
+            { x: 20, y: 30, duration: 0 },      // 開始位置
+            { x: 75, y: 20, duration: 800 },    // 右上へ
+            { x: 70, y: 65, duration: 1500 },   // 右下へ
+            { x: 25, y: 75, duration: 2200 },   // 左下へ
+            { x: 15, y: 15, duration: 2800 },   // 左上へ
+            { x: 80, y: 50, duration: 3400 },   // 右中央へ
+            { x: 60, y: 35, duration: 4000 },   // 中央上へ
+            { x: fivePos.x, y: fivePos.y, duration: 4800 }, // 「5」へ移動
+            { x: fivePos.x, y: fivePos.y, duration: 6500 }, // 「5」で長時間停止
+            { x: fivePos.x, y: fivePos.y, duration: 7000 }  // 終了準備
         ];
-        
-        this.animateSequence(points, 0);
+
+        this.animateWaypoints(waypoints, 0);
     }
-    
-    // シーケンスアニメーション
-    animateSequence(points, index) {
-        if (index >= points.length) {
-            // 最後に全体を表示
-            this.expandAndFinish();
+
+    animateWaypoints(waypoints, index) {
+        if (index >= waypoints.length - 1) {
+            this.finishAnimation();
             return;
         }
-        
-        const point = points[index];
+
+        const current = waypoints[index];
+        const next = waypoints[index + 1];
         
         // 「5」の上にいる間は特別エフェクト
-        if (index >= 7 && index <= 10) {
-            this.trigger.style.color = '#d4af37';
-            this.trigger.style.textShadow = '0 0 15px #d4af37, 0 0 25px rgba(212, 175, 55, 0.8)';
+        if (index >= 7 && index <= 9) {
+            this.secretTrigger.classList.add('spotlight-focus');
+        } else {
+            this.secretTrigger.classList.remove('spotlight-focus');
         }
-        
-        // スポットライトを移動
-        this.hole.style.transition = `all ${point.duration}ms ease-in-out`;
-        this.hole.style.left = point.x + '%';
-        this.hole.style.top = point.y + '%';
-        this.hole.style.width = point.size + 'px';
-        this.hole.style.height = point.size + 'px';
-        
-        // 次のポイントへ
-                // 次のポイントへ
-        setTimeout(() => {
-            this.animateSequence(points, index + 1);
-        }, point.duration);
+
+        // 現在の位置から次の位置へアニメーション
+        this.animateToPosition(current, next, () => {
+            this.animateWaypoints(waypoints, index + 1);
+        });
     }
-    
-    // 拡散して終了
-    expandAndFinish() {
-        this.hole.style.transition = 'all 2000ms ease-out';
-        this.hole.style.width = '300vw';
-        this.hole.style.height = '300vh';
+
+    animateToPosition(from, to, callback) {
+        const duration = to.duration - from.duration;
+        const startTime = performance.now();
         
-        setTimeout(() => {
-            this.stage.style.opacity = '0';
-            this.stage.style.transition = 'opacity 1000ms ease-out';
+        const animate = (currentTime) => {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
             
-            // エフェクトをリセット
-            this.trigger.style.color = '';
-            this.trigger.style.textShadow = '';
+            // イージング関数（ease-in-out）
+            const easeProgress = progress < 0.5 
+                ? 2 * progress * progress 
+                : -1 + (4 - 2 * progress) * progress;
+            
+            // 位置を補間
+            const x = from.x + (to.x - from.x) * easeProgress;
+            const y = from.y + (to.y - from.y) * easeProgress;
+            
+            // マスクの位置を更新
+            this.maskLayer.style.webkitMaskPosition = `${x}% ${y}%`;
+            this.maskLayer.style.maskPosition = `${x}% ${y}%`;
+            
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+            } else {
+                callback();
+            }
+        };
+        
+        requestAnimationFrame(animate);
+    }
+
+    finishAnimation() {
+        // マスクサイズを拡大して全体を表示
+        this.maskLayer.style.webkitMaskSize = '300vw 300vh';
+        this.maskLayer.style.maskSize = '300vw 300vh';
+        
+        // フェードアウト
+        setTimeout(() => {
+            this.maskLayer.style.opacity = '0';
+            this.secretTrigger.classList.remove('spotlight-focus');
             
             setTimeout(() => {
-                this.stage.style.display = 'none';
+                this.maskLayer.style.display = 'none';
             }, 1000);
-        }, 2000);
+        }, 1000);
     }
 }
 
@@ -424,9 +471,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const hasVisitedKey = 'engeki5-has-attempted';
 
     // スポットライト演出を開始
-    new SimpleSpotlight();
+    new CircleMaskSpotlight();
 
-    // ギミックを発動させる共通関数
+    // ギミック機能（元のコードと同じ）
     function activateGimmick() {
         clickCount++;
         if (clickCount >= requiredClicks) {
@@ -469,10 +516,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // PC用のclickイベントリスナー
+    // イベントリスナー
     trigger.addEventListener('click', activateGimmick);
-    
-    // スマートフォン用のtouchstartイベントリスナー
     trigger.addEventListener('touchstart', (e) => {
         e.preventDefault();
         activateGimmick();
