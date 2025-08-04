@@ -6,7 +6,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="" type="image/png">
 <style>
-    /* (CSSは変更なしのため省略) */
     /* フォントのインポート */
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Noto+Serif+JP:wght@400;700&display=swap');
 
@@ -51,7 +50,7 @@
         margin: 20px 0;
     }
 
-    /* (h1から下、<style>の終わりまで変更なしのため省略) */
+    /* メインタイトル */
     h1 {
         text-align: center;
         font-family: 'Noto Serif JP', serif;
@@ -62,6 +61,7 @@
         text-shadow: 0 0 10px var(--accent-gold), 0 0 2px #fff;
     }
 
+    /* 動画プレイヤーのラッパー */
     .video-wrapper {
         position: relative;
         width: 100%;
@@ -79,6 +79,7 @@
         border-radius: 8px;
     }
 
+    /* 動画情報セクション */
     .info {
         text-align: left;
         border-top: 1px solid var(--border-color);
@@ -108,6 +109,7 @@
         user-select: none;
     }
 
+    /* ギミックのトリガー */
     #secret-trigger {
         color: #777;
         cursor: pointer;
@@ -125,6 +127,7 @@
         color: #fff;
     }
 
+    /* 緞帳、シークレットページなど */
     .curtain {
         position: fixed;
         top: 0;
@@ -209,13 +212,14 @@
         font-weight: bold;
     }
 
+   /* 管理者用パネル */
     .admin-panel {
         position: fixed;
         bottom: 10px;
         right: 10px;
         z-index: 101;
-        display: flex; /* 変更点: ボタンを横並びにする */
-        gap: 5px;       /* 変更点: ボタン間の隙間 */
+        display: flex;
+        gap: 5px;
     }
     .admin-panel button {
         background: #555;
@@ -231,9 +235,8 @@
     .admin-panel:hover button {
         opacity: 1;
     }
-    /* 変更点: 開発用ボタンのスタイルを追加 */
     .admin-panel button#dev-clear-button {
-        background-color: #3a5fcd; /* 少し違う色にして区別 */
+        background-color: #3a5fcd;
     }
 
     @media (max-width: 768px) {
@@ -264,7 +267,6 @@
 </head>
 <body>
 
-<!-- (body内の上部は変更なしのため省略) -->
 <div class="container">
     <h1>動画公開ページ</h1>
     <div class="video-wrapper">
@@ -279,10 +281,14 @@
         <p class="copyright">© 2025 NAZUNA ENGEKI<span id="secret-trigger">5</span></p>
     </div>
 </div>
+
+<!-- 緞帳 -->
 <div id="curtain" class="curtain">
     <div class="curtain-panel left"></div>
     <div class="curtain-panel right"></div>
 </div>
+
+<!-- シークレットページ -->
 <div id="secret-page" class="secret-overlay">
     <div class="secret-content">
         <h2 id="secret-title"></h2>
@@ -293,33 +299,37 @@
 
 <!-- 管理者用パネル -->
 <div class="admin-panel">
-    <!-- 変更点: 開発用の閲覧記録クリアボタンを追加 -->
     <button id="dev-clear-button" title="閲覧記録(localStorage)を削除してリロードします">閲覧記録クリア</button>
     <button id="admin-reset-button">管理者用リセット</button>
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // (定数宣言部分は変更なしのため省略)
     const trigger = document.getElementById('secret-trigger');
     const curtain = document.getElementById('curtain');
     const secretPage = document.getElementById('secret-page');
     let clickCount = 0;
     const requiredClicks = 5;
 
+    // Google Apps ScriptのURL（デプロイ後に取得したURLを設定してください）
     const GAS_URL = "https://script.google.com/macros/s/AKfycbwqB0kXqVzwtIYsLQ9HSrCz27MwwN_jzyW8C_T0tqQHO9VK58LgRTWULF83wocBycDp/exec";
+    // localStorageで使用するキー
     const hasVisitedKey = 'engeki5-has-attempted';
 
-    // (ギミック機能は変更なしのため省略)
+    // ギミック機能
     function activateGimmick() {
         clickCount++;
         if (clickCount >= requiredClicks) {
             clickCount = 0;
+
+            // localStorageに記録があるか確認
             if (localStorage.getItem(hasVisitedKey)) {
                 alert('既にご応募いただいております。');
                 return;
             }
+
             curtain.classList.add('closed');
+
             setTimeout(() => {
                 fetch(GAS_URL, {
                     method: 'POST',
@@ -329,6 +339,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 })
                 .then(response => response.json())
                 .then(data => {
+                    // 応募した記録をlocalStorageに保存
                     localStorage.setItem(hasVisitedKey, 'true');
                     if (data.status === 'success') {
                         document.getElementById('secret-title').textContent = '特別なご招待状';
@@ -350,14 +361,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // (イベントリスナーは変更なしのため省略)
+    // イベントリスナー
     trigger.addEventListener('click', activateGimmick);
     trigger.addEventListener('touchstart', (e) => {
         e.preventDefault();
         activateGimmick();
     });
-
-    // --- 変更点: ここから ---
 
     // 開発用の閲覧記録クリア機能
     document.getElementById('dev-clear-button').addEventListener('click', () => {
@@ -366,7 +375,7 @@ document.addEventListener('DOMContentLoaded', () => {
         location.reload();
     });
 
-    // 管理者用リセット機能（元の機能はそのまま）
+    // 管理者用リセット機能
     document.getElementById('admin-reset-button').addEventListener('click', () => {
         const password = prompt('管理者用パスワードを入力してください:');
         if (password === 'nazuna-engeki-5') {
@@ -376,6 +385,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 'このページの閲覧者記録(localStorage)のみをクリアしますか？'
             );
             if (confirmReset) {
+                // localStorageの記録を削除
                 localStorage.removeItem(hasVisitedKey);
                 alert('閲覧者記録をクリアしました。ページをリロードすると、再度ギミックを試すことができます。');
                 location.reload();
@@ -384,7 +394,6 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('パスワードが違います。');
         }
     });
-    // --- 変更点: ここまで ---
 });
 </script>
 
