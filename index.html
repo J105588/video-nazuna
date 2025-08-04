@@ -28,14 +28,44 @@
     </div>
 
     <!-- 小ネタ：舞台裏モーダル -->
-    <div class="backstage-modal" id="backstageModal">
-        <div class="photo-container">
-            <!-- ↓↓↓ 画像を変更する場合はこの行の src="..." を書き換えます ↓↓↓ -->
-            <img src="index/test-video-yozora.jpg" alt="舞台裏の風景">
-            <p>Behind the Scenes</p>
+    
+
+<!-- 小ネタ：舞台裏モーダル -->
+<div class="backstage-modal" id="backstageModal">
+
+    <!-- ▼▼▼ ここから下がスライドショーのコンテナになります ▼▼▼ -->
+    <div class="slideshow-container">
+
+        <!-- 左右のナビゲーション矢印 -->
+        <div class="prev-arrow" id="prevArrow">＜</div>
+        <div class="next-arrow" id="nextArrow">＞</div>
+
+        <!-- 画像とキャプションのラッパー -->
+        <div class="photo-wrapper" id="photoWrapper">
+            <!-- 
+                ↓↓↓ ここに写真を追加していきます ↓↓↓ 
+                各写真とキャプションは <div class="slide"> で囲みます。
+                最初の写真だけ、classに "active" をつけておきます。
+            -->
+            <div class="slide active">
+                <img src="images/my-backstage.jpg" alt="舞台裏の風景1">
+                <p>Behind the Scenes #1</p>
+            </div>
+            <div class="slide">
+                <img src="images/my-backstage-2.jpg" alt="舞台裏の風景2">
+                <p>The Rehearsal Room</p>
+            </div>
+            <div class="slide">
+                <img src="images/my-backstage-3.jpg" alt="舞台裏の風景3">
+                <p>Work in Progress</p>
+            </div>
+            <!-- ▲▲▲ 写真を追加する場合は、この上に追加します ▲▲▲ -->
         </div>
-        <div class="close-button" id="closeModal">×</div>
     </div>
+    <!-- ▲▲▲ スライドショーのコンテナはここまで ▲▲▲ -->
+
+    <div class="close-button" id="closeModal">×</div>
+</div>
 
     <!-- JavaScriptライブラリ -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
