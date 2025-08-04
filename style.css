@@ -1,173 +1,173 @@
-/* style.css */
-body, html {
-    margin: 0;
-    padding: 0;
+/* =================================================== */
+/* ========== ギミック（舞台裏モーダル）のCSS ========== */
+/* =================================================== */
+
+/* --- モーダル背景 --- */
+.backstage-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
-    overflow: hidden;
-    background-color: #000;
-    color: #fff;
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-}
-
-.op-wrapper {
-    position: fixed; top: 0; left: 0;
-    width: 100%; height: 100%;
-    display: flex; justify-content: center; align-items: center;
-}
-
-.title-block { text-align: center; }
-.title-box { position: relative; overflow: hidden; }
-
-.main-title {
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 900;
-    font-size: clamp(40px, 10vw, 120px);
-    letter-spacing: 0.1em;
-    opacity: 0;
-}
-
-#backstage-trigger {
-    cursor: pointer;
-    display: inline-block;
-    transition: color 0.2s, transform 0.2s;
-}
-#backstage-trigger:hover {
-    color: #ffdd00;
-    transform: scale(1.1);
-}
-
-.sub-title {
-    font-family: 'Dancing Script', cursive;
-    font-size: clamp(24px, 5vw, 60px);
-    margin-top: 10px;
-    opacity: 0;
-    color: #FFD700;
-}
-
-.glow {
-    position: absolute; top: -50%; left: 0;
-    width: 30%; height: 200%;
-    background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0) 100%);
-    transform: skewX(-25deg);
-    opacity: 0;
-}
-
-.backstage-modal {
-    position: fixed; top: 0; left: 0;
-    width: 100%; height: 100%;
-    background-color: rgba(0, 0, 0, 0.85);
-    display: none;
-    opacity: 0;
+    
+    background-color: rgba(0, 0, 0, 0.85); /* 半透明の黒背景 */
+    backdrop-filter: blur(10px); /* 背景をぼかす（対応ブラウザのみ） */
+    
+    display: none; /* 初期状態では非表示 */
     justify-content: center;
     align-items: center;
-    z-index: 1000;
+    
+    opacity: 0; /* 初期状態では透明 */
+    z-index: 1000; /* 最前面に表示 */
 }
 
-.photo-container {
-    position: relative;
-    text-align: center;
-    color: #fff;
-}
-
-.photo-container img {
-    max-width: 80vw;
-    max-height: 70vh;
-    border: 3px solid #fff;
-    border-radius: 5px;
-    object-fit: contain;
-}
-
-.photo-container p {
-    font-family: 'Dancing Script', cursive;
-    font-size: clamp(18px, 4vw, 24px);
-    margin-top: 15px;
-}
-
+/* --- 閉じるボタン（×） --- */
 .close-button {
-    position: absolute; top: 20px; right: 30px;
+    position: absolute;
+    top: 30px;
+    right: 40px;
+    
     font-size: 40px;
+    font-weight: bold;
     color: #fff;
+    
     cursor: pointer;
-    transition: color 0.2s;
+    transition: transform 0.3s ease, color 0.3s ease;
 }
-.close-button:hover { color: #ffdd00; }
-/* style.css の一番下に追加 */
+.close-button:hover {
+    color: #ccc;
+    transform: rotate(90deg);
+}
 
-/* --- スライドショー関連のスタイル --- */
+/* =================================================== */
+/* ====== スライドショー用のスタイル（ポラロイド風） ====== */
+/* =================================================== */
+
+/* --- スライドショー全体のコンテナ --- */
 .slideshow-container {
     position: relative;
     width: 80vw;
-    max-width: 800px; /* スライドショーの最大幅を設定 */
+    max-width: 600px; /* ポラロイド風のデザインに合わせ少し最大幅を調整 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
+/* --- 写真を重ねて表示するためのラッパー --- */
 .photo-wrapper {
     position: relative;
     width: 100%;
-    /* 高さはアスペクト比 16:9 を目安に設定 */
-    padding-top: 56.25%; 
+    padding-top: 100%; /* 正方形の表示領域を確保 */
 }
 
+/* --- 各スライド（ポラロイドフレーム）の基本スタイル --- */
 .slide {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    opacity: 0; /* 最初は非表示 */
+    
+    /* アニメーションのための初期設定 */
+    opacity: 0;
     visibility: hidden;
-    transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
-    text-align: center;
+    transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
+    transform: scale(0.95);
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
+/* 表示中のスライドに適用するスタイル */
 .slide.active {
-    opacity: 1; /* 表示中のスライドだけ見えるようにする */
+    opacity: 1;
     visibility: visible;
+    transform: scale(1); /* 表示時に少し拡大 */
+    transition-delay: 0.1s; /* 切り替わりに少し間を持たせる */
 }
 
+/* --- ポラロイド写真風のフレーム --- */
 .slide img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain; /* アスペクト比を保ったままフィットさせる */
-    border: 3px solid #fff;
-    border-radius: 5px;
+    width: 88%; 
+    height: 75%;
+    object-fit: cover;
+    
+    background: #fff;
+    border: 1px solid #EAEAEA;
+    padding: 15px 15px 60px 15px; /* 写真の余白（下がキャプションエリア） */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+    
+    /* 写真を少し傾ける */
+    transform: rotate(-2deg); 
 }
 
+/* 2枚目以降の写真を少しずつ違う角度に傾ける（遊び心） */
+.slide:nth-child(2) img { transform: rotate(1.5deg); }
+.slide:nth-child(3) img { transform: rotate(-2.5deg); }
+.slide:nth-child(4) img { transform: rotate(2deg); }
+/* 写真を追加した場合は、ここを追記していくと、さらに多様な角度を付けられます */
+
+
+/* --- 写真のキャプション（手書き風フォントを適用） --- */
 .slide p {
-    font-family: 'Dancing Script', cursive;
-    font-size: clamp(18px, 4vw, 24px);
-    margin-top: 15px;
-    color: #fff;
+    font-family: 'Yuji Syuku', serif; /* 手書き風フォント */
+    font-size: clamp(16px, 3vw, 22px); /* 画面サイズに応じて調整 */
+    
+    position: absolute;
+    bottom: 8%; /* ポラロイドの下の余白部分に配置 */
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: #333;
+    pointer-events: none; /* キャプションがクリックの邪魔をしないように */
 }
 
-/* --- 左右の矢印のスタイル --- */
+
+/* --- 左右の矢印ボタンのスタイル --- */
 .prev-arrow, .next-arrow {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 3rem;
-    color: rgba(255, 255, 255, 0.5);
+    
+    font-size: 24px;
+    color: rgba(255, 255, 255, 0.7);
+    background-color: rgba(0, 0, 0, 0.3);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%; /* 円形にする */
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
     cursor: pointer;
-    transition: color 0.3s;
+    user-select: none;
+    transition: all 0.3s ease;
     z-index: 10;
-    user-select: none; /* テキスト選択を無効化 */
-    padding: 0 20px;
 }
-
 .prev-arrow:hover, .next-arrow:hover {
-    color: rgba(255, 255, 255, 1);
+    color: #fff;
+    background-color: rgba(0, 0, 0, 0.6);
+    transform: translateY(-50%) scale(1.1); /* ホバー時に少し拡大 */
 }
 
-.prev-arrow {
-    left: -60px; /* 位置を調整 */
-}
+/* 矢印の位置 */
+.prev-arrow { left: -20px; }
+.next-arrow { right: -20px; }
 
-.next-arrow {
-    right: -60px; /* 位置を調整 */
-}
 
-/* スマホなど画面が狭い場合は矢印を内側に */
+/* --- レスポンシブ対応：スマホなど画面が狭い場合 --- */
 @media (max-width: 768px) {
-    .prev-arrow { left: 5px; background: rgba(0,0,0,0.3); border-radius: 5px;}
-    .next-arrow { right: 5px; background: rgba(0,0,0,0.3); border-radius: 5px;}
+    /* 閉じるボタンを少し大きく、押しやすく */
+    .close-button {
+        top: 20px;
+        right: 20px;
+        font-size: 32px;
+    }
+    
+    /* 矢印を画像の内側に配置 */
+    .prev-arrow { left: 10px; }
+    .next-arrow { right: 10px; }
 }
