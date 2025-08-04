@@ -1,133 +1,136 @@
-/* 基本設定 */
+/* --- 基本設定 --- */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-html, body {
+body, html {
+    width: 100%;
     height: 100%;
-    overflow: hidden; /* スクロールバーを非表示に */
-    background-color: #000;
-    color: #fff;
-    font-family: 'Montserrat', sans-serif;
+    overflow: hidden;
+    background-color: #111;
+    color: white;
 }
 
-/* オープニング全体のコンテナ */
+/* --- メインのオープニング画面 --- */
 .op-wrapper {
     width: 100%;
     height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    cursor: default;
+    position: relative;
+    overflow: hidden; /* ラッパー自体もoverflow: hidden推奨 */
 }
 
-/* タイトル全体のブロック */
 .title-block {
     text-align: center;
 }
 
-/* メインタイトル("NAZUNA ENGEKI")の箱 */
 .title-box {
-    position: relative; /* 子要素のglowを相対位置で配置するため */
-    overflow: hidden; /* はみ出したglowを隠す */
+    position: relative;
 }
 
-/* 光のエフェクト */
-.glow {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.5) 50%, rgba(255,255,255,0) 100%);
-    opacity: 0;
-    transform: translateX(-100%); /* 初期位置を左端の外側へ */
-    pointer-events: none; /* クリックを邪魔しないように */
-}
-
-/* メインタイトル */
 .main-title {
-    font-size: clamp(40px, 10vw, 120px);
-    font-weight: 900;
-    letter-spacing: 0.05em;
-    opacity: 0; /* 初期状態は透明 */
+    font-family: 'Montserrat', sans-serif;
+    /* 【改善案】clampでレスポンシブ対応 */
+    font-size: clamp(3rem, 15vw, 9rem);
+    color: white;
+    position: relative;
+    opacity: 0; /* JSでアニメーション */
+    letter-spacing: 0.1em;
 }
 
-/* "A" の部分のスタイル */
 #backstage-trigger {
-    cursor: pointer; /* クリックできることを示すカーソル */
-    transition: color 0.3s ease;
-}
-#backstage-trigger:hover {
-    color: #ffd700; /* ホバー時に金色に */
+    cursor: pointer;
+    transition: color 0.3s;
 }
 
-/* サブタイトル */
+#backstage-trigger:hover {
+    color: #ffd700; /* ホバー時に金色っぽく */
+    text-shadow: 0 0 10px #ffd700;
+}
+
 .sub-title {
     font-family: 'Dancing Script', cursive;
-    font-size: clamp(24px, 5vw, 60px);
-    margin-top: 10px;
-    opacity: 0; /* 初期状態は透明 */
-    color: #FFD700; /* 文字色を金色に指定 */
+    /* 【改善案】clampでレスポンシブ対応 */
+    font-size: clamp(1.5rem, 6vw, 4rem);
+    color: #eee;
+    margin-top: 1rem;
+    opacity: 0; /* JSでアニメーション */
+}
+
+.glow {
+    position: absolute;
+    top: 50%;
+    /* 【改善案】CSSで完全に左に隠す */
+    left: -100%;
+    width: 100%;
+    height: 300px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0) 70%);
+    transform: translateY(-50%) skewX(-20deg);
+    opacity: 0;
+    pointer-events: none; /* クリックイベントを透過させる */
 }
 
 
 /* --- 舞台裏モーダル --- */
 .backstage-modal {
-    position: fixed; /* 画面に固定 */
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.85); /* 半透明の黒い背景 */
+    background-color: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
     display: none; /* 初期状態は非表示 */
     justify-content: center;
     align-items: center;
+    opacity: 0; /* JSでアニメーション */
     z-index: 1000;
-    opacity: 0; /* 初期状態は透明 */
 }
 
-/* 写真のコンテナ */
 .photo-container {
-    position: relative;
-    max-width: 80vw;
-    max-height: 80vh;
+    text-align: center;
 }
 
 .photo-container img {
-    max-width: 100%;
-    max-height: 100%;
+    /* 【改善案】画像のレスポンシブ対応 */
+    max-width: 90vw;
+    max-height: 80vh;
+    width: auto;
     height: auto;
-    object-fit: contain;
-    border: 4px solid #fff;
+    border-radius: 8px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    cursor: pointer; 
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.photo-container img:hover {
+    transform: scale(1.02);
 }
 
 .photo-container p {
-    position: absolute;
-    bottom: 20px;
-    left: 20px;
-    font-size: clamp(16px, 2.5vw, 24px);
-    color: #fff;
-    background-color: rgba(0, 0, 0, 0.6);
-    padding: 5px 15px;
-    border-radius: 4px;
-    pointer-events: none;
+    /* 【改善案】筆記体とレスポンシブ対応 */
+    font-family: 'Dancing Script', cursive;
+    font-size: clamp(1.2rem, 4vw, 2rem);
+    color: #f0f0f0;
+    margin-top: 1.5rem;
+    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.7);
 }
 
-/* 閉じるボタン */
 .close-button {
     position: absolute;
-    top: 20px;
-    right: 30px;
-    font-size: 40px;
-    color: #fff;
+    top: 30px;
+    right: 40px;
+    font-size: 3rem;
+    color: #aaa;
     cursor: pointer;
-    transition: transform 0.2s ease;
+    transition: color 0.3s, transform 0.3s;
 }
+
 .close-button:hover {
-    transform: scale(1.2);
+    color: white;
+    transform: rotate(90deg);
 }
