@@ -103,37 +103,81 @@
 
         // --- 舞台裏モーダル機能部分 ---
 
-        document.addEventListener('DOMContentLoaded', () => {
+        
+        // index.html の <script> 内
 
-            const backstageTrigger = document.getElementById('backstage-trigger');
-            // ▼▼▼【修正点】ここのIDを 'backstageModal' に修正しました ▼▼▼
-            const backstageModal = document.getElementById('backstageModal'); 
-            const closeModal = document.getElementById('closeModal');
+// ... (initializeAnimationAndGimmick 関数の上部とアニメーション部分は変更なし) ...
 
-            if (!backstageTrigger || !backstageModal || !closeModal) {
-                console.error('致命的エラー: 舞台裏モーダルのHTML要素取得に失敗しました。ID名を確認してください。');
-                return;
-            }
+    // --- 舞台裏モーダル機能部分 (スライドショー対応版) ---
+    const backstageModal = document.getElementById('backstageModal'); 
+    const closeModal = document.getElementById('closeModal');
+    const backstageTrigger = document.getElementById('backstage-trigger');
+    
+    // スライドショーの要素を取得
+    const prevArrow = document.getElementById('prevArrow');
+    const nextArrow = document.getElementById('nextArrow');
+    const slides = document.querySelectorAll('.slide');
+    let currentSlideIndex = 0; // 現在表示しているスライドの番号
 
-            // 開く処理
-            backstageTrigger.addEventListener('click', () => {
-                tl.pause();
-                backstageModal.style.display = 'flex';
-                gsap.to(backstageModal, { duration: 0.3, opacity: 1 });
-            });
+    if (!backstageTrigger || !backstageModal || !closeModal || !prevArrow || !nextArrow) {
+        console.error('致命的エラー: 舞台裏モーダルのHTML要素取得に失敗しました。ID名を確認してください。');
+        return;
+    }
 
-            // 閉じる処理
-            closeModal.addEventListener('click', () => {
-                gsap.to(backstageModal, {
-                    duration: 0.3,
-                    opacity: 0,
-                    onComplete: () => {
-                        backstageModal.style.display = 'none';
-                        tl.resume();
-                    }
-                });
-            });
+    // スライドを更新する関数
+    function showSlide(index) {
+        // 全てのスライドから "active" クラスを削除
+        slides.forEach(slide => {
+            slide.classList.remove('active');
         });
+        // 指定されたスライドに "active" クラスを追加
+        slides[index].classList.add('active');
+    }
+
+    // 次へボタンの処理
+    nextArrow.addEventListener('click', () => {
+        currentSlideIndex++;
+        if (currentSlideIndex >= slides.length) {
+            currentSlideIndex = 0; // 最後まで行ったら最初に戻る
+        }
+        showSlide(currentSlideIndex);
+    });
+
+    // 前へボタンの処理
+    prevArrow.addEventListener('click', () => {
+        currentSlideIndex--;
+        if (currentSlideIndex < 0) {
+            currentSlideIndex = slides.length - 1; // 最初から戻ったら最後に行く
+        }
+        showSlide(currentSlideIndex);
+    });
+
+    // モーダルを開く処理
+    backstageTrigger.addEventListener('click', () => {
+        localStorage.setItem(GIMMICK_KEY, 'true');
+        console.log('ギミックが発動され、localStorageに記録しました。');
+
+        tl.pause();
+        backstageModal.style.display = 'flex';
+        gsap.to(backstageModal, { duration: 0.3, opacity: 1 });
+        
+        // モーダルを開いたときに最初のスライドを確実に表示
+        currentSlideIndex = 0;
+        showSlide(currentSlideIndex);
+    });
+
+    // モーダルを閉じる処理 (変更なし)
+    closeModal.addEventListener('click', () => {
+        gsap.to(backstageModal, {
+            duration: 0.3,
+            opacity: 0,
+            onComplete: () => {
+                backstageModal.style.display = 'none';
+                tl.resume();
+            }
+        });
+    });
+}
     </script>
 
 </body>
