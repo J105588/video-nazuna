@@ -22,18 +22,16 @@
     /* 基本的なページ設定 */
     body {
         margin: 0;
-        padding: 20px;
+        padding: 20px; /* 変更点: レスポンシブ対応のためパディングを調整 */
         font-family: 'Noto Sans JP', sans-serif;
         background-color: var(--background-color);
-        background-image:
-            radial-gradient(ellipse at center, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
+        /* 変更点: bodyのグラデーションを削除し、コンテナのスポットライト効果に集中させます */
         color: var(--text-color);
         display: flex;
         justify-content: center;
-        align-items: flex-start; /* 修正: center から flex-start へ変更 */
+        align-items: flex-start;
         min-height: 100vh;
         box-sizing: border-box;
-        /* overflow: hidden; を削除 */
     }
 
     /* メインコンテンツのコンテナ */
@@ -44,10 +42,14 @@
         background: var(--card-background);
         border: 1px solid var(--border-color);
         border-radius: 8px;
-        box-shadow: 0 0 30px rgba(0, 0, 0, 0.5), 0 0 15px var(--border-color);
+        /* 変更点: box-shadowを調整してスポットライト効果を強調 */
+        box-shadow: 
+            0 0 80px rgba(212, 175, 55, 0.15), /* 外側の広い輝き */
+            0 0 35px rgba(212, 175, 55, 0.2),  /* 中間の輝き */
+            0 0 15px rgba(0, 0, 0, 0.7);        /* 直下の影 */
         position: relative;
         z-index: 1;
-        margin: 20px 0; /* 上下に余白を追加して見栄えを調整 */
+        margin: 20px 0;
     }
 
     /* メインタイトル */
@@ -170,6 +172,8 @@
         visibility: hidden;
         transition: opacity 1s ease 1.5s, visibility 1s ease 1.5s;
         z-index: 100;
+        padding: 20px; /* 変更点: 小画面用の余白を追加 */
+        box-sizing: border-box; /* 変更点: パディング計算のため */
     }
     .secret-overlay.visible {
         opacity: 1;
@@ -211,27 +215,52 @@
     }
 
    /* 管理者用パネル */
-.admin-panel {
-    position: fixed;
-    bottom: 10px;
-    right: 10px;
-    z-index: 101;
-}
-.admin-panel button {
-    background: #555;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    cursor: pointer;
-    border-radius: 5px;
-    font-size: 12px;
-    opacity: 0; /* 修正：デフォルトでは完全に非表示 */
-    transition: opacity 0.4s ease-in-out;
-}
-/* 修正：パネル領域にマウスが乗った時だけボタンを表示 */
-.admin-panel:hover button {
-    opacity: 1;
-}
+    .admin-panel {
+        position: fixed;
+        bottom: 10px;
+        right: 10px;
+        z-index: 101;
+    }
+    .admin-panel button {
+        background: #555;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        cursor: pointer;
+        border-radius: 5px;
+        font-size: 12px;
+        opacity: 0;
+        transition: opacity 0.4s ease-in-out;
+    }
+    .admin-panel:hover button {
+        opacity: 1;
+    }
+
+    /* 変更点: レスポンシブ対応のメディアクエリ */
+    @media (max-width: 768px) {
+        body {
+            padding: 10px; /* 小画面ではパディングを減らす */
+        }
+        .container {
+            padding: 20px; /* コンテナのパディングも調整 */
+            margin: 10px 0;
+        }
+        h1 {
+            font-size: 24px;
+        }
+        .info h2 {
+            font-size: 20px;
+        }
+        .secret-content {
+            padding: 20px;
+        }
+        .secret-content h2 {
+            font-size: 24px;
+        }
+        .secret-content p {
+            font-size: 15px;
+        }
+    }
 </style>
 </head>
 <body>
