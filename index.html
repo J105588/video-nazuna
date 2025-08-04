@@ -5,12 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>NAZUNA ENGEKI 5</title>
     
-    <!-- ご指定のフォントをGoogle Fontsから読み込みます -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Yuji+Syuku&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&family=Montserrat:wght@900&display=swap" rel="stylesheet">
     
-    <!-- 外部CSSファイルを読み込み -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -28,126 +26,81 @@
         </div>
     </div>
 
-    <!-- ▼▼▼ 小ネタ：舞台裏モーダル（スライドショー形式に修正） ▼▼▼ -->
+    <!-- 小ネタ：舞台裏モーダル -->
     <div class="backstage-modal" id="backstageModal">
-        <div class="slideshow-container">
-
-            <!-- 左右のナビゲーション矢印 -->
-            <div class="prev-arrow" id="prevArrow">＜</div>
-            <div class="next-arrow" id="nextArrow">＞</div>
-
-            <!-- 画像とキャプションのラッパー -->
-            <div class="photo-wrapper" id="photoWrapper">
-                <!-- 
-                    ↓↓↓ ここに写真を追加・変更してください ↓↓↓ 
-                    各写真とキャプションは <div class="slide"> で囲みます。
-                    最初の写真にだけ、class="slide active" をつけます。
-                -->
-                <div class="slide active">
-                    <img src="images/my-backstage.jpg" alt="舞台裏の風景1">
-                    <p>Behind the Scenes #1</p>
-                </div>
-                <div class="slide">
-                    <img src="images/my-backstage-2.jpg" alt="舞台裏の風景2">
-                    <p>The Rehearsal Room</p>
-                </div>
-                <div class="slide">
-                    <img src="images/my-backstage-3.jpg" alt="舞台裏の風景3">
-                    <p>Work in Progress</p>
-                </div>
-                <!-- ▲▲▲ 写真の追加・変更はここまで ▲▲▲ -->
-            </div>
+        <div class="photo-container">
+            <!-- 最初の画像を指定。JavaScriptによって動的に変更される -->
+            <img src="images/my-backstage-1.jpg" alt="舞台裏の風景">
+            <p>Behind the Scenes</p>
         </div>
         <div class="close-button" id="closeModal">×</div>
     </div>
-
-    <!-- JavaScriptライブラリ（GSAP）を読み込みます -->
+    
+    <!-- JavaScriptライブラリ -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 
-    <!-- ★★★ 自作JavaScript（スライドショー機能を追加） ★★★ -->
+    <!-- 自作JavaScript -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // 表示したい画像ファイルのリストをここに定義します。
+            // お手元のファイル名に合わせて、このリストを編集してください。
+            const backstageImages = [
+                'images/my-backstage-1.jpg',
+                'images/my-backstage-2.jpg',
+                'images/my-backstage-3.jpg'
+                // 必要ならコンマで区切って、どんどん追加できます
+                // 'images/another-photo.png',
+            ];
 
-            // --- 1. アニメーションとギミックに必要なHTML要素を取得 ---
+            // 現在表示している画像の番号を記録するカウンター
+            let currentImageIndex = 0;
+
             const opWrapper = document.getElementById('opWrapper');
             const glow = document.getElementById('glow');
             const mainTitle = document.getElementById('mainTitle');
             const subTitle = document.getElementById('subTitle');
-            
-            // --- 2. メインのアニメーションタイムラインを定義 ---
+
+            // --- メインのアニメーションタイムライン ---
             const tl = gsap.timeline({
                 onComplete: () => {
                     gsap.to(opWrapper, {
                         duration: 1.5,
                         opacity: 0,
                         ease: 'power2.in',
-                        onComplete: () => { window.location.href = 'index/video.html'; }
+                        onComplete: () => {
+                            window.location.href = 'index/video.html';
+                        }
                     });
                 }
             });
 
             tl.to(mainTitle, { duration: 1.5, opacity: 1, ease: 'power2.out' }, 0.5);
             tl.fromTo(glow, { opacity: 0, xPercent: -100 }, 
-                      { duration: 1.3, opacity: 1, xPercent: 100, ease: 'power1.inOut' }, 0.8);
+                      { duration: 1.3, opacity: 1, xPercent: 250, ease: 'power1.inOut' }, 
+                      0.8);
             tl.to(glow, { duration: 0.5, opacity: 0 }, ">-0.3");
             tl.to(subTitle, { duration: 1.5, opacity: 1, ease: 'power2.out' }, 1.8);
             tl.to({}, {duration: 2});
 
-            // --- 3. 舞台裏モーダル（ギミック）の処理 ---
-
-            // モーダルと閉じるボタンの要素
+            // --- 舞台裏モーダル機能 ---
             const backstageTrigger = document.getElementById('backstage-trigger');
             const backstageModal = document.getElementById('backstageModal');
             const closeModal = document.getElementById('closeModal');
+            const modalImage = document.querySelector('.photo-container img');
 
-            // ▼▼▼ スライドショー関連の要素を取得 ▼▼▼
-            const prevArrow = document.getElementById('prevArrow');
-            const nextArrow = document.getElementById('nextArrow');
-            const slides = document.querySelectorAll('.slide');
-            let currentSlideIndex = 0; // 現在表示中のスライド番号を管理
-
-            // スライドを切り替えるための関数
-            function showSlide(index) {
-                slides.forEach((slide, i) => {
-                    // 表示すべきスライド(index)にだけ 'active' クラスを付ける
-                    if (i === index) {
-                        slide.classList.add('active');
-                    } else {
-                        slide.classList.remove('active');
-                    }
-                });
+            if (!backstageTrigger || !backstageModal || !closeModal || !modalImage) {
+                console.error('致命的エラー: 必要なHTML要素の取得に失敗しました。ID名やクラス名を確認してください。');
+                return;
             }
 
-            // 「次へ」ボタンを押したときの処理
-            nextArrow.addEventListener('click', () => {
-                currentSlideIndex++;
-                if (currentSlideIndex >= slides.length) {
-                    currentSlideIndex = 0; // 最後のスライドの次は最初に戻る
-                }
-                showSlide(currentSlideIndex);
-            });
-
-            // 「前へ」ボタンを押したときの処理
-            prevArrow.addEventListener('click', () => {
-                currentSlideIndex--;
-                if (currentSlideIndex < 0) {
-                    currentSlideIndex = slides.length - 1; // 最初のスライドの前は最後に行く
-                }
-                showSlide(currentSlideIndex);
-            });
-
-            // モーダルを開く処理
-            backstageTrigger.addEventListener('click', (event) => {
-                event.stopPropagation();
+            // "A" をクリックしたときの処理
+            backstageTrigger.addEventListener('click', () => {
                 tl.pause();
                 backstageModal.style.display = 'flex';
                 gsap.to(backstageModal, { duration: 0.3, opacity: 1 });
-                // モーダルを開いたときは、必ず最初のスライドを表示する
-                currentSlideIndex = 0;
-                showSlide(currentSlideIndex);
             });
 
-            // モーダルを閉じる処理
+            // 閉じるボタン "×" をクリックしたときの処理
             closeModal.addEventListener('click', () => {
                 gsap.to(backstageModal, {
                     duration: 0.3,
@@ -158,8 +111,35 @@
                     }
                 });
             });
+
+            // モーダル内の画像をクリックしたときの処理
+            modalImage.addEventListener('click', () => {
+                // カウンターを次に進める
+                currentImageIndex++;
+
+                // もしカウンターが画像の枚数以上になったら、0番目（最初）に戻す
+                if (currentImageIndex >= backstageImages.length) {
+                    currentImageIndex = 0;
+                }
+
+                // 画像が切り替わる演出（一瞬フェードアウトして、新しい画像をフェードイン）
+                gsap.to(modalImage, {
+                    duration: 0.2,
+                    opacity: 0,
+                    ease: 'power1.in',
+                    onComplete: () => {
+                        // 画像のソースを新しいものに差し替える
+                        modalImage.src = backstageImages[currentImageIndex];
+                        // 新しい画像をフェードインさせる
+                        gsap.to(modalImage, {
+                            duration: 0.3,
+                            opacity: 1,
+                            ease: 'power1.out'
+                        });
+                    }
+                });
+            });
         });
     </script>
-
 </body>
 </html>
