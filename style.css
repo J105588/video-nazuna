@@ -1,173 +1,133 @@
-/* =================================================== */
-/* ========== ギミック（舞台裏モーダル）のCSS ========== */
-/* =================================================== */
-
-/* --- モーダル背景 --- */
-.backstage-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    
-    background-color: rgba(0, 0, 0, 0.85); /* 半透明の黒背景 */
-    backdrop-filter: blur(10px); /* 背景をぼかす（対応ブラウザのみ） */
-    
-    display: none; /* 初期状態では非表示 */
-    justify-content: center;
-    align-items: center;
-    
-    opacity: 0; /* 初期状態では透明 */
-    z-index: 1000; /* 最前面に表示 */
+/* 基本設定 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-/* --- 閉じるボタン（×） --- */
-.close-button {
-    position: absolute;
-    top: 30px;
-    right: 40px;
-    
-    font-size: 40px;
-    font-weight: bold;
+html, body {
+    height: 100%;
+    overflow: hidden; /* スクロールバーを非表示に */
+    background-color: #000;
     color: #fff;
-    
-    cursor: pointer;
-    transition: transform 0.3s ease, color 0.3s ease;
-}
-.close-button:hover {
-    color: #ccc;
-    transform: rotate(90deg);
+    font-family: 'Montserrat', sans-serif;
 }
 
-/* =================================================== */
-/* ====== スライドショー用のスタイル（ポラロイド風） ====== */
-/* =================================================== */
-
-/* --- スライドショー全体のコンテナ --- */
-.slideshow-container {
-    position: relative;
-    width: 80vw;
-    max-width: 600px; /* ポラロイド風のデザインに合わせ少し最大幅を調整 */
+/* オープニング全体のコンテナ */
+.op-wrapper {
+    width: 100%;
+    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: default;
 }
 
-/* --- 写真を重ねて表示するためのラッパー --- */
-.photo-wrapper {
-    position: relative;
-    width: 100%;
-    padding-top: 100%; /* 正方形の表示領域を確保 */
+/* タイトル全体のブロック */
+.title-block {
+    text-align: center;
 }
 
-/* --- 各スライド（ポラロイドフレーム）の基本スタイル --- */
-.slide {
+/* メインタイトル("NAZUNA ENGEKI")の箱 */
+.title-box {
+    position: relative; /* 子要素のglowを相対位置で配置するため */
+    overflow: hidden; /* はみ出したglowを隠す */
+}
+
+/* 光のエフェクト */
+.glow {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    
-    /* アニメーションのための初期設定 */
+    background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.5) 50%, rgba(255,255,255,0) 100%);
     opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
-    transform: scale(0.95);
-    
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    transform: translateX(-100%); /* 初期位置を左端の外側へ */
+    pointer-events: none; /* クリックを邪魔しないように */
 }
 
-/* 表示中のスライドに適用するスタイル */
-.slide.active {
-    opacity: 1;
-    visibility: visible;
-    transform: scale(1); /* 表示時に少し拡大 */
-    transition-delay: 0.1s; /* 切り替わりに少し間を持たせる */
+/* メインタイトル */
+.main-title {
+    font-size: clamp(40px, 10vw, 120px);
+    font-weight: 900;
+    letter-spacing: 0.05em;
+    opacity: 0; /* 初期状態は透明 */
 }
 
-/* --- ポラロイド写真風のフレーム --- */
-.slide img {
-    width: 88%; 
-    height: 75%;
-    object-fit: cover;
-    
-    background: #fff;
-    border: 1px solid #EAEAEA;
-    padding: 15px 15px 60px 15px; /* 写真の余白（下がキャプションエリア） */
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-    border-radius: 3px;
-    
-    /* 写真を少し傾ける */
-    transform: rotate(-2deg); 
+/* "A" の部分のスタイル */
+#backstage-trigger {
+    cursor: pointer; /* クリックできることを示すカーソル */
+    transition: color 0.3s ease;
+}
+#backstage-trigger:hover {
+    color: #ffd700; /* ホバー時に金色に */
 }
 
-/* 2枚目以降の写真を少しずつ違う角度に傾ける（遊び心） */
-.slide:nth-child(2) img { transform: rotate(1.5deg); }
-.slide:nth-child(3) img { transform: rotate(-2.5deg); }
-.slide:nth-child(4) img { transform: rotate(2deg); }
-/* 写真を追加した場合は、ここを追記していくと、さらに多様な角度を付けられます */
+/* サブタイトル */
+.sub-title {
+    font-family: 'Dancing Script', cursive;
+    font-size: clamp(24px, 5vw, 60px);
+    margin-top: 10px;
+    opacity: 0; /* 初期状態は透明 */
+    color: #FFD700; /* 文字色を金色に指定 */
+}
 
 
-/* --- 写真のキャプション（手書き風フォントを適用） --- */
-.slide p {
-    font-family: 'Yuji Syuku', serif; /* 手書き風フォント */
-    font-size: clamp(16px, 3vw, 22px); /* 画面サイズに応じて調整 */
-    
-    position: absolute;
-    bottom: 8%; /* ポラロイドの下の余白部分に配置 */
+/* --- 舞台裏モーダル --- */
+.backstage-modal {
+    position: fixed; /* 画面に固定 */
+    top: 0;
     left: 0;
-    right: 0;
-    text-align: center;
-    color: #333;
-    pointer-events: none; /* キャプションがクリックの邪魔をしないように */
-}
-
-
-/* --- 左右の矢印ボタンのスタイル --- */
-.prev-arrow, .next-arrow {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    
-    font-size: 24px;
-    color: rgba(255, 255, 255, 0.7);
-    background-color: rgba(0, 0, 0, 0.3);
-    width: 44px;
-    height: 44px;
-    border-radius: 50%; /* 円形にする */
-    
-    display: flex;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85); /* 半透明の黒い背景 */
+    display: none; /* 初期状態は非表示 */
     justify-content: center;
     align-items: center;
-    
-    cursor: pointer;
-    user-select: none;
-    transition: all 0.3s ease;
-    z-index: 10;
+    z-index: 1000;
+    opacity: 0; /* 初期状態は透明 */
 }
-.prev-arrow:hover, .next-arrow:hover {
+
+/* 写真のコンテナ */
+.photo-container {
+    position: relative;
+    max-width: 80vw;
+    max-height: 80vh;
+}
+
+.photo-container img {
+    max-width: 100%;
+    max-height: 100%;
+    height: auto;
+    object-fit: contain;
+    border: 4px solid #fff;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    cursor: pointer; 
+}
+
+.photo-container p {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    font-size: clamp(16px, 2.5vw, 24px);
     color: #fff;
     background-color: rgba(0, 0, 0, 0.6);
-    transform: translateY(-50%) scale(1.1); /* ホバー時に少し拡大 */
+    padding: 5px 15px;
+    border-radius: 4px;
+    pointer-events: none;
 }
 
-/* 矢印の位置 */
-.prev-arrow { left: -20px; }
-.next-arrow { right: -20px; }
-
-
-/* --- レスポンシブ対応：スマホなど画面が狭い場合 --- */
-@media (max-width: 768px) {
-    /* 閉じるボタンを少し大きく、押しやすく */
-    .close-button {
-        top: 20px;
-        right: 20px;
-        font-size: 32px;
-    }
-    
-    /* 矢印を画像の内側に配置 */
-    .prev-arrow { left: 10px; }
-    .next-arrow { right: 10px; }
+/* 閉じるボタン */
+.close-button {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    font-size: 40px;
+    color: #fff;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+.close-button:hover {
+    transform: scale(1.2);
 }
