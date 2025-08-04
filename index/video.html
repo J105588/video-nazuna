@@ -184,6 +184,11 @@
         padding: 40px;
         max-width: 600px;
         position: relative;
+        background-color: rgba(10, 10, 10, 0.2); /* 変更点: わずかに背景色を追加して光の効果を補強 */
+        /* 変更点: スポットライト効果を追加 */
+        box-shadow: 
+            0 0 100px rgba(212, 175, 55, 0.25), /* 外側の広い輝き */
+            0 0 40px rgba(212, 175, 55, 0.3);  /* 内側の強い輝き */
     }
 
     .secret-content h2 {
@@ -218,8 +223,6 @@
         bottom: 10px;
         right: 10px;
         z-index: 101;
-        display: flex;
-        gap: 5px;
     }
     .admin-panel button {
         background: #555;
@@ -235,10 +238,8 @@
     .admin-panel:hover button {
         opacity: 1;
     }
-    .admin-panel button#dev-clear-button {
-        background-color: #3a5fcd;
-    }
 
+    /* レスポンシブ対応 */
     @media (max-width: 768px) {
         body {
             padding: 10px;
@@ -299,7 +300,6 @@
 
 <!-- 管理者用パネル -->
 <div class="admin-panel">
-    <button id="dev-clear-button" title="閲覧記録(localStorage)を削除してリロードします">閲覧記録クリア</button>
     <button id="admin-reset-button">管理者用リセット</button>
 </div>
 
@@ -368,21 +368,15 @@ document.addEventListener('DOMContentLoaded', () => {
         activateGimmick();
     });
 
-    // 開発用の閲覧記録クリア機能
-    document.getElementById('dev-clear-button').addEventListener('click', () => {
-        localStorage.removeItem(hasVisitedKey);
-        alert('閲覧者記録をクリアしました。ページをリロードします。');
-        location.reload();
-    });
-
     // 管理者用リセット機能
     document.getElementById('admin-reset-button').addEventListener('click', () => {
         const password = prompt('管理者用パスワードを入力してください:');
         if (password === 'nazuna-engeki-5') {
             const confirmReset = confirm(
                 '【管理者向け操作】\n\n' +
-                'Googleスプレッドシートの当選者記録は手動で削除する必要があります。\n\n' +
-                'このページの閲覧者記録(localStorage)のみをクリアしますか？'
+                'この操作は、このブラウザの閲覧者記録(localStorage)のみをクリアします。\n' +
+                'Googleスプレッドシート上の当選者記録はリセットされません。\n\n' +
+                '閲覧者記録をクリアしますか？'
             );
             if (confirmReset) {
                 // localStorageの記録を削除
