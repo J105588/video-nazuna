@@ -7,7 +7,7 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&family=Montserrat:wght@900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@900&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="style.css">
 </head>
@@ -29,24 +29,20 @@
     <!-- 小ネタ：舞台裏モーダル -->
     <div class="backstage-modal" id="backstageModal">
         <div class="photo-container">
-            <!-- 最初の画像を指定。JavaScriptによって動的に変更される -->
             <img src="images/my-backstage-1.jpg" alt="舞台裏の風景">
             <p>Behind the Scenes</p>
         </div>
         <div class="close-button" id="closeModal">×</div>
     </div>
     
-    <!-- JavaScriptライブラリ -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 
-    <!-- 自作JavaScript -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // 表示したい画像ファイルのリストをここに定義します。
             const backstageImages = [
                 'images/test-video-yozora.jpg',
-                'images/2.jpg',
-                'images/3.jpg'
+                'images/my-backstage-2.jpg',
+                'images/my-backstage-3.jpg'
             ];
 
             let currentImageIndex = 0;
@@ -64,32 +60,29 @@
                         opacity: 0,
                         ease: 'power2.in',
                         onComplete: () => {
-                            window.location.href = 'index/video.html';
+                            // window.location.href = 'index/video.html';
+                            console.log('アニメーション完了、ページ遷移します。'); // 開発用にコメントアウト
                         }
                     });
                 }
             });
 
-            tl.to(mainTitle, { duration: 2.7, opacity: 1, ease: 'power2.out' }, 0.5);
+            tl.to(mainTitle, { duration: 1.5, opacity: 1, ease: 'power2.out' }, 0.5);
             
-            // 【変更点】光が画面を突き抜けるようにアニメーションを一つに統合
+            // 【改善案】光が画面を突き抜けるようにアニメーションを調整
             tl.fromTo(glow, 
-                { xPercent: -100, opacity: 0 }, // 開始状態
+                { x: '0', opacity: 0 },
                 { 
-                    duration: 1.8, // アニメーション全体の時間
-                    xPercent: 400, // 終了位置（画面の右外）
-                    opacity: 1, // 移動中に不透明にする
+                    duration: 1.8,
+                    x: '200vw', // 画面幅の2倍右へ移動し、確実に画面外へ
                     ease: 'power1.inOut',
-                    // 移動に合わせてopacityを変化させるキーフレーム
                     keyframes: {
-                        "20%": { opacity: 1 },  // 開始から20%の地点で完全に表示
-                        "80%": { opacity: 1 },  // 80%の地点まで表示を維持
-                        "100%": { opacity: 0 }  // 最後の地点で完全に消える
+                        "20%": { opacity: 1 },
+                        "80%": { opacity: 1 },
+                        "100%": { opacity: 0 }
                     }
                 }, 
-                0.8); // タイムラインの0.8秒地点から開始
-
-            // tl.to(glow, ...) の行は不要になったため削除
+                0.8);
 
             tl.to(subTitle, { duration: 1.5, opacity: 1, ease: 'power2.out' }, 1.8);
             tl.to({}, {duration: 2});
@@ -105,7 +98,8 @@
                 return;
             }
 
-            backstageTrigger.addEventListener('click', () => {
+            backstageTrigger.addEventListener('click', (e) => {
+                e.stopPropagation(); // 親要素へのイベント伝播を停止
                 tl.pause();
                 backstageModal.style.display = 'flex';
                 gsap.to(backstageModal, { duration: 0.3, opacity: 1 });
@@ -123,10 +117,7 @@
             });
 
             modalImage.addEventListener('click', () => {
-                currentImageIndex++;
-                if (currentImageIndex >= backstageImages.length) {
-                    currentImageIndex = 0;
-                }
+                currentImageIndex = (currentImageIndex + 1) % backstageImages.length;
                 gsap.to(modalImage, {
                     duration: 0.2,
                     opacity: 0,
