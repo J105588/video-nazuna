@@ -5,10 +5,9 @@
 <title>試験公開_動画公開ページ</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="" type="image/png">
-<!-- スポットライト関連のhtml2canvas.min.jsを削除 -->
 <style>
     /* フォントのインポート */
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700&family=Noto+Serif+JP:wght@400;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Noto+Serif+JP:wght@400;700&display=swap');
 
     /* 色や基本的な変数の定義 */
     :root {
@@ -23,7 +22,7 @@
     /* 基本的なページ設定 */
     body {
         margin: 0;
-        padding: 20px; 
+        padding: 20px;
         font-family: 'Noto Sans JP', sans-serif;
         background-color: var(--background-color);
         background-image:
@@ -31,25 +30,24 @@
         color: var(--text-color);
         display: flex;
         justify-content: center;
-        align-items: center;
+        align-items: flex-start; /* 修正: center から flex-start へ変更 */
         min-height: 100vh;
         box-sizing: border-box;
-        overflow: hidden; 
+        /* overflow: hidden; を削除 */
     }
-
-    /* スポットライト関連のCSSを全て削除 */
 
     /* メインコンテンツのコンテナ */
     .container {
-        max-width: 720px; 
+        max-width: 720px;
         width: 100%;
-        padding: 30px; 
+        padding: 30px;
         background: var(--card-background);
         border: 1px solid var(--border-color);
         border-radius: 8px;
         box-shadow: 0 0 30px rgba(0, 0, 0, 0.5), 0 0 15px var(--border-color);
         position: relative;
         z-index: 1;
+        margin: 20px 0; /* 上下に余白を追加して見栄えを調整 */
     }
 
     /* メインタイトル */
@@ -57,8 +55,8 @@
         text-align: center;
         font-family: 'Noto Serif JP', serif;
         font-weight: 700;
-        font-size: 28px; 
-        margin-bottom: 25px; 
+        font-size: 28px;
+        margin-bottom: 25px;
         color: #fff;
         text-shadow: 0 0 10px var(--accent-gold), 0 0 2px #fff;
     }
@@ -91,14 +89,14 @@
     .info h2 {
         font-family: 'Noto Serif JP', serif;
         font-weight: 400;
-        font-size: 22px; 
+        font-size: 22px;
         margin-top: 0;
         margin-bottom: 12px;
         color: var(--accent-gold);
     }
 
     .info p {
-        font-size: 14px; 
+        font-size: 14px;
         line-height: 1.7;
         color: #ccc;
     }
@@ -129,9 +127,7 @@
         color: #fff;
     }
 
-    /* スポットライト関連の#secret-trigger.spotlight-focusと@keyframes secret-pulseを削除 */
-
-    /* その他のスタイル（緞帳、シークレットページなど）は元のコードと同じ */
+    /* 緞帳、シークレットページなど */
     .curtain {
         position: fixed;
         top: 0;
@@ -198,7 +194,7 @@
     }
 
     .secret-content p {
-        font-size: 16px; 
+        font-size: 16px;
         line-height: 1.8;
         margin-bottom: 30px;
         color: #f0f0f0;
@@ -222,24 +218,22 @@
         z-index: 101;
     }
     .admin-panel button {
-        background: #555;
+        background: rgba(85, 85, 85, 0.7); /* 少し透明に */
         color: white;
         border: none;
-        padding: 6px 10px; 
+        padding: 8px 12px; /* 少し大きく */
         cursor: pointer;
         border-radius: 5px;
-        font-size: 11px;
-        opacity: 0;
-        transition: opacity 0.4s ease-in-out;
+        font-size: 12px; /* 少し大きく */
+        opacity: 0.2; /* 常に少し見えるように */
+        transition: opacity 0.3s ease;
     }
     .admin-panel button:hover {
-        opacity: 1;
+        opacity: 1; /* ホバーで完全表示 */
     }
 </style>
 </head>
 <body>
-
-<!-- スポットライト関連の<div id="spotlight-mask-layer"></div>を削除 -->
 
 <div class="container">
     <h1>動画公開ページ</h1>
@@ -284,19 +278,20 @@ document.addEventListener('DOMContentLoaded', () => {
     let clickCount = 0;
     const requiredClicks = 5;
 
+    // Google Apps ScriptのURL（デプロイ後に取得したURLを設定してください）
     const GAS_URL = "https://script.google.com/macros/s/AKfycbwqB0kXqVzwtIYsLQ9HSrCz27MwwN_jzyW8C_T0tqQHO9VK58LgRTWULF83wocBycDp/exec";
+    // localStorageで使用するキー
     const hasVisitedKey = 'engeki5-has-attempted';
 
-    // スポットライト関連のJavaScript(CircleMaskSpotlightクラスなど)を全て削除
-
-    // ギミック機能（元のコードと同じ）
+    // ギミック機能
     function activateGimmick() {
         clickCount++;
         if (clickCount >= requiredClicks) {
             clickCount = 0;
 
-            if (sessionStorage.getItem(hasVisitedKey)) {
-                alert('本日分は既にご応募いただいております。');
+            // localStorageに記録があるか確認
+            if (localStorage.getItem(hasVisitedKey)) {
+                alert('既にご応募いただいております。');
                 return;
             }
 
@@ -311,7 +306,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 })
                 .then(response => response.json())
                 .then(data => {
-                    sessionStorage.setItem(hasVisitedKey, 'true');
+                    // 応募した記録をlocalStorageに保存
+                    localStorage.setItem(hasVisitedKey, 'true');
                     if (data.status === 'success') {
                         document.getElementById('secret-title').textContent = '特別なご招待状';
                         document.getElementById('secret-message').innerHTML = `おめでとうございます。<br>あなたは ${data.winnerNumber} 番目の特別な招待客として認められました。`;
@@ -345,11 +341,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (password === 'nazuna-engeki-5') {
             const confirmReset = confirm(
                 '【管理者向け操作】\n\n' +
-                'スプレッドシートの当選者記録（A2以降の行）は手動で削除してください。\n\n' +
-                'このページの閲覧者記録のみをクリアしますか？'
+                'Googleスプレッドシートの当選者記録は手動で削除する必要があります。\n\n' +
+                'このページの閲覧者記録(localStorage)のみをクリアしますか？'
             );
             if (confirmReset) {
-                sessionStorage.removeItem(hasVisitedKey);
+                // localStorageの記録を削除
+                localStorage.removeItem(hasVisitedKey);
                 alert('閲覧者記録をクリアしました。ページをリロードすると、再度ギミックを試すことができます。');
                 location.reload();
             }
