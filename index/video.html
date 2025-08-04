@@ -210,27 +210,28 @@
         font-weight: bold;
     }
 
-    /* 管理者用パネル */
-    .admin-panel {
-        position: fixed;
-        bottom: 10px;
-        right: 10px;
-        z-index: 101;
-    }
-    .admin-panel button {
-        background: rgba(85, 85, 85, 0.7); /* 少し透明に */
-        color: white;
-        border: none;
-        padding: 8px 12px; /* 少し大きく */
-        cursor: pointer;
-        border-radius: 5px;
-        font-size: 12px; /* 少し大きく */
-        opacity: 0.2; /* 常に少し見えるように */
-        transition: opacity 0.3s ease;
-    }
-    .admin-panel button:hover {
-        opacity: 1; /* ホバーで完全表示 */
-    }
+   /* 管理者用パネル */
+.admin-panel {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    z-index: 101;
+}
+.admin-panel button {
+    background: #555;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 12px;
+    opacity: 0; /* 修正：デフォルトでは完全に非表示 */
+    transition: opacity 0.4s ease-in-out;
+}
+/* 修正：パネル領域にマウスが乗った時だけボタンを表示 */
+.admin-panel:hover button {
+    opacity: 1;
+}
 </style>
 </head>
 <body>
