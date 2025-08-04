@@ -43,16 +43,12 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // 表示したい画像ファイルのリストをここに定義します。
-            // お手元のファイル名に合わせて、このリストを編集してください。
             const backstageImages = [
-                'images/my-backstage-1.jpg',
-                'images/my-backstage-2.jpg',
-                'images/my-backstage-3.jpg'
-                // 必要ならコンマで区切って、どんどん追加できます
-                // 'images/another-photo.png',
+                'images/test-video-yozora.jpg',
+                'images/2.jpg',
+                'images/3.jpg'
             ];
 
-            // 現在表示している画像の番号を記録するカウンター
             let currentImageIndex = 0;
 
             const opWrapper = document.getElementById('opWrapper');
@@ -75,10 +71,26 @@
             });
 
             tl.to(mainTitle, { duration: 1.5, opacity: 1, ease: 'power2.out' }, 0.5);
-            tl.fromTo(glow, { opacity: 0, xPercent: -100 }, 
-                      { duration: 2.7, opacity: 1, xPercent: 250, ease: 'power1.inOut' }, 
-                      0.8);
-            tl.to(glow, { duration: 0.5, opacity: 0 }, ">-0.3");
+            
+            // 【変更点】光が画面を突き抜けるようにアニメーションを一つに統合
+            tl.fromTo(glow, 
+                { xPercent: -100, opacity: 0 }, // 開始状態
+                { 
+                    duration: 1.8, // アニメーション全体の時間
+                    xPercent: 400, // 終了位置（画面の右外）
+                    opacity: 1, // 移動中に不透明にする
+                    ease: 'power1.inOut',
+                    // 移動に合わせてopacityを変化させるキーフレーム
+                    keyframes: {
+                        "20%": { opacity: 1 },  // 開始から20%の地点で完全に表示
+                        "80%": { opacity: 1 },  // 80%の地点まで表示を維持
+                        "100%": { opacity: 0 }  // 最後の地点で完全に消える
+                    }
+                }, 
+                0.8); // タイムラインの0.8秒地点から開始
+
+            // tl.to(glow, ...) の行は不要になったため削除
+
             tl.to(subTitle, { duration: 1.5, opacity: 1, ease: 'power2.out' }, 1.8);
             tl.to({}, {duration: 2});
 
@@ -93,14 +105,12 @@
                 return;
             }
 
-            // "A" をクリックしたときの処理
             backstageTrigger.addEventListener('click', () => {
                 tl.pause();
                 backstageModal.style.display = 'flex';
                 gsap.to(backstageModal, { duration: 0.3, opacity: 1 });
             });
 
-            // 閉じるボタン "×" をクリックしたときの処理
             closeModal.addEventListener('click', () => {
                 gsap.to(backstageModal, {
                     duration: 0.3,
@@ -112,25 +122,17 @@
                 });
             });
 
-            // モーダル内の画像をクリックしたときの処理
             modalImage.addEventListener('click', () => {
-                // カウンターを次に進める
                 currentImageIndex++;
-
-                // もしカウンターが画像の枚数以上になったら、0番目（最初）に戻す
                 if (currentImageIndex >= backstageImages.length) {
                     currentImageIndex = 0;
                 }
-
-                // 画像が切り替わる演出（一瞬フェードアウトして、新しい画像をフェードイン）
                 gsap.to(modalImage, {
                     duration: 0.2,
                     opacity: 0,
                     ease: 'power1.in',
                     onComplete: () => {
-                        // 画像のソースを新しいものに差し替える
                         modalImage.src = backstageImages[currentImageIndex];
-                        // 新しい画像をフェードインさせる
                         gsap.to(modalImage, {
                             duration: 0.3,
                             opacity: 1,
