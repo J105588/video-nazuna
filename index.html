@@ -5,9 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>NAZUNA ENGEKI 5</title>
     
+    <!-- Google Fonts（正しく読み込みます） -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&family=Montserrat:wght@900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Yuji+Syuku&display=swap" rel="stylesheet">
     
     <!-- 外部CSSファイルを読み込み -->
     <link rel="stylesheet" href="style.css">
@@ -28,156 +29,150 @@
     </div>
 
     <!-- 小ネタ：舞台裏モーダル -->
-    
-
-<!-- 小ネタ：舞台裏モーダル -->
-<div class="backstage-modal" id="backstageModal">
-
-    <!-- ▼▼▼ ここから下がスライドショーのコンテナになります ▼▼▼ -->
-    <div class="slideshow-container">
-
-        <!-- 左右のナビゲーション矢印 -->
-        <div class="prev-arrow" id="prevArrow">＜</div>
-        <div class="next-arrow" id="nextArrow">＞</div>
-
-        <!-- 画像とキャプションのラッパー -->
-        <div class="photo-wrapper" id="photoWrapper">
-            <!-- 
-                ↓↓↓ ここに写真を追加していきます ↓↓↓ 
-                各写真とキャプションは <div class="slide"> で囲みます。
-                最初の写真だけ、classに "active" をつけておきます。
-            -->
-            <div class="slide active">
-                <img src="images/my-backstage.jpg" alt="舞台裏の風景1">
-                <p>Behind the Scenes #1</p>
+    <div class="backstage-modal" id="backstageModal">
+        <div class="slideshow-container">
+            <div class="prev-arrow" id="prevArrow">＜</div>
+            <div class="next-arrow" id="nextArrow">＞</div>
+            <div class="photo-wrapper" id="photoWrapper">
+                <!-- 
+                    ↓↓↓ ここに写真を追加していきます ↓↓↓ 
+                -->
+                <div class="slide active">
+                    <img src="images/my-backstage.jpg" alt="舞台裏の風景1">
+                    <p>Behind the Scenes #1</p>
+                </div>
+                <div class="slide">
+                    <img src="images/my-backstage-2.jpg" alt="舞台裏の風景2">
+                    <p>The Rehearsal Room</p>
+                </div>
+                <div class="slide">
+                    <img src="images/my-backstage-3.jpg" alt="舞台裏の風景3">
+                    <p>Work in Progress</p>
+                </div>
+                <!-- ▲▲▲ 写真を追加する場合は、この上に追加します ▲▲▲ -->
             </div>
-            <div class="slide">
-                <img src="images/my-backstage-2.jpg" alt="舞台裏の風景2">
-                <p>The Rehearsal Room</p>
-            </div>
-            <div class="slide">
-                <img src="images/my-backstage-3.jpg" alt="舞台裏の風景3">
-                <p>Work in Progress</p>
-            </div>
-            <!-- ▲▲▲ 写真を追加する場合は、この上に追加します ▲▲▲ -->
         </div>
+        <div class="close-button" id="closeModal">×</div>
     </div>
-    <!-- ▲▲▲ スライドショーのコンテナはここまで ▲▲▲ -->
 
-    <div class="close-button" id="closeModal">×</div>
-</div>
-
-    <!-- JavaScriptライブラリ -->
+    <!-- JavaScriptライブラリ（GSAPを正しく読み込みます） -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 
-    <!-- ★★★ 自作JavaScript（IDの指定ミスを修正済み） ★★★ -->
+    <!-- ★★★ 自作JavaScript（構造とロジックを修正済み） ★★★ -->
     <script>
-        // --- メインアニメーション部分 ---
+        // --- ページが読み込まれたら、全体の初期化処理を開始 ---
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeAnimationAndGimmick();
+        });
 
-        const opWrapper = document.getElementById('opWrapper');
-        const glow = document.getElementById('glow');
-        const mainTitle = document.getElementById('mainTitle');
-        const subTitle = document.getElementById('subTitle');
+        // --- アニメーションとギミックの初期化関数 ---
+        function initializeAnimationAndGimmick() {
+            
+            // --- 1. アニメーション関連の要素を取得 ---
+            const opWrapper = document.getElementById('opWrapper');
+            const glow = document.getElementById('glow');
+            const mainTitle = document.getElementById('mainTitle');
+            const subTitle = document.getElementById('subTitle');
 
-        const tl = gsap.timeline({
-            onComplete: () => {
-                gsap.to(opWrapper, {
-                    duration: 1.5,
-                    opacity: 0,
-                    ease: 'power2.in',
-                    onComplete: () => {
-                        window.location.href = 'index/video.html';
+            // --- 2. メインのアニメーションタイムラインを定義 ---
+            const tl = gsap.timeline({
+                onComplete: () => {
+                    // アニメーション完了後、フェードアウトして次のページへ
+                    gsap.to(opWrapper, {
+                        duration: 1.5,
+                        opacity: 0,
+                        ease: 'power2.in',
+                        onComplete: () => {
+                            window.location.href = 'index/video.html';
+                        }
+                    });
+                }
+            });
+
+            // GSAPタイムラインの定義
+            tl.to(mainTitle, { duration: 1.5, opacity: 1, ease: 'power2.out' }, 0.5);
+            tl.fromTo(glow, { opacity: 0, xPercent: -100 }, 
+                      { duration: 1.3, opacity: 1, xPercent: 250, ease: 'power1.inOut' }, 
+                      0.8);
+            tl.to(glow, { duration: 0.5, opacity: 0 }, ">-0.3");
+            tl.to(subTitle, { duration: 1.5, opacity: 1, ease: 'power2.out' }, 1.8);
+            tl.to({}, {duration: 2}); // 最後のポーズ（待ち時間）
+
+            
+            // --- 3. 舞台裏モーダル（ギミック）関連の処理 ---
+
+            // ギミック関連の要素を取得
+            const backstageModal = document.getElementById('backstageModal'); 
+            const closeModal = document.getElementById('closeModal');
+            const backstageTrigger = document.getElementById('backstage-trigger');
+            
+            // スライドショーの要素を取得
+            const prevArrow = document.getElementById('prevArrow');
+            const nextArrow = document.getElementById('nextArrow');
+            const slides = document.querySelectorAll('.slide');
+            let currentSlideIndex = 0; // 現在表示しているスライドの番号
+
+            // 要素が見つからない場合のエラーハンドリング
+            if (!backstageTrigger || !backstageModal || !closeModal || !prevArrow || !nextArrow) {
+                console.error('致命的エラー: 舞台裏モーダルのHTML要素取得に失敗しました。ID名を確認してください。');
+                return; // 処理を中断
+            }
+
+            // スライドを切り替える関数
+            function showSlide(index) {
+                slides.forEach((slide, i) => {
+                    // 表示するスライド（index）だけに 'active' クラスを付ける
+                    if (i === index) {
+                        slide.classList.add('active');
+                    } else {
+                        slide.classList.remove('active');
                     }
                 });
             }
-        });
 
-        tl.to(mainTitle, { duration: 1.5, opacity: 1, ease: 'power2.out' }, 0.5);
-        tl.fromTo(glow, { opacity: 0, xPercent: -100 }, 
-                  { duration: 1.3, opacity: 1, xPercent: 250, ease: 'power1.inOut' }, 
-                  0.8);
-        tl.to(glow, { duration: 0.5, opacity: 0 }, ">-0.3");
-        tl.to(subTitle, { duration: 1.5, opacity: 1, ease: 'power2.out' }, 1.8);
-        tl.to({}, {duration: 2});
+            // 「次へ」ボタンのクリックイベント
+            nextArrow.addEventListener('click', () => {
+                currentSlideIndex++;
+                if (currentSlideIndex >= slides.length) {
+                    currentSlideIndex = 0; // 最後まで行ったら最初に戻る
+                }
+                showSlide(currentSlideIndex);
+            });
 
+            // 「前へ」ボタンのクリックイベント
+            prevArrow.addEventListener('click', () => {
+                currentSlideIndex--;
+                if (currentSlideIndex < 0) {
+                    currentSlideIndex = slides.length - 1; // 最初から戻ったら最後に行く
+                }
+                showSlide(currentSlideIndex);
+            });
 
-        // --- 舞台裏モーダル機能部分 ---
+            // モーダルを開く処理（"A"の文字をクリック）
+            backstageTrigger.addEventListener('click', (event) => {
+                event.stopPropagation(); // 親要素へのイベント伝播を停止（重要）
+                
+                tl.pause(); // メインアニメーションを一時停止
+                backstageModal.style.display = 'flex';
+                gsap.to(backstageModal, { duration: 0.3, opacity: 1 });
+                
+                // モーダルを開いたときに最初のスライドを確実に表示
+                currentSlideIndex = 0;
+                showSlide(currentSlideIndex);
+            });
 
-        
-        // index.html の <script> 内
-
-// ... (initializeAnimationAndGimmick 関数の上部とアニメーション部分は変更なし) ...
-
-    // --- 舞台裏モーダル機能部分 (スライドショー対応版) ---
-    const backstageModal = document.getElementById('backstageModal'); 
-    const closeModal = document.getElementById('closeModal');
-    const backstageTrigger = document.getElementById('backstage-trigger');
-    
-    // スライドショーの要素を取得
-    const prevArrow = document.getElementById('prevArrow');
-    const nextArrow = document.getElementById('nextArrow');
-    const slides = document.querySelectorAll('.slide');
-    let currentSlideIndex = 0; // 現在表示しているスライドの番号
-
-    if (!backstageTrigger || !backstageModal || !closeModal || !prevArrow || !nextArrow) {
-        console.error('致命的エラー: 舞台裏モーダルのHTML要素取得に失敗しました。ID名を確認してください。');
-        return;
-    }
-
-    // スライドを更新する関数
-    function showSlide(index) {
-        // 全てのスライドから "active" クラスを削除
-        slides.forEach(slide => {
-            slide.classList.remove('active');
-        });
-        // 指定されたスライドに "active" クラスを追加
-        slides[index].classList.add('active');
-    }
-
-    // 次へボタンの処理
-    nextArrow.addEventListener('click', () => {
-        currentSlideIndex++;
-        if (currentSlideIndex >= slides.length) {
-            currentSlideIndex = 0; // 最後まで行ったら最初に戻る
+            // モーダルを閉じる処理（"×"ボタンをクリック）
+            closeModal.addEventListener('click', () => {
+                gsap.to(backstageModal, {
+                    duration: 0.3,
+                    opacity: 0,
+                    onComplete: () => {
+                        backstageModal.style.display = 'none';
+                        tl.resume(); // メインアニメーションを再開
+                    }
+                });
+            });
         }
-        showSlide(currentSlideIndex);
-    });
-
-    // 前へボタンの処理
-    prevArrow.addEventListener('click', () => {
-        currentSlideIndex--;
-        if (currentSlideIndex < 0) {
-            currentSlideIndex = slides.length - 1; // 最初から戻ったら最後に行く
-        }
-        showSlide(currentSlideIndex);
-    });
-
-    // モーダルを開く処理
-    backstageTrigger.addEventListener('click', () => {
-        localStorage.setItem(GIMMICK_KEY, 'true');
-        console.log('ギミックが発動され、localStorageに記録しました。');
-
-        tl.pause();
-        backstageModal.style.display = 'flex';
-        gsap.to(backstageModal, { duration: 0.3, opacity: 1 });
-        
-        // モーダルを開いたときに最初のスライドを確実に表示
-        currentSlideIndex = 0;
-        showSlide(currentSlideIndex);
-    });
-
-    // モーダルを閉じる処理 (変更なし)
-    closeModal.addEventListener('click', () => {
-        gsap.to(backstageModal, {
-            duration: 0.3,
-            opacity: 0,
-            onComplete: () => {
-                backstageModal.style.display = 'none';
-                tl.resume();
-            }
-        });
-    });
-}
     </script>
 
 </body>
