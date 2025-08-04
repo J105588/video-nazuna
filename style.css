@@ -92,3 +92,82 @@ body, html {
     transition: color 0.2s;
 }
 .close-button:hover { color: #ffdd00; }
+/* style.css の一番下に追加 */
+
+/* --- スライドショー関連のスタイル --- */
+.slideshow-container {
+    position: relative;
+    width: 80vw;
+    max-width: 800px; /* スライドショーの最大幅を設定 */
+}
+
+.photo-wrapper {
+    position: relative;
+    width: 100%;
+    /* 高さはアスペクト比 16:9 を目安に設定 */
+    padding-top: 56.25%; 
+}
+
+.slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0; /* 最初は非表示 */
+    visibility: hidden;
+    transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+    text-align: center;
+}
+
+.slide.active {
+    opacity: 1; /* 表示中のスライドだけ見えるようにする */
+    visibility: visible;
+}
+
+.slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* アスペクト比を保ったままフィットさせる */
+    border: 3px solid #fff;
+    border-radius: 5px;
+}
+
+.slide p {
+    font-family: 'Dancing Script', cursive;
+    font-size: clamp(18px, 4vw, 24px);
+    margin-top: 15px;
+    color: #fff;
+}
+
+/* --- 左右の矢印のスタイル --- */
+.prev-arrow, .next-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 3rem;
+    color: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: color 0.3s;
+    z-index: 10;
+    user-select: none; /* テキスト選択を無効化 */
+    padding: 0 20px;
+}
+
+.prev-arrow:hover, .next-arrow:hover {
+    color: rgba(255, 255, 255, 1);
+}
+
+.prev-arrow {
+    left: -60px; /* 位置を調整 */
+}
+
+.next-arrow {
+    right: -60px; /* 位置を調整 */
+}
+
+/* スマホなど画面が狭い場合は矢印を内側に */
+@media (max-width: 768px) {
+    .prev-arrow { left: 5px; background: rgba(0,0,0,0.3); border-radius: 5px;}
+    .next-arrow { right: 5px; background: rgba(0,0,0,0.3); border-radius: 5px;}
+}
