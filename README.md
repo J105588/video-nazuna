@@ -1,6 +1,6 @@
 # NAZUNA ENGEKI 5th Anniversary Web
 
-演劇祭向けの動画公開サイト（最小構成）。トップ（オープニング）と動画公開ページの2ページで構成。  
+演劇祭向けの動画公開サイト。トップ（オープニング）と動画公開ページの2ページで構成。  
 デプロイは GitHub Pages を使用し、カスタムドメインは https://video.ichigak-engeki5.com/ を想定。
 
 - オープニング（/index.html）
