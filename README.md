@@ -95,3 +95,15 @@
 - 
 - GAS プロジェクトURL`https://script.google.com/d/1JCWXcb7LXVl9glEAN8W-4L0flK960jGvtcVOZAglBemkBpgKIWTkq_u7/edit?usp=sharing`
 - スプレッドシートURL`https://docs.google.com/spreadsheets/d/1_2QyyoNMO0gD0yLoFfE-Mpp6iIVawZ98xnlTRsFss-Y/edit?usp=sharing`
+
+---
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](https://raw.githubusercontent.com/J105588/video-nazuna/refs/heads/main/LICENSE) file for details.
+
+## Copyright
+
+Copyright (c) 2025 [J.J.X.]
+
+*Last updated: 2025-08-12*
