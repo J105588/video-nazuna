@@ -35,8 +35,8 @@
 ├─ style.css
 ├─ index/
 │  ├─ video.html
-   ├─ samsumnail.jpg
-   └─video.mp4
+|   ├─ samsumnail.jpg
+|   └─video.mp4
 └─ images/
    ├─ IMG_...   # 舞台裏写真
 ```
@@ -45,12 +45,12 @@
 
 1) アセット配置
 - 舞台裏写真を /images/IMG_backstage.jpg に配置（ファイル名は index.html に合わせて修正可）
-- 動画を /images/IMG_video.mp4 に配置（大容量のため圧縮推奨）
+- 動画を直接アップロードする形式をとっている
 
 2) GAS（Google Apps Script）
 - Web アプリとしてデプロイ（アクセス権: 全員）
 - 発行された URL を /index/video.html 内の関数 GAS_WEB_APP_URL の欄に貼り付け
-- 下記のサンプル doPost を使う場合は、スプレッドシート ID を設定
+- スプレッドシート ID を設定
 
 3) ローカル確認
 - オープニングのスポットライトと A 押下モーダル、動画ページの 5 回タップ → 緞帳 → 専用画面 まで確認
