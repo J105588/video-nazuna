@@ -93,8 +93,10 @@
 - GitHub Pages では上記のように絶対パス（/index/video.html 等）で参照する前提で、リポジトリ直下に配置してください
 - 動画サイズが大きい場合はエンコード（H.264/AAC, 720p/1080p, 適切なビットレート）を検討してください
 - 
-- GAS プロジェクトURL`https://script.google.com/d/1JCWXcb7LXVl9glEAN8W-4L0flK960jGvtcVOZAglBemkBpgKIWTkq_u7/edit?usp=sharing`
-- スプレッドシートURL`https://docs.google.com/spreadsheets/d/1_2QyyoNMO0gD0yLoFfE-Mpp6iIVawZ98xnlTRsFss-Y/edit?usp=sharing`
+- GAS プロジェクトURL
+- `https://script.google.com/d/1JCWXcb7LXVl9glEAN8W-4L0flK960jGvtcVOZAglBemkBpgKIWTkq_u7/edit?usp=sharing`
+- スプレッドシートURL
+- `https://docs.google.com/spreadsheets/d/1_2QyyoNMO0gD0yLoFfE-Mpp6iIVawZ98xnlTRsFss-Y/edit?usp=sharing`
 
 ---
 
@@ -104,6 +106,6 @@ This project is licensed under the MIT License - see the [LICENSE](https://raw.g
 
 ## Copyright
 
-Copyright (c) 2025 [J.J.X.]
+Copyright (c) 2025 J.J.X.
 
-*Last updated: 2025-08-12*
+*Last updated: 2025-08-25*
