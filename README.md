@@ -15,9 +15,11 @@
 ## 前提・制約
 
 - 物理ファイルは最小構成のみ
+  ```bash
   - /index.html
   - /index/video.html
   - /images/IMG_...（舞台裏写真、動画ファイルも images 配下に置く前提）
+  ```
 - 追加の外部 JS/CSS は作らず、すべて各 HTML 内にインライン実装
 - GAS Web アプリの URL は video.html 内に直接記載
 - GitHub Pages で公開し、カスタムドメインを設定（video.ichigak-engeki5.com）
@@ -44,12 +46,12 @@
 ## セットアップ
 
 1) アセット配置
-- 舞台裏写真を /images/IMG_backstage.jpg に配置（ファイル名は index.html に合わせて修正可）
+- 舞台裏写真を `/images/IMG_backstage.jpg` に配置（ファイル名は `index.html` に合わせて修正可）
 - 動画を直接アップロードする形式をとっている
 
 2) GAS（Google Apps Script）
 - Web アプリとしてデプロイ（アクセス権: 全員）
-- 発行された URL を /index/video.html 内の関数 GAS_WEB_APP_URL の欄に貼り付け
+- 発行された URL を `/index/video.html` 内の関数 `GAS_WEB_APP_URL` の欄に貼り付け
 - スプレッドシート ID を設定
 
 3) ローカル確認
@@ -57,12 +59,12 @@
 
 ## デプロイ（GitHub Pages + カスタムドメイン）
 
-1) リポジトリへ commit/push  
+1) リポジトリへ `commit/push`
 2) GitHub > Settings > Pages  
    - Source: Deploy from a branch（例: main / root）  
-3) Custom domain に video.ichigak-engeki5.com を設定  
+3) Custom domain に `video.ichigak-engeki5.com` を設定  
 4) DNS 設定  
-   - CNAME: video.ichigak-engeki5.com → <username>.github.io  
+   - CNAME: `video.ichigak-engeki5.com → <username>.github.io`
 5) Enforce HTTPS を有効化  
 6) 反映後、上記の公開 URL を確認
 
@@ -94,9 +96,9 @@
 - 動画サイズが大きい場合はエンコード（H.264/AAC, 720p/1080p, 適切なビットレート）を検討してください
 - 
 - GAS プロジェクトURL
-- `https://script.google.com/d/1JCWXcb7LXVl9glEAN8W-4L0flK960jGvtcVOZAglBemkBpgKIWTkq_u7/edit?usp=sharing`
+  `https://script.google.com/d/1JCWXcb7LXVl9glEAN8W-4L0flK960jGvtcVOZAglBemkBpgKIWTkq_u7/edit?usp=sharing`
 - スプレッドシートURL
-- `https://docs.google.com/spreadsheets/d/1_2QyyoNMO0gD0yLoFfE-Mpp6iIVawZ98xnlTRsFss-Y/edit?usp=sharing`
+  `https://docs.google.com/spreadsheets/d/1_2QyyoNMO0gD0yLoFfE-Mpp6iIVawZ98xnlTRsFss-Y/edit?usp=sharing`
 
 ---
 
