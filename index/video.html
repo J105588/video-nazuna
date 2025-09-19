@@ -65,12 +65,15 @@
     .video-wrapper {
         position: relative;
         width: 100%;
-        padding-top: 56.25%; /* 16:9 アスペクト比を維持 */
+        padding-top: 56.25%; /* 16:9 アスペクト比 */
         border-radius: 8px;
         overflow: hidden;
         margin-bottom: 30px;
         box-shadow: 0 5px 20px rgba(0, 0, 0, 0.7);
         background: #000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
     /* YouTube埋め込みiframeのスタイル */
@@ -83,6 +86,39 @@
         border: 0;
     }
 
+    /* カウントダウンタイマーのスタイル */
+    #countdown-timer {
+        color: #fff;
+        text-align: center;
+        position: absolute; /* video-wrapper内で中央に配置 */
+    }
+    
+    #countdown-timer .time-label {
+        font-size: 14px;
+        color: #ccc;
+        margin-bottom: 10px;
+    }
+
+    #countdown-timer .time-display {
+        font-family: 'Noto Serif JP', serif;
+        font-size: 36px;
+        font-weight: 700;
+        color: var(--accent-gold);
+        text-shadow: 0 0 8px rgba(212, 175, 55, 0.7);
+        letter-spacing: 2px;
+    }
+    
+    #countdown-timer .time-unit {
+        font-size: 16px;
+        font-weight: normal;
+        margin: 0 4px;
+        color: #ccc;
+    }
+
+    /* 表示/非表示を切り替えるためのクラス */
+    .hidden {
+        display: none !important;
+    }
 
     /* 動画情報セクション */
     .info {
@@ -114,7 +150,6 @@
         user-select: none;
     }
 
-    /* ギミックのトリガー */
     #secret-trigger {
         color: #777;
         cursor: pointer;
@@ -123,30 +158,15 @@
         user-select: none;
         -webkit-tap-highlight-color: transparent;
     }
+    #secret-trigger:hover { color: var(--accent-gold); }
+    #secret-trigger:active { color: #fff; }
 
-    #secret-trigger:hover {
-        color: var(--accent-gold);
-    }
-
-    #secret-trigger:active {
-        color: #fff;
-    }
-
-    /* 緞帳、シークレットページなど */
     .curtain {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        z-index: 99;
-        pointer-events: none;
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        display: flex; z-index: 99; pointer-events: none;
     }
     .curtain-panel {
-        width: 50%;
-        height: 100%;
-        background-color: var(--curtain-color);
+        width: 50%; height: 100%; background-color: var(--curtain-color);
         background-image: linear-gradient(to right, rgba(0,0,0,0.4), transparent 20%),
                           linear-gradient(90deg, var(--curtain-color) 0%, #3a0c0c 100%);
         box-shadow: inset -5px 0 20px rgba(0,0,0,0.5);
@@ -157,116 +177,51 @@
         transform: translateX(100%);
         box-shadow: inset 5px 0 20px rgba(0,0,0,0.5);
     }
-    .curtain.closed .curtain-panel {
-        transform: translateX(0);
-    }
+    .curtain.closed .curtain-panel { transform: translateX(0); }
 
     .secret-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: #000;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        opacity: 0;
-        visibility: hidden;
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background-color: #000; display: flex; justify-content: center;
+        align-items: center; opacity: 0; visibility: hidden;
         transition: opacity 1s ease 1.5s, visibility 1s ease 1.5s;
-        z-index: 100;
-        padding: 20px;
-        box-sizing: border-box;
+        z-index: 100; padding: 20px; box-sizing: border-box;
     }
-    .secret-overlay.visible {
-        opacity: 1;
-        visibility: visible;
-    }
+    .secret-overlay.visible { opacity: 1; visibility: visible; }
 
     .secret-content {
-        text-align: center;
-        color: #fff;
-        padding: 40px;
-        max-width: 600px;
-        position: relative;
-        background-color: rgba(10, 10, 10, 0.2);
-        box-shadow: 
-            0 0 100px rgba(212, 175, 55, 0.25),
-            0 0 40px rgba(212, 175, 55, 0.3);
+        text-align: center; color: #fff; padding: 40px; max-width: 600px;
+        position: relative; background-color: rgba(10, 10, 10, 0.2);
+        box-shadow: 0 0 100px rgba(212, 175, 55, 0.25), 0 0 40px rgba(212, 175, 55, 0.3);
     }
-
     .secret-content h2 {
-        font-family: 'Noto Serif JP', serif;
-        font-size: 28px;
-        font-weight: 700;
-        color: var(--accent-gold);
-        margin-bottom: 20px;
-        text-shadow: 0 0 10px var(--accent-gold);
+        font-family: 'Noto Serif JP', serif; font-size: 28px; font-weight: 700;
+        color: var(--accent-gold); margin-bottom: 20px; text-shadow: 0 0 10px var(--accent-gold);
     }
-
-    .secret-content p {
-        font-size: 16px;
-        line-height: 1.8;
-        margin-bottom: 30px;
-        color: #f0f0f0;
-    }
-
+    .secret-content p { font-size: 16px; line-height: 1.8; margin-bottom: 30px; color: #f0f0f0; }
     .secret-content .prize-info {
-        border: 1px dashed var(--accent-gold);
-        padding: 20px;
-        background: rgba(212, 175, 55, 0.1);
-        border-radius: 5px;
-        font-size: 16px;
-        color: #fff;
-        font-weight: bold;
+        border: 1px dashed var(--accent-gold); padding: 20px; background: rgba(212, 175, 55, 0.1);
+        border-radius: 5px; font-size: 16px; color: #fff; font-weight: bold;
     }
 
-   /* 管理者用パネル */
-    .admin-panel {
-        position: fixed;
-        bottom: 10px;
-        right: 10px;
-        z-index: 101;
+   .admin-panel {
+        position: fixed; bottom: 10px; right: 10px; z-index: 101;
     }
     .admin-panel button {
-        background: #555;
-        color: white;
-        border: none;
-        padding: 8px 12px;
-        cursor: pointer;
-        border-radius: 5px;
-        font-size: 12px;
-        opacity: 0;
-        transition: opacity 0.4s ease-in-out;
+        background: #555; color: white; border: none; padding: 8px 12px; cursor: pointer;
+        border-radius: 5px; font-size: 12px; opacity: 0; transition: opacity 0.4s ease-in-out;
     }
-    .admin-panel:hover button {
-        opacity: 1;
-    }
+    .admin-panel:hover button { opacity: 1; }
 
-    /* レスポンシブ対応 */
     @media (max-width: 768px) {
-        body {
-            padding: 10px;
-        }
-        .container {
-            padding: 20px;
-            margin: 10px 0;
-        }
-        h1 {
-            font-size: 24px;
-        }
-        .info h2 {
-            font-size: 20px;
-        }
-        .secret-content {
-            padding: 20px;
-        }
-        .secret-content h2 {
-            font-size: 24px;
-        }
-        .secret-content p {
-            font-size: 15px;
-        }
+        body { padding: 10px; }
+        .container { padding: 20px; margin: 10px 0; }
+        h1 { font-size: 24px; }
+        .info h2 { font-size: 20px; }
+        .secret-content { padding: 20px; }
+        .secret-content h2 { font-size: 24px; }
+        .secret-content p { font-size: 15px; }
+        #countdown-timer .time-display { font-size: 28px; }
+        #countdown-timer .time-unit { font-size: 14px; }
     }
 </style>
 </head>
@@ -275,9 +230,17 @@
 <div class="container">
     <h1>動画公開ページ</h1>
     <div class="video-wrapper">
-        <!-- 変更点：YouTubeの埋め込みコードに変更 -->
-        <iframe 
-            src="https://www.youtube.com/embed/-myFTbG7w9E" 
+        <!-- カウントダウンタイマーのコンテナ -->
+        <div id="countdown-timer">
+            <div class="time-label">公開まで</div>
+            <div id="countdown-display" class="time-display"></div>
+        </div>
+
+        <!-- YouTube埋め込み動画（最初は非表示） -->
+        <iframe
+            id="youtube-video"
+            class="hidden" 
+            src="https://www.youtube.com/embed/-myFTbG7w9E?enablejsapi=1" 
             title="YouTube video player" 
             frameborder="0" 
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
@@ -286,68 +249,89 @@
     </div>
     <div class="info">
         <h2>演劇祭PR動画</h2>
-        <p>これは演劇祭のPR動画です。<br>再生ボタンを押すと動画がスタートします。</p>
+        <p>これは演劇祭のPR動画です。<br>ボタンを押すと再生されます。</p>
         <p class="copyright">© 2025 NAZUNA ENGEKI<span id="secret-trigger">5</span></p>
     </div>
 </div>
 
-<!-- 緞帳 -->
-<div id="curtain" class="curtain">
-    <div class="curtain-panel left"></div>
-    <div class="curtain-panel right"></div>
-</div>
-
-<!-- シークレットページ -->
-<div id="secret-page" class="secret-overlay">
-    <div class="secret-content">
-        <h2 id="secret-title"></h2>
-        <p id="secret-message"></p>
-        <div id="prize-wrapper"></div>
-    </div>
-</div>
-
-<!-- 管理者用パネル -->
-<div class="admin-panel">
-    <button id="admin-reset-button">管理者用リセット</button>
-</div>
+<div id="curtain" class="curtain"><div class="curtain-panel left"></div><div class="curtain-panel right"></div></div>
+<div id="secret-page" class="secret-overlay"><div class="secret-content"><h2 id="secret-title"></h2><p id="secret-message"></p><div id="prize-wrapper"></div></div></div>
+<div class="admin-panel"><button id="admin-reset-button">管理者用リセット</button></div>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+
+    // --- カウントダウン機能 ---
+    const countdownElement = document.getElementById('countdown-display');
+    const countdownContainer = document.getElementById('countdown-timer');
+    const videoElement = document.getElementById('youtube-video');
+
+    // ▼▼▼【重要】ここに公開したい日本時間を設定してください ▼▼▼
+    // new Date(年, 月-1, 日, 時, 分, 秒)  ※月は0から(1月=0, 12月=11)
+    const releaseTimeJST = new Date(2025, 8, 20, 9, 0, 0); // 例: 2025年9月20日 9:00:00 (JST)
+    // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
+    let countdownInterval;
+
+    function updateCountdown() {
+        const now = new Date();
+        const diff = releaseTimeJST.getTime() - now.getTime();
+
+        if (diff <= 0) {
+            // 時間になったらカウントダウンを終了し、動画を表示
+            clearInterval(countdownInterval);
+            countdownContainer.classList.add('hidden');
+            videoElement.classList.remove('hidden');
+            document.querySelector('.info p').innerHTML = 'これは演劇祭のPR動画です。<br>再生ボタンを押すと動画がスタートします。';
+            return;
+        }
+
+        // 残り時間を計算
+        const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+        // 表示を更新
+        countdownElement.innerHTML = 
+            `${d}<span class="time-unit">日</span> ` +
+            `${String(h).padStart(2, '0')}<span class="time-unit">:</span>` +
+            `${String(m).padStart(2, '0')}<span class="time-unit">:</span>` +
+            `${String(s).padStart(2, '0')}`;
+    }
+    
+    // ページ読み込み時に初回実行
+    updateCountdown();
+    // 1秒ごとに更新
+    countdownInterval = setInterval(updateCountdown, 1000);
+
+
+    // --- 以下、既存のギミック機能 ---
     const trigger = document.getElementById('secret-trigger');
     const curtain = document.getElementById('curtain');
     const secretPage = document.getElementById('secret-page');
     let clickCount = 0;
     const requiredClicks = 5;
 
-    // Google Apps ScriptのURL（デプロイ後に取得したURLを設定してください）
     const GAS_URL = "https://script.google.com/macros/s/AKfycbwqB0kXqVzwtIYsLQ9HSrCz27MwwN_jzyW8C_T0tqQHO9VK58LgRTWULF83wocBycDp/exec";
-    // localStorageで使用するキー
     const hasVisitedKey = 'engeki5-has-attempted';
 
-    // ギミック機能
     function activateGimmick() {
         clickCount++;
         if (clickCount >= requiredClicks) {
             clickCount = 0;
-
-            // localStorageに記録があるか確認
             if (localStorage.getItem(hasVisitedKey)) {
                 alert('既にご応募いただいております。');
                 return;
             }
-
             curtain.classList.add('closed');
-
             setTimeout(() => {
                 fetch(GAS_URL, {
-                    method: 'POST',
-                    redirect: "follow",
-                    muteHttpExceptions: true,
+                    method: 'POST', redirect: "follow", muteHttpExceptions: true,
                     contentType: 'application/json',
                 })
                 .then(response => response.json())
                 .then(data => {
-                    // 応募した記録をlocalStorageに保存
                     localStorage.setItem(hasVisitedKey, 'true');
                     if (data.status === 'success') {
                         document.getElementById('secret-title').textContent = '特別なご招待状';
@@ -369,25 +353,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // イベントリスナー
     trigger.addEventListener('click', activateGimmick);
-    trigger.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        activateGimmick();
-    });
+    trigger.addEventListener('touchstart', (e) => { e.preventDefault(); activateGimmick(); });
 
-    // 管理者用リセット機能
     document.getElementById('admin-reset-button').addEventListener('click', () => {
         const password = prompt('管理者用パスワードを入力してください:');
         if (password === 'nazuna-engeki-5') {
-            const confirmReset = confirm(
-                '【管理者向け操作】\n\n' +
-                'この操作は、このブラウザの閲覧者記録(localStorage)のみをクリアします。\n' +
-                'Googleスプレッドシート上の当選者記録はリセットされません。\n\n' +
-                '閲覧者記録をクリアしますか？'
-            );
+            const confirmReset = confirm('【管理者向け操作】\n\nこの操作は、このブラウザの閲覧者記録(localStorage)のみをクリアします。\nGoogleスプレッドシート上の当選者記録はリセットされません。\n\n閲覧者記録をクリアしますか？');
             if (confirmReset) {
-                // localStorageの記録を削除
                 localStorage.removeItem(hasVisitedKey);
                 alert('閲覧者記録をクリアしました。ページをリロードすると、再度ギミックを試すことができます。');
                 location.reload();
