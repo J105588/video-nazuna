@@ -21,142 +21,83 @@
 
     /* 基本的なページ設定 */
     body {
-        margin: 0;
-        padding: 20px;
-        font-family: 'Noto Sans JP', sans-serif;
-        background-color: var(--background-color);
-        color: var(--text-color);
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-        min-height: 100vh;
-        box-sizing: border-box;
+        margin: 0; padding: 20px; font-family: 'Noto Sans JP', sans-serif;
+        background-color: var(--background-color); color: var(--text-color);
+        display: flex; justify-content: center; align-items: flex-start;
+        min-height: 100vh; box-sizing: border-box;
     }
 
     /* メインコンテンツのコンテナ */
     .container {
-        max-width: 720px;
-        width: 100%;
-        padding: 30px;
-        background: var(--card-background);
-        border: 1px solid var(--border-color);
+        max-width: 720px; width: 100%; padding: 30px;
+        background: var(--card-background); border: 1px solid var(--border-color);
         border-radius: 8px;
-        box-shadow: 
-            0 0 80px rgba(212, 175, 55, 0.15),
-            0 0 35px rgba(212, 175, 55, 0.2),
-            0 0 15px rgba(0, 0, 0, 0.7);
-        position: relative;
-        z-index: 1;
-        margin: 20px 0;
+        box-shadow: 0 0 80px rgba(212, 175, 55, 0.15), 0 0 35px rgba(212, 175, 55, 0.2), 0 0 15px rgba(0, 0, 0, 0.7);
+        position: relative; z-index: 1; margin: 20px 0;
     }
 
     /* メインタイトル */
     h1 {
-        text-align: center;
-        font-family: 'Noto Serif JP', serif;
-        font-weight: 700;
-        font-size: 28px;
-        margin-bottom: 25px;
-        color: #fff;
+        text-align: center; font-family: 'Noto Serif JP', serif; font-weight: 700;
+        font-size: 28px; margin-bottom: 25px; color: #fff;
         text-shadow: 0 0 10px var(--accent-gold), 0 0 2px #fff;
     }
 
     /* 動画プレイヤーのラッパー */
     .video-wrapper {
-        position: relative;
-        width: 100%;
-        padding-top: 56.25%; /* 16:9 アスペクト比 */
-        border-radius: 8px;
-        overflow: hidden;
-        margin-bottom: 30px;
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.7);
-        background: #000;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        position: relative; width: 100%; padding-top: 56.25%; /* 16:9 アスペクト比 */
+        border-radius: 8px; overflow: hidden; margin-bottom: 30px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.7); background: #000;
     }
 
     /* YouTube埋め込みiframeのスタイル */
     .video-wrapper iframe {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        border: 0;
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;
     }
 
-    /* カウントダウンタイマーのスタイル */
+    /* カウントダウンタイマーのスタイル (修正) */
     #countdown-timer {
-        color: #fff;
-        text-align: center;
-        position: absolute; /* video-wrapper内で中央に配置 */
+        position: absolute; /* ラッパー内で絶対配置 */
+        top: 50%; left: 50%; /* 中央を基点に */
+        transform: translate(-50%, -50%); /* 自身のサイズ分ずらして真ん中に */
+        color: #fff; text-align: center; width: 100%; /* 横幅を確保 */
     }
     
     #countdown-timer .time-label {
-        font-size: 14px;
-        color: #ccc;
-        margin-bottom: 10px;
+        font-size: 14px; color: #ccc; margin-bottom: 10px;
     }
 
     #countdown-timer .time-display {
-        font-family: 'Noto Serif JP', serif;
-        font-size: 36px;
-        font-weight: 700;
-        color: var(--accent-gold);
-        text-shadow: 0 0 8px rgba(212, 175, 55, 0.7);
+        font-family: 'Noto Serif JP', serif; font-size: 36px; font-weight: 700;
+        color: var(--accent-gold); text-shadow: 0 0 8px rgba(212, 175, 55, 0.7);
         letter-spacing: 2px;
     }
     
     #countdown-timer .time-unit {
-        font-size: 16px;
-        font-weight: normal;
-        margin: 0 4px;
-        color: #ccc;
+        font-size: 16px; font-weight: normal; margin: 0 4px; color: #ccc;
     }
 
     /* 表示/非表示を切り替えるためのクラス */
-    .hidden {
-        display: none !important;
-    }
+    .hidden { display: none !important; }
 
     /* 動画情報セクション */
     .info {
-        text-align: left;
-        border-top: 1px solid var(--border-color);
-        padding-top: 25px;
+        text-align: left; border-top: 1px solid var(--border-color); padding-top: 25px;
     }
-
     .info h2 {
-        font-family: 'Noto Serif JP', serif;
-        font-weight: 400;
-        font-size: 22px;
-        margin-top: 0;
-        margin-bottom: 12px;
-        color: var(--accent-gold);
+        font-family: 'Noto Serif JP', serif; font-weight: 400; font-size: 22px;
+        margin-top: 0; margin-bottom: 12px; color: var(--accent-gold);
     }
-
-    .info p {
-        font-size: 14px;
-        line-height: 1.7;
-        color: #ccc;
-    }
-
+    .info p { font-size: 14px; line-height: 1.7; color: #ccc; }
     .info p.copyright {
-        font-size: 12px;
-        color: #777;
-        margin-top: 25px;
-        text-align: center;
-        user-select: none;
+        font-size: 12px; color: #777; margin-top: 25px;
+        text-align: center; user-select: none;
     }
 
     #secret-trigger {
-        color: #777;
-        cursor: pointer;
-        display: inline-block;
+        color: #777; cursor: pointer; display: inline-block;
         transition: color 0.2s, text-shadow 0.3s;
-        user-select: none;
-        -webkit-tap-highlight-color: transparent;
+        user-select: none; -webkit-tap-highlight-color: transparent;
     }
     #secret-trigger:hover { color: var(--accent-gold); }
     #secret-trigger:active { color: #fff; }
@@ -230,26 +171,23 @@
 <div class="container">
     <h1>動画公開ページ</h1>
     <div class="video-wrapper">
-        <!-- カウントダウンタイマーのコンテナ -->
         <div id="countdown-timer">
             <div class="time-label">公開まで</div>
             <div id="countdown-display" class="time-display"></div>
         </div>
-
-        <!-- YouTube埋め込み動画（最初は非表示） -->
         <iframe
             id="youtube-video"
             class="hidden" 
-            src="https://www.youtube.com/embed/-myFTbG7w9E?enablejsapi=1" 
+            src="https://www.youtube.com/embed/-myFTbG7w9E?enablejsapi=1&autoplay=1&mute=1" 
             title="YouTube video player" 
             frameborder="0" 
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
             allowfullscreen>
         </iframe>
     </div>
     <div class="info">
-        <h2>演劇祭PR動画</h2>
-        <p>これは演劇祭のPR動画です。<br>ボタンを押すと再生されます。</p>
+        <h2 id="info-title">演劇祭PR動画</h2>
+        <p id="info-text">指定時刻になると、カウントダウンが動画に切り替わります。</p>
         <p class="copyright">© 2025 NAZUNA ENGEKI<span id="secret-trigger">5</span></p>
     </div>
 </div>
@@ -260,51 +198,55 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-
-    // --- カウントダウン機能 ---
-    const countdownElement = document.getElementById('countdown-display');
     const countdownContainer = document.getElementById('countdown-timer');
+    const countdownDisplay = document.getElementById('countdown-display');
     const videoElement = document.getElementById('youtube-video');
+    const infoText = document.getElementById('info-text');
 
     // ▼▼▼【重要】ここに公開したい日本時間を設定してください ▼▼▼
     // new Date(年, 月-1, 日, 時, 分, 秒)  ※月は0から(1月=0, 12月=11)
-    const releaseTimeJST = new Date(2025, 8, 20, 9, 0, 0); // 例: 2025年9月20日 9:00:00 (JST)
+    const releaseTimeJST = new Date(2025, 8, 20, 9, 0, 0); // 例: 2025年9月21日 19:00:00 (JST)
     // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
 
     let countdownInterval;
+
+    function switchToVideo() {
+        clearInterval(countdownInterval);
+        countdownContainer.classList.add('hidden');
+        videoElement.classList.remove('hidden');
+        infoText.innerHTML = 'これは演劇祭のPR動画です。<br>再生ボタンを押すと動画がスタートします。';
+    }
 
     function updateCountdown() {
         const now = new Date();
         const diff = releaseTimeJST.getTime() - now.getTime();
 
         if (diff <= 0) {
-            // 時間になったらカウントダウンを終了し、動画を表示
-            clearInterval(countdownInterval);
-            countdownContainer.classList.add('hidden');
-            videoElement.classList.remove('hidden');
-            document.querySelector('.info p').innerHTML = 'これは演劇祭のPR動画です。<br>再生ボタンを押すと動画がスタートします。';
+            switchToVideo();
             return;
         }
+        
+        // カウントダウンが表示されていることを確認
+        if (countdownContainer.classList.contains('hidden')) {
+             countdownContainer.classList.remove('hidden');
+             videoElement.classList.add('hidden');
+        }
 
-        // 残り時間を計算
         const d = Math.floor(diff / (1000 * 60 * 60 * 24));
         const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
         const s = Math.floor((diff % (1000 * 60)) / 1000);
 
-        // 表示を更新
-        countdownElement.innerHTML = 
+        countdownDisplay.innerHTML = 
             `${d}<span class="time-unit">日</span> ` +
             `${String(h).padStart(2, '0')}<span class="time-unit">:</span>` +
             `${String(m).padStart(2, '0')}<span class="time-unit">:</span>` +
             `${String(s).padStart(2, '0')}`;
     }
     
-    // ページ読み込み時に初回実行
+    // ページ読み込み時に初回実行し、その後1秒ごとに更新
     updateCountdown();
-    // 1秒ごとに更新
     countdownInterval = setInterval(updateCountdown, 1000);
-
 
     // --- 以下、既存のギミック機能 ---
     const trigger = document.getElementById('secret-trigger');
@@ -312,7 +254,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const secretPage = document.getElementById('secret-page');
     let clickCount = 0;
     const requiredClicks = 5;
-
     const GAS_URL = "https://script.google.com/macros/s/AKfycbwqB0kXqVzwtIYsLQ9HSrCz27MwwN_jzyW8C_T0tqQHO9VK58LgRTWULF83wocBycDp/exec";
     const hasVisitedKey = 'engeki5-has-attempted';
 
@@ -326,10 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             curtain.classList.add('closed');
             setTimeout(() => {
-                fetch(GAS_URL, {
-                    method: 'POST', redirect: "follow", muteHttpExceptions: true,
-                    contentType: 'application/json',
-                })
+                fetch(GAS_URL, { method: 'POST', redirect: "follow", muteHttpExceptions: true, contentType: 'application/json' })
                 .then(response => response.json())
                 .then(data => {
                     localStorage.setItem(hasVisitedKey, 'true');
