@@ -239,9 +239,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         countdownDisplay.innerHTML = 
             `${d}<span class="time-unit">日</span> ` +
-            `${String(h).padStart(2, '0')}<span class="time-unit">:</span>` +
-            `${String(m).padStart(2, '0')}<span class="time-unit">:</span>` +
-            `${String(s).padStart(2, '0')}`;
+            `${String(h).padStart(2, '0')}<span class="time-unit">時間</span>` +
+            `${String(m).padStart(2, '0')}<span class="time-unit">分</span>` +
+            `${String(s).padStart(2, '0')}<span class="time-unit">秒</span>`;
     }
     
     // ページ読み込み時に初回実行し、その後1秒ごとに更新
