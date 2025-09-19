@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>試験公開_動画公開ページ</title>
+<title>動画公開ページ</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="https://raw.githubusercontent.com/J105588/video-nazuna/main/images/IMG_5316.png" type="image/png">
 <style>
@@ -65,19 +65,24 @@
     .video-wrapper {
         position: relative;
         width: 100%;
+        padding-top: 56.25%; /* 16:9 アスペクト比を維持 */
         border-radius: 8px;
         overflow: hidden;
         margin-bottom: 30px;
         box-shadow: 0 5px 20px rgba(0, 0, 0, 0.7);
+        background: #000;
     }
 
-    video {
+    /* YouTube埋め込みiframeのスタイル */
+    .video-wrapper iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
         width: 100%;
-        height: auto;
-        display: block;
-        background: #000;
-        border-radius: 8px;
+        height: 100%;
+        border: 0;
     }
+
 
     /* 動画情報セクション */
     .info {
@@ -184,11 +189,10 @@
         padding: 40px;
         max-width: 600px;
         position: relative;
-        background-color: rgba(10, 10, 10, 0.2); /* 変更点: わずかに背景色を追加して光の効果を補強 */
-        /* 変更点: スポットライト効果を追加 */
+        background-color: rgba(10, 10, 10, 0.2);
         box-shadow: 
-            0 0 100px rgba(212, 175, 55, 0.25), /* 外側の広い輝き */
-            0 0 40px rgba(212, 175, 55, 0.3);  /* 内側の強い輝き */
+            0 0 100px rgba(212, 175, 55, 0.25),
+            0 0 40px rgba(212, 175, 55, 0.3);
     }
 
     .secret-content h2 {
@@ -271,14 +275,18 @@
 <div class="container">
     <h1>動画公開ページ</h1>
     <div class="video-wrapper">
-        <video controls poster="test-video-yozora.jpg">
-            <source src="test-yozora.mp4" type="video/mp4">
-            お使いのブラウザは動画タグに対応していません。
-        </video>
+        <!-- 変更点：YouTubeの埋め込みコードに変更 -->
+        <iframe 
+            src="https://www.youtube.com/embed/-myFTbG7w9E" 
+            title="YouTube video player" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen>
+        </iframe>
     </div>
     <div class="info">
-        <h2>試験公開_アスノヨゾラ哨戒班</h2>
-        <p>これは試験公開動画です。<br>はじめにサムネイル画像が表示され、再生ボタンを押すと動画がスタートします。</p>
+        <h2>演劇祭PR動画</h2>
+        <p>これは演劇祭のPR動画です。<br>再生ボタンを押すと動画がスタートします。</p>
         <p class="copyright">© 2025 NAZUNA ENGEKI<span id="secret-trigger">5</span></p>
     </div>
 </div>
