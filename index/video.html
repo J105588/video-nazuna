@@ -55,7 +55,7 @@
         position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;
     }
 
-    /* カウントダウンタイマーのスタイル (修正) */
+    /* カウントダウンタイマーのスタイル */
     #countdown-timer {
         position: absolute; /* ラッパー内で絶対配置 */
         top: 50%; left: 50%; /* 中央を基点に */
@@ -203,10 +203,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const videoElement = document.getElementById('youtube-video');
     const infoText = document.getElementById('info-text');
 
-    // ▼▼▼【重要】ここに公開したい日本時間を設定してください ▼▼▼
+    //【重要】ここに公開したい日本時間を設定
     // new Date(年, 月-1, 日, 時, 分, 秒)  ※月は0から(1月=0, 12月=11)
     const releaseTimeJST = new Date(2025, 8, 20, 9, 0, 0); // 例: 2025年9月21日 19:00:00 (JST)
-    // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
 
     let countdownInterval;
 
@@ -248,7 +247,6 @@ document.addEventListener('DOMContentLoaded', () => {
     updateCountdown();
     countdownInterval = setInterval(updateCountdown, 1000);
 
-    // --- 以下、既存のギミック機能 ---
     const trigger = document.getElementById('secret-trigger');
     const curtain = document.getElementById('curtain');
     const secretPage = document.getElementById('secret-page');
